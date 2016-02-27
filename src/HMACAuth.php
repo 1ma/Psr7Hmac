@@ -45,6 +45,6 @@ class HMACAuth
 
     private static function calculateHMACSig($payload, $secret)
     {
-        return rtrim(strtr(base64_encode(hash_hmac(self::HMAC_HASH, $payload, $secret, true)), '+/', '-_'), '=');
+        return base64_encode(hash_hmac(self::HMAC_HASH, $payload, $secret, true));
     }
 }
