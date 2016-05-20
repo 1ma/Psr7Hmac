@@ -3,14 +3,15 @@
 namespace OneMA\Tests;
 
 use OneMA\HMACAuth;
-use Psr\Http\Message\MessageInterface;
+use Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\ResponseInterface;
 
 class HMACAuthTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @dataProvider simpleRequestProvider
+     * @dataProvider simpleRequestsProvider
      */
-    public function testSimpleRequest(MessageInterface $request)
+    public function testSimpleRequests(RequestInterface $request)
     {
         $signedRequest = HMACAuth::sign($request, '$ecr3t');
 
@@ -18,7 +19,7 @@ class HMACAuthTest extends \PHPUnit_Framework_TestCase
         $this->assertFalse(HMACAuth::verify($signedRequest, 'wr0ng_$ecr3t'));
     }
 
-    public function simpleRequestProvider()
+    public function simpleRequestsProvider()
     {
         return [
             [new \Asika\Http\Request('http://example.com', 'GET')],
@@ -37,10 +38,42 @@ class HMACAuthTest extends \PHPUnit_Framework_TestCase
         ];
     }
 
+    /**
+     * @dataProvider simpleResponsesProvider
+     */
+    public function testSimpleResponses(ResponseInterface $response)
+    {
+        $signedResponse = HMACAuth::sign($response, '$ecr3t');
+
+        $this->assertTrue(HMACAuth::verify($signedResponse, '$ecr3t'));
+        $this->assertFalse(HMACAuth::verify($signedResponse, 'wr0ng_$ecr3t'));
+    }
+
+    public function simpleResponsesProvider()
+    {
+        return [
+            [new \Asika\Http\Response()],
+            [new \GuzzleHttp\Psr7\Response()],
+            [new \Phyrexia\Http\Response()],
+            [new \RingCentral\Psr7\Response()],
+            [new \Slim\Http\Response()],
+            [new \Wandu\Http\Psr\Response()],
+            [new \Zend\Diactoros\Response()],
+        ];
+    }
+
+
     public function testMissingAuthorizationHeader()
     {
         $request = new \GuzzleHttp\Psr7\Request('GET', 'http://example.com');
 
         $this->assertFalse(HMACAuth::verify($request, 'irrelevant'));
+    }
+
+    public function testSignNeitherRequestNorResponse()
+    {
+        $this->setExpectedException(\InvalidArgumentException::class);
+
+        HMACAuth::sign(new \Asika\Http\Test\Stub\StubMessage(), '$ecr3t');
     }
 }
