@@ -12,7 +12,10 @@ before_script:
   - mkdir build
 
 script:
-  - php vendor/bin/phpunit --coverage-clover build/clover.xml tests
+  - php vendor/bin/phpunit
 
 after_script:
   - travis_retry php vendor/bin/coveralls -v
+
+notifications:
+  email: false
