@@ -21,7 +21,18 @@ class HMACAuthTest extends \PHPUnit_Framework_TestCase
     public function simpleRequestProvider()
     {
         return [
+            [new \Asika\Http\Request('http://example.com', 'GET')],
             [new \GuzzleHttp\Psr7\Request('GET', 'http://example.com')],
+            [new \Phyrexia\Http\Request('GET', 'http://example.com')],
+            [new \RingCentral\Psr7\Request('GET', 'http://example.com')],
+            [new \Slim\Http\Request(
+                'GET',
+                new \Slim\Http\Uri('http', 'example.com'),
+                new \Slim\Http\Headers(),
+                [],
+                [],
+                new \Slim\Http\RequestBody())],
+            [new \Wandu\Http\Psr\Request('GET', new \Wandu\Http\Psr\Uri('http://example.com'))],
             [new \Zend\Diactoros\Request('http://example.com', 'GET')],
         ];
     }
