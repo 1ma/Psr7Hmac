@@ -36,4 +36,11 @@ class HMACAuthTest extends \PHPUnit_Framework_TestCase
             [new \Zend\Diactoros\Request('http://example.com', 'GET')],
         ];
     }
+
+    public function testMissingAuthorizationHeader()
+    {
+        $request = new \GuzzleHttp\Psr7\Request('GET', 'http://example.com');
+
+        $this->assertFalse(HMACAuth::verify($request, 'irrelevant'));
+    }
 }
