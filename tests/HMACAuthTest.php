@@ -62,7 +62,6 @@ class HMACAuthTest extends \PHPUnit_Framework_TestCase
         ];
     }
 
-
     public function testMissingAuthorizationHeader()
     {
         $request = new \GuzzleHttp\Psr7\Request('GET', 'http://example.com');
