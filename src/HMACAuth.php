@@ -7,7 +7,7 @@ use Psr\Http\Message\MessageInterface;
 class HMACAuth
 {
     const AUTH_HEADER = 'Authorization';
-    const HMAC_HASH = 'sha256';
+    const HMAC_ALGO = 'sha256';
 
     /**
      * @param MessageInterface $message
@@ -19,7 +19,7 @@ class HMACAuth
     {
         return $message->withHeader(
             self::AUTH_HEADER,
-            self::calculateHMACSig(\GuzzleHttp\Psr7\str($message), $secret)
+            self::calculateHMACSig(MessageSerializer::serialize($message), $secret)
         );
     }
 
@@ -36,7 +36,7 @@ class HMACAuth
         }
 
         $serverSideSignature = self::calculateHMACSig(
-            \GuzzleHttp\Psr7\str($message->withoutHeader(self::AUTH_HEADER)),
+            MessageSerializer::serialize($message->withoutHeader(self::AUTH_HEADER)),
             $secret
         );
 
@@ -45,6 +45,6 @@ class HMACAuth
 
     private static function calculateHMACSig($payload, $secret)
     {
-        return base64_encode(hash_hmac(self::HMAC_HASH, $payload, $secret, true));
+        return base64_encode(hash_hmac(self::HMAC_ALGO, $payload, $secret, true));
     }
 }
