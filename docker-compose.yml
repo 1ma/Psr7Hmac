@@ -1,0 +1,9 @@
+version: '2'
+services:
+  php:
+    image: 1maa/php-dev:7.0
+    ports:
+      - '2222:22'
+    volumes:
+      - .:/root/Psr7HmacAuth
+    working_dir: /root/Psr7HmacAuth
