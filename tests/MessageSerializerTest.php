@@ -4,25 +4,25 @@ namespace UMA\Tests;
 
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
-use UMA\HMACAuth;
+use UMA\MessageSerializer;
 
-class HMACAuthTest extends \PHPUnit_Framework_TestCase
+class MessageSerializerTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @dataProvider simpleRequestsProvider
      */
     public function testSimpleRequests(RequestInterface $request)
     {
-        $signedRequest = HMACAuth::sign($request, '$ecr3t');
+        $expectedSerialization = "GET / HTTP/1.1\r\nHost: example.com\r\n\r\n";
+        $actualSerialization = MessageSerializer::serialize($request);
 
-        $this->assertTrue(HMACAuth::verify($signedRequest, '$ecr3t'));
-        $this->assertFalse(HMACAuth::verify($signedRequest, 'wr0ng_$ecr3t'));
+        $this->assertSame($expectedSerialization, $actualSerialization);
     }
 
     public function simpleRequestsProvider()
     {
         return [
-            [new \Asika\Http\Request('http://example.com', 'GET')],
+            // [new \Asika\Http\Request('http://example.com', 'GET')],      // Broken, reported at https://github.com/asika32764/http/issues/2
             [new \GuzzleHttp\Psr7\Request('GET', 'http://example.com')],
             [new \Phyrexia\Http\Request('GET', 'http://example.com')],
             [new \RingCentral\Psr7\Request('GET', 'http://example.com')],
@@ -34,7 +34,7 @@ class HMACAuthTest extends \PHPUnit_Framework_TestCase
                 [],
                 new \Slim\Http\RequestBody())],
             [new \Wandu\Http\Psr\Request('GET', new \Wandu\Http\Psr\Uri('http://example.com'))],
-            [new \Zend\Diactoros\Request('http://example.com', 'GET')],
+            // [new \Zend\Diactoros\Request('http://example.com', 'GET')],  // Broken, reported at https://github.com/zendframework/zend-diactoros/issues/172
         ];
     }
 
@@ -43,10 +43,10 @@ class HMACAuthTest extends \PHPUnit_Framework_TestCase
      */
     public function testSimpleResponses(ResponseInterface $response)
     {
-        $signedResponse = HMACAuth::sign($response, '$ecr3t');
+        $expectedSerialization = "HTTP/1.1 200 OK\r\n\r\n";
+        $actualSerialization = MessageSerializer::serialize($response);
 
-        $this->assertTrue(HMACAuth::verify($signedResponse, '$ecr3t'));
-        $this->assertFalse(HMACAuth::verify($signedResponse, 'wr0ng_$ecr3t'));
+        $this->assertSame($expectedSerialization, $actualSerialization);
     }
 
     public function simpleResponsesProvider()
@@ -62,10 +62,10 @@ class HMACAuthTest extends \PHPUnit_Framework_TestCase
         ];
     }
 
-    public function testMissingAuthorizationHeader()
+    public function testSerializeNeitherRequestNorResponse()
     {
-        $request = new \GuzzleHttp\Psr7\Request('GET', 'http://example.com');
+        $this->setExpectedException(\InvalidArgumentException::class);
 
-        $this->assertFalse(HMACAuth::verify($request, 'irrelevant'));
+        MessageSerializer::serialize(new \Asika\Http\Test\Stub\StubMessage());
     }
 }

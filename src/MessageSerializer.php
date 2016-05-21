@@ -15,9 +15,8 @@ class MessageSerializer
      *
      * @return string
      *
-     * @throws \InvalidArgumentException When $message is an implementation of
-     *                                   MessageInterface that cannot be
-     *                                   serialized by this method.
+     * @throws \InvalidArgumentException When $message is neither an implementation
+     *                                   of RequestInterface nor ResponseInterface.
      */
     public static function serialize(MessageInterface $message)
     {

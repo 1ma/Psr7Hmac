@@ -13,7 +13,11 @@ class HMACAuth
      * @param MessageInterface $message
      * @param string           $secret
      *
-     * @return MessageInterface The signed message
+     * @return MessageInterface The signed message.
+     *
+     * @throws \InvalidArgumentException When $message is an implementation of
+     *                                   MessageInterface that cannot be
+     *                                   serialized and thus neither signed.
      */
     public static function sign(MessageInterface $message, $secret)
     {
@@ -27,7 +31,11 @@ class HMACAuth
      * @param MessageInterface $message
      * @param string           $secret
      *
-     * @return bool Signature verification outcome
+     * @return bool Signature verification outcome.
+     *
+     * @throws \InvalidArgumentException When $message is an implementation of
+     *                                   MessageInterface that cannot be
+     *                                   serialized and thus neither verified.
      */
     public static function verify(MessageInterface $message, $secret)
     {
