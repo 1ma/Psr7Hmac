@@ -14,6 +14,10 @@ class MessageSerializer
      * @param MessageInterface $message Message to convert to a string.
      *
      * @return string
+     *
+     * @throws \InvalidArgumentException When $message is an implementation of
+     *                                   MessageInterface that cannot be
+     *                                   serialized by this method.
      */
     public static function serialize(MessageInterface $message)
     {
