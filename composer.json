@@ -1,5 +1,5 @@
 {
-    "name": "onema/psr7-hmac-auth",
+    "name": "uma/psr7-hmac-auth",
     "description": "HMAC authentication library based on PSR-7 message interfaces",
     "type": "library",
     "license": "MIT",
@@ -28,12 +28,12 @@
     },
     "autoload": {
         "psr-4": {
-            "OneMA\\": "src/"
+            "UMA\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "OneMA\\Tests\\": "tests/"
+            "UMA\\Tests\\": "tests/"
         }
     }
 }

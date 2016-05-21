@@ -1,8 +1,8 @@
 <?php
 
-namespace OneMA\Tests;
+namespace UMA\Tests;
 
-use OneMA\HMACAuth;
+use UMA\HMACAuth;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 

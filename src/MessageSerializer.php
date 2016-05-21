@@ -1,6 +1,6 @@
 <?php
 
-namespace OneMA;
+namespace UMA;
 
 use Psr\Http\Message\MessageInterface;
 use Psr\Http\Message\RequestInterface;
