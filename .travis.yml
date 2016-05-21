@@ -10,9 +10,6 @@ php:
 install:
   - composer install
 
-before_script:
-  - mkdir build
-
 script:
   - php vendor/bin/phpunit
 
