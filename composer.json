@@ -1,5 +1,5 @@
 {
-    "name": "uma/psr7-hmac-auth",
+    "name": "uma/psr7-hmac",
     "description": "HMAC authentication library based on PSR-7 message interfaces",
     "type": "library",
     "license": "MIT",
