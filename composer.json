@@ -11,6 +11,9 @@
     ],
     "require": {
         "php": ">=5.5.0",
+        "ext-hash": "*",
+        "ext-pcre": "*",
+
         "psr/http-message": "1.0",
         "symfony/polyfill-php56": "^1.2"
     },
