@@ -76,7 +76,7 @@ class HMACAuth
         // to get the same signature every time
         ksort($headers);
 
-        return empty(implode('|', array_keys($headers))) ?
-            '(none)' : implode('|', array_keys($headers));
+        return empty(implode(',', array_keys($headers))) ?
+            '(none)' : implode(',', array_keys($headers));
     }
 }
