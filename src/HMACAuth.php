@@ -8,7 +8,7 @@ use Psr\Http\Message\RequestInterface;
 class HMACAuth
 {
     const AUTH_HEADER = 'Authorization';
-    const AUTH_PREFIX = 'HMAC-'.self::HMAC_ALGO;
+    const AUTH_PREFIX = 'HMAC-SHA256';
     const HMAC_ALGO = 'SHA256';
 
     /**
