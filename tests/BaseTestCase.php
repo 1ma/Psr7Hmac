@@ -5,35 +5,32 @@ namespace UMA\Tests;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 
-class HMACTestCase extends \PHPUnit_Framework_TestCase
+abstract class BaseTestCase extends \PHPUnit_Framework_TestCase
 {
     /**
      * @param string $method
-     * @param string $uri
+     * @param string $url
      *
      * @return RequestInterface[]
      */
-    protected function psr7RequestShotgun($method, $uri)
+    protected function psr7RequestShotgun($method, $url)
     {
-        $parseUrl = parse_url($uri);
-        $scheme = $parseUrl['scheme'];
-        $host = $parseUrl['host'];
-        $path = $parseUrl['path'];
+        $parsedUrl = parse_url($url);
 
         return [
-            new \Asika\Http\Request($uri, $method),
-            new \GuzzleHttp\Psr7\Request($method, $uri),
-            new \Phyrexia\Http\Request($method, $uri),
-            new \RingCentral\Psr7\Request($method, $uri),
+            new \Asika\Http\Request($url, $method),
+            new \GuzzleHttp\Psr7\Request($method, $url),
+            new \Phyrexia\Http\Request($method, $url),
+            new \RingCentral\Psr7\Request($method, $url),
             new \Slim\Http\Request(
                 $method,
-                new \Slim\Http\Uri($scheme, $host, null, $path),
+                new \Slim\Http\Uri($parsedUrl['scheme'], $parsedUrl['host'], null, $parsedUrl['path']),
                 new \Slim\Http\Headers(),
                 [],
                 [],
                 new \Slim\Http\RequestBody()),
-            new \Wandu\Http\Psr\Request('GET', new \Wandu\Http\Psr\Uri($uri)),
-            new \Zend\Diactoros\Request($uri, $method),
+            new \Wandu\Http\Psr\Request('GET', new \Wandu\Http\Psr\Uri($url)),
+            new \Zend\Diactoros\Request($url, $method),
         ];
     }
 

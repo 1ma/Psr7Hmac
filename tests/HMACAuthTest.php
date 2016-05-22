@@ -5,17 +5,16 @@ namespace UMA\Tests;
 use Psr\Http\Message\MessageInterface;
 use UMA\HMACAuth;
 
-class HMACAuthTest extends HMACTestCase
+class HMACAuthTest extends BaseTestCase
 {
     public function testSimpleRequests()
     {
-        $expectedSignature = 'PueTWqaIii0VrFEFJRN4fLKP0qyTC2hFUIqEmqsSASs=';
+        $expectedSignature = 'ws9P+LKeAplOT2ergYhdJpb9QeXZF3mUJSYcLEX40fI=';
 
-        foreach ($this->psr7RequestShotgun('GET', 'http://example.com/foo') as $request) {
+        foreach ($this->psr7RequestShotgun('GET', 'http://www.example.com/index.html') as $request) {
             $signedRequest = HMACAuth::sign($request, '$ecr3t');
 
-            $this->assertHasSignature($signedRequest, $expectedSignature);
-
+            $this->assertRequestHasSignature($signedRequest, $expectedSignature);
             $this->assertTrue(HMACAuth::verify($signedRequest, '$ecr3t'));
             $this->assertFalse(HMACAuth::verify($signedRequest, 'wr0ng_$ecr3t'));
         }
@@ -28,8 +27,7 @@ class HMACAuthTest extends HMACTestCase
         foreach ($this->psr7ResponseShotgun(200) as $response) {
             $signedResponse = HMACAuth::sign($response, '$ecr3t');
 
-            $this->assertHasSignature($signedResponse, $expectedSignature);
-
+            $this->assertRequestHasSignature($signedResponse, $expectedSignature);
             $this->assertTrue(HMACAuth::verify($signedResponse, '$ecr3t'));
             $this->assertFalse(HMACAuth::verify($signedResponse, 'wr0ng_$ecr3t'));
         }
@@ -53,7 +51,7 @@ class HMACAuthTest extends HMACTestCase
      * @param MessageInterface $signedMessage
      * @param string           $signature
      */
-    private function assertHasSignature(MessageInterface $signedMessage, $signature)
+    private function assertRequestHasSignature(MessageInterface $signedMessage, $signature)
     {
         $this->assertTrue($signedMessage->hasHeader(HMACAuth::AUTH_HEADER));
         $this->assertSame(HMACAuth::AUTH_PREFIX.' '.$signature, $signedMessage->getHeaderLine(HMACAuth::AUTH_HEADER));

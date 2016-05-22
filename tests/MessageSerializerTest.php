@@ -4,13 +4,13 @@ namespace UMA\Tests;
 
 use UMA\MessageSerializer;
 
-class MessageSerializerTest extends HMACTestCase
+class MessageSerializerTest extends BaseTestCase
 {
     public function testSimpleRequests()
     {
-        $expectedSerialization = "GET /foo HTTP/1.1\r\nHost: example.com\r\n\r\n";
+        $expectedSerialization = "GET /index.html HTTP/1.1\r\nHost: www.example.com\r\n\r\n";
 
-        foreach ($this->psr7RequestShotgun('GET', 'http://example.com/foo') as $request) {
+        foreach ($this->psr7RequestShotgun('GET', 'http://www.example.com/index.html') as $request) {
             $actualSerialization = MessageSerializer::serialize($request);
 
             $this->assertSame($expectedSerialization, $actualSerialization);
