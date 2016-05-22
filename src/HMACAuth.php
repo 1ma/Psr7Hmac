@@ -8,7 +8,8 @@ use Psr\Http\Message\RequestInterface;
 class HMACAuth
 {
     const AUTH_HEADER = 'Authorization';
-    const HMAC_ALGO = 'sha256';
+    const AUTH_PREFIX = 'HMAC-'.self::HMAC_ALGO;
+    const HMAC_ALGO = 'SHA256';
 
     /**
      * @param MessageInterface $message
@@ -22,14 +23,12 @@ class HMACAuth
      */
     public static function sign(MessageInterface $message, $secret)
     {
-        $preSignedMessage = $message
-            ->withHeader('Signed-Headers', self::getSignedHeadersString($message));
+        $preSignedMessage = $message->withHeader('Signed-Headers', self::getSignedHeadersString($message));
 
-        return $preSignedMessage
-            ->withHeader(
-                self::AUTH_HEADER,
-                self::calculateHMACSig(MessageSerializer::serialize($preSignedMessage), $secret)
-            );
+        return $preSignedMessage->withHeader(
+            self::AUTH_HEADER,
+            self::AUTH_PREFIX.' '.self::calculateHMACSig(MessageSerializer::serialize($preSignedMessage), $secret)
+        );
     }
 
     /**
@@ -44,9 +43,15 @@ class HMACAuth
      */
     public static function verify(MessageInterface $message, $secret)
     {
-        if (empty($clientSideSignature = $message->getHeaderLine(self::AUTH_HEADER))) {
+        if (empty($authHeader = $message->getHeaderLine(self::AUTH_HEADER))) {
             return false;
         }
+
+        if (0 === preg_match('#^'.self::AUTH_PREFIX.' ([+/0-9A-Za-z]{43}=)$#', $authHeader, $matches)) {
+            return false;
+        }
+
+        $clientSideSignature = $matches[1];
 
         $serverSideSignature = self::calculateHMACSig(
             MessageSerializer::serialize($message->withoutHeader(self::AUTH_HEADER)),

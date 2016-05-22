@@ -74,6 +74,13 @@ class HMACAuthTest extends \PHPUnit_Framework_TestCase
         $this->assertFalse(HMACAuth::verify($request, 'irrelevant'));
     }
 
+    public function testBadFormattedSignature()
+    {
+        $request = new \GuzzleHttp\Psr7\Request('GET', 'http://example.com', [HMACAuth::AUTH_HEADER => 'HMAC-SHA256 herpder=']);
+
+        $this->assertFalse(HMACAuth::verify($request, 'irrelevant'));
+    }
+
     /**
      * @param MessageInterface $signedMessage
      * @param string           $signature
@@ -81,6 +88,6 @@ class HMACAuthTest extends \PHPUnit_Framework_TestCase
     private function assertHasSignature(MessageInterface $signedMessage, $signature)
     {
         $this->assertTrue($signedMessage->hasHeader(HMACAuth::AUTH_HEADER));
-        $this->assertSame($signature, $signedMessage->getHeaderLine(HMACAuth::AUTH_HEADER));
+        $this->assertSame(HMACAuth::AUTH_PREFIX.' '.$signature, $signedMessage->getHeaderLine(HMACAuth::AUTH_HEADER));
     }
 }
