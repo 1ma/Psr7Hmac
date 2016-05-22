@@ -3,6 +3,7 @@
 namespace UMA;
 
 use Psr\Http\Message\MessageInterface;
+use Psr\Http\Message\RequestInterface;
 
 class HMACAuth
 {
@@ -21,10 +22,14 @@ class HMACAuth
      */
     public static function sign(MessageInterface $message, $secret)
     {
-        return $message->withHeader(
-            self::AUTH_HEADER,
-            self::calculateHMACSig(MessageSerializer::serialize($message), $secret)
-        );
+        $message = $message
+            ->withHeader('Signed-Headers', self::getSignedHeadersList($message));
+
+        return $message
+            ->withHeader(
+                self::AUTH_HEADER,
+                self::calculateHMACSig(MessageSerializer::serialize($message), $secret)
+            );
     }
 
     /**
@@ -54,5 +59,24 @@ class HMACAuth
     private static function calculateHMACSig($payload, $secret)
     {
         return base64_encode(hash_hmac(self::HMAC_ALGO, $payload, $secret, true));
+    }
+
+    private static function getSignedHeadersList(MessageInterface $message)
+    {
+        $headers = $message->getHeaders();
+
+        // Some of the tested RequestInterface implementations do not include
+        // the Host header in $message->getHeaders(), so it is explicitly set
+        if ($message instanceof RequestInterface) {
+            $headers['Host'] = $message->getUri()->getHost();
+        }
+
+        // There is no guarantee about the order of the headers returned by
+        // $message->getHeaders(), so they are explicitly sorted in order
+        // to get the same signature every time
+        ksort($headers);
+
+        return empty(implode('|', array_keys($headers))) ?
+            '(none)' : implode('|', array_keys($headers));
     }
 }

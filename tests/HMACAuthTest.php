@@ -16,7 +16,7 @@ class HMACAuthTest extends \PHPUnit_Framework_TestCase
     {
         $signedRequest = HMACAuth::sign($request, '$ecr3t');
 
-        $this->assertHasSignature($signedRequest, 'twvAXFoBR92fc9QpgQxXRik8dFjuwyFxug+dXMVU478=');
+        $this->assertHasSignature($signedRequest, 'PueTWqaIii0VrFEFJRN4fLKP0qyTC2hFUIqEmqsSASs=');
 
         $this->assertTrue(HMACAuth::verify($signedRequest, '$ecr3t'));
         $this->assertFalse(HMACAuth::verify($signedRequest, 'wr0ng_$ecr3t'));
@@ -48,7 +48,7 @@ class HMACAuthTest extends \PHPUnit_Framework_TestCase
     {
         $signedResponse = HMACAuth::sign($response, '$ecr3t');
 
-        $this->assertHasSignature($signedResponse, '+DILN/Vd+9/S85xgxQlZ+xeFyM2T2v+j2pfsRSPmSKk=');
+        $this->assertHasSignature($signedResponse, 'VyDIPfyx+SO53fiQc3lNq03urAKIgeDyiGGZww9ccRU=');
 
         $this->assertTrue(HMACAuth::verify($signedResponse, '$ecr3t'));
         $this->assertFalse(HMACAuth::verify($signedResponse, 'wr0ng_$ecr3t'));
