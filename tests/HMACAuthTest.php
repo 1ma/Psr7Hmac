@@ -3,68 +3,36 @@
 namespace UMA\Tests;
 
 use Psr\Http\Message\MessageInterface;
-use Psr\Http\Message\RequestInterface;
-use Psr\Http\Message\ResponseInterface;
 use UMA\HMACAuth;
 
-class HMACAuthTest extends \PHPUnit_Framework_TestCase
+class HMACAuthTest extends HMACTestCase
 {
-    /**
-     * @dataProvider simpleRequestsProvider
-     */
-    public function testSimpleRequests(RequestInterface $request)
+    public function testSimpleRequests()
     {
-        $signedRequest = HMACAuth::sign($request, '$ecr3t');
+        $expectedSignature = 'PueTWqaIii0VrFEFJRN4fLKP0qyTC2hFUIqEmqsSASs=';
 
-        $this->assertHasSignature($signedRequest, 'PueTWqaIii0VrFEFJRN4fLKP0qyTC2hFUIqEmqsSASs=');
+        foreach ($this->psr7RequestShotgun('GET', 'http://example.com/foo') as $request) {
+            $signedRequest = HMACAuth::sign($request, '$ecr3t');
 
-        $this->assertTrue(HMACAuth::verify($signedRequest, '$ecr3t'));
-        $this->assertFalse(HMACAuth::verify($signedRequest, 'wr0ng_$ecr3t'));
+            $this->assertHasSignature($signedRequest, $expectedSignature);
+
+            $this->assertTrue(HMACAuth::verify($signedRequest, '$ecr3t'));
+            $this->assertFalse(HMACAuth::verify($signedRequest, 'wr0ng_$ecr3t'));
+        }
     }
 
-    public function simpleRequestsProvider()
+    public function testSimpleResponses()
     {
-        return [
-            [new \Asika\Http\Request('http://example.com/foo', 'GET')],
-            [new \GuzzleHttp\Psr7\Request('GET', 'http://example.com/foo')],
-            [new \Phyrexia\Http\Request('GET', 'http://example.com/foo')],
-            [new \RingCentral\Psr7\Request('GET', 'http://example.com/foo')],
-            [new \Slim\Http\Request(
-                'GET',
-                new \Slim\Http\Uri('http', 'example.com', null, '/foo'),
-                new \Slim\Http\Headers(),
-                [],
-                [],
-                new \Slim\Http\RequestBody())],
-            [new \Wandu\Http\Psr\Request('GET', new \Wandu\Http\Psr\Uri('http://example.com/foo'))],
-            [new \Zend\Diactoros\Request('http://example.com/foo', 'GET')],
-        ];
-    }
+        $expectedSignature = 'VyDIPfyx+SO53fiQc3lNq03urAKIgeDyiGGZww9ccRU=';
 
-    /**
-     * @dataProvider simpleResponsesProvider
-     */
-    public function testSimpleResponses(ResponseInterface $response)
-    {
-        $signedResponse = HMACAuth::sign($response, '$ecr3t');
+        foreach ($this->psr7ResponseShotgun(200) as $response) {
+            $signedResponse = HMACAuth::sign($response, '$ecr3t');
 
-        $this->assertHasSignature($signedResponse, 'VyDIPfyx+SO53fiQc3lNq03urAKIgeDyiGGZww9ccRU=');
+            $this->assertHasSignature($signedResponse, $expectedSignature);
 
-        $this->assertTrue(HMACAuth::verify($signedResponse, '$ecr3t'));
-        $this->assertFalse(HMACAuth::verify($signedResponse, 'wr0ng_$ecr3t'));
-    }
-
-    public function simpleResponsesProvider()
-    {
-        return [
-            [new \Asika\Http\Response()],
-            [new \GuzzleHttp\Psr7\Response()],
-            [new \Phyrexia\Http\Response()],
-            [new \RingCentral\Psr7\Response()],
-            [new \Slim\Http\Response()],
-            [new \Wandu\Http\Psr\Response()],
-            [new \Zend\Diactoros\Response()],
-        ];
+            $this->assertTrue(HMACAuth::verify($signedResponse, '$ecr3t'));
+            $this->assertFalse(HMACAuth::verify($signedResponse, 'wr0ng_$ecr3t'));
+        }
     }
 
     public function testMissingAuthorizationHeader()
