@@ -23,10 +23,8 @@ class MessageSerializer
         if ($message instanceof RequestInterface) {
             $msg = trim($message->getMethod().' '
                 .$message->getRequestTarget())
-                .' HTTP/'.$message->getProtocolVersion();
-            if (!$message->hasHeader('host')) {
-                $msg .= "\r\nHost: ".$message->getUri()->getHost();
-            }
+                .' HTTP/'.$message->getProtocolVersion()
+                ."\r\nHost: ".$message->getUri()->getHost();
         } elseif ($message instanceof ResponseInterface) {
             $msg = 'HTTP/'.$message->getProtocolVersion().' '
                 .$message->getStatusCode().' '
@@ -35,7 +33,10 @@ class MessageSerializer
             throw new \InvalidArgumentException('Unknown message type');
         }
 
-        foreach ($message->getHeaders() as $name => $values) {
+        $headers = $message->getHeaders();
+        unset($headers['Host']);
+
+        foreach ($headers as $name => $values) {
             $msg .= "\r\n{$name}: ".implode(', ', $values);
         }
 

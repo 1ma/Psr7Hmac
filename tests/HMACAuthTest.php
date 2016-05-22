@@ -2,6 +2,7 @@
 
 namespace UMA\Tests;
 
+use Psr\Http\Message\MessageInterface;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use UMA\HMACAuth;
@@ -15,6 +16,8 @@ class HMACAuthTest extends \PHPUnit_Framework_TestCase
     {
         $signedRequest = HMACAuth::sign($request, '$ecr3t');
 
+        $this->assertHasSignature($signedRequest, 'twvAXFoBR92fc9QpgQxXRik8dFjuwyFxug+dXMVU478=');
+
         $this->assertTrue(HMACAuth::verify($signedRequest, '$ecr3t'));
         $this->assertFalse(HMACAuth::verify($signedRequest, 'wr0ng_$ecr3t'));
     }
@@ -22,19 +25,19 @@ class HMACAuthTest extends \PHPUnit_Framework_TestCase
     public function simpleRequestsProvider()
     {
         return [
-            [new \Asika\Http\Request('http://example.com', 'GET')],
-            [new \GuzzleHttp\Psr7\Request('GET', 'http://example.com')],
-            [new \Phyrexia\Http\Request('GET', 'http://example.com')],
-            [new \RingCentral\Psr7\Request('GET', 'http://example.com')],
+            [new \Asika\Http\Request('http://example.com/foo', 'GET')],
+            [new \GuzzleHttp\Psr7\Request('GET', 'http://example.com/foo')],
+            [new \Phyrexia\Http\Request('GET', 'http://example.com/foo')],
+            [new \RingCentral\Psr7\Request('GET', 'http://example.com/foo')],
             [new \Slim\Http\Request(
                 'GET',
-                new \Slim\Http\Uri('http', 'example.com'),
+                new \Slim\Http\Uri('http', 'example.com', null, '/foo'),
                 new \Slim\Http\Headers(),
                 [],
                 [],
                 new \Slim\Http\RequestBody())],
-            [new \Wandu\Http\Psr\Request('GET', new \Wandu\Http\Psr\Uri('http://example.com'))],
-            [new \Zend\Diactoros\Request('http://example.com', 'GET')],
+            [new \Wandu\Http\Psr\Request('GET', new \Wandu\Http\Psr\Uri('http://example.com/foo'))],
+            [new \Zend\Diactoros\Request('http://example.com/foo', 'GET')],
         ];
     }
 
@@ -44,6 +47,8 @@ class HMACAuthTest extends \PHPUnit_Framework_TestCase
     public function testSimpleResponses(ResponseInterface $response)
     {
         $signedResponse = HMACAuth::sign($response, '$ecr3t');
+
+        $this->assertHasSignature($signedResponse, '+DILN/Vd+9/S85xgxQlZ+xeFyM2T2v+j2pfsRSPmSKk=');
 
         $this->assertTrue(HMACAuth::verify($signedResponse, '$ecr3t'));
         $this->assertFalse(HMACAuth::verify($signedResponse, 'wr0ng_$ecr3t'));
@@ -67,5 +72,15 @@ class HMACAuthTest extends \PHPUnit_Framework_TestCase
         $request = new \GuzzleHttp\Psr7\Request('GET', 'http://example.com');
 
         $this->assertFalse(HMACAuth::verify($request, 'irrelevant'));
+    }
+
+    /**
+     * @param MessageInterface $signedMessage
+     * @param string           $signature
+     */
+    private function assertHasSignature(MessageInterface $signedMessage, $signature)
+    {
+        $this->assertTrue($signedMessage->hasHeader(HMACAuth::AUTH_HEADER));
+        $this->assertSame($signature, $signedMessage->getHeaderLine(HMACAuth::AUTH_HEADER));
     }
 }

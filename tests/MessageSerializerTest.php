@@ -13,7 +13,7 @@ class MessageSerializerTest extends \PHPUnit_Framework_TestCase
      */
     public function testSimpleRequests(RequestInterface $request)
     {
-        $expectedSerialization = "GET / HTTP/1.1\r\nHost: example.com\r\n\r\n";
+        $expectedSerialization = "GET /foo HTTP/1.1\r\nHost: example.com\r\n\r\n";
         $actualSerialization = MessageSerializer::serialize($request);
 
         $this->assertSame($expectedSerialization, $actualSerialization);
@@ -22,19 +22,19 @@ class MessageSerializerTest extends \PHPUnit_Framework_TestCase
     public function simpleRequestsProvider()
     {
         return [
-            // [new \Asika\Http\Request('http://example.com', 'GET')],      // Broken, reported at https://github.com/asika32764/http/issues/2
-            [new \GuzzleHttp\Psr7\Request('GET', 'http://example.com')],
-            [new \Phyrexia\Http\Request('GET', 'http://example.com')],
-            [new \RingCentral\Psr7\Request('GET', 'http://example.com')],
+            [new \Asika\Http\Request('http://example.com/foo', 'GET')],
+            [new \GuzzleHttp\Psr7\Request('GET', 'http://example.com/foo')],
+            [new \Phyrexia\Http\Request('GET', 'http://example.com/foo')],
+            [new \RingCentral\Psr7\Request('GET', 'http://example.com/foo')],
             [new \Slim\Http\Request(
                 'GET',
-                new \Slim\Http\Uri('http', 'example.com'),
+                new \Slim\Http\Uri('http', 'example.com', null, '/foo'),
                 new \Slim\Http\Headers(),
                 [],
                 [],
                 new \Slim\Http\RequestBody())],
-            [new \Wandu\Http\Psr\Request('GET', new \Wandu\Http\Psr\Uri('http://example.com'))],
-            // [new \Zend\Diactoros\Request('http://example.com', 'GET')],  // Broken, reported at https://github.com/zendframework/zend-diactoros/issues/172
+            [new \Wandu\Http\Psr\Request('GET', new \Wandu\Http\Psr\Uri('http://example.com/foo'))],
+            [new \Zend\Diactoros\Request('http://example.com/foo', 'GET')],
         ];
     }
 
