@@ -16,7 +16,6 @@
     },
     "require-dev": {
         "phpunit/phpunit": "^4.8",
-        "satooshi/php-coveralls": "^1.0",
 
         "asika/http": "^1.0",
         "guzzlehttp/psr7": "^1.3",

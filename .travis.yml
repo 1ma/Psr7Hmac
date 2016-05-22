@@ -14,7 +14,8 @@ script:
   - php vendor/bin/phpunit
 
 after_script:
-  - travis_retry php vendor/bin/coveralls -v
+  - wget https://github.com/satooshi/php-coveralls/releases/download/v1.0.1/coveralls.phar
+  - travis_retry php coveralls.phar -v
 
 notifications:
   email: false
