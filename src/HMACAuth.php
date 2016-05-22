@@ -22,13 +22,13 @@ class HMACAuth
      */
     public static function sign(MessageInterface $message, $secret)
     {
-        $message = $message
-            ->withHeader('Signed-Headers', self::getSignedHeadersList($message));
+        $preSignedMessage = $message
+            ->withHeader('Signed-Headers', self::getSignedHeadersString($message));
 
-        return $message
+        return $preSignedMessage
             ->withHeader(
                 self::AUTH_HEADER,
-                self::calculateHMACSig(MessageSerializer::serialize($message), $secret)
+                self::calculateHMACSig(MessageSerializer::serialize($preSignedMessage), $secret)
             );
     }
 
@@ -61,7 +61,7 @@ class HMACAuth
         return base64_encode(hash_hmac(self::HMAC_ALGO, $payload, $secret, true));
     }
 
-    private static function getSignedHeadersList(MessageInterface $message)
+    private static function getSignedHeadersString(MessageInterface $message)
     {
         $headers = $message->getHeaders();
 
