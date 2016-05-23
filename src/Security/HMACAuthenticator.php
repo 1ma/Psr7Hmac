@@ -6,12 +6,8 @@ use Psr\Http\Message\MessageInterface;
 use Psr\Http\Message\RequestInterface;
 use UMA\Psr\Http\Message\Serializer\MessageSerializer;
 
-class HMACAuth
+class HMACAuthenticator
 {
-    const AUTH_HEADER = 'Authorization';
-    const AUTH_PREFIX = 'HMAC-SHA256';
-    const HMAC_ALGO = 'SHA256';
-
     /**
      * @param MessageInterface $message
      * @param string           $secret
@@ -22,13 +18,13 @@ class HMACAuth
      *                                   MessageInterface that cannot be
      *                                   serialized and thus neither signed.
      */
-    public static function sign(MessageInterface $message, $secret)
+    public function sign(MessageInterface $message, $secret)
     {
-        $preSignedMessage = $message->withHeader('Signed-Headers', self::getSignedHeadersString($message));
+        $preSignedMessage = $message->withHeader('Signed-Headers', $this->getSignedHeadersString($message));
 
         return $preSignedMessage->withHeader(
-            self::AUTH_HEADER,
-            self::AUTH_PREFIX.' '.self::calculateHMACSig(MessageSerializer::serialize($preSignedMessage), $secret)
+            HMACSpecification::AUTH_HEADER,
+            HMACSpecification::AUTH_PREFIX.' '.HMACSpecification::doHMACSignature(MessageSerializer::serialize($preSignedMessage), $secret)
         );
     }
 
@@ -42,32 +38,32 @@ class HMACAuth
      *                                   MessageInterface that cannot be
      *                                   serialized and thus neither verified.
      */
-    public static function verify(MessageInterface $message, $secret)
+    public function verify(MessageInterface $message, $secret)
     {
-        if (empty($authHeader = $message->getHeaderLine(self::AUTH_HEADER))) {
+        if (empty($authHeader = $message->getHeaderLine(HMACSpecification::AUTH_HEADER))) {
             return false;
         }
 
-        if (0 === preg_match('#^'.self::AUTH_PREFIX.' ([+/0-9A-Za-z]{43}=)$#', $authHeader, $matches)) {
+        if (0 === preg_match('#^'.HMACSpecification::AUTH_PREFIX.' ([+/0-9A-Za-z]{43}=)$#', $authHeader, $matches)) {
             return false;
         }
 
         $clientSideSignature = $matches[1];
 
-        $serverSideSignature = self::calculateHMACSig(
-            MessageSerializer::serialize($message->withoutHeader(self::AUTH_HEADER)),
+        $serverSideSignature = HMACSpecification::doHMACSignature(
+            MessageSerializer::serialize($message->withoutHeader(HMACSpecification::AUTH_HEADER)),
             $secret
         );
 
         return hash_equals($serverSideSignature, $clientSideSignature);
     }
 
-    private static function calculateHMACSig($payload, $secret)
-    {
-        return base64_encode(hash_hmac(self::HMAC_ALGO, $payload, $secret, true));
-    }
-
-    private static function getSignedHeadersString(MessageInterface $message)
+    /**
+     * @param MessageInterface $message
+     *
+     * @return string
+     */
+    private function getSignedHeadersString(MessageInterface $message)
     {
         $headers = $message->getHeaders();
 
