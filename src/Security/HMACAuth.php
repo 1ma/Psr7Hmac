@@ -1,9 +1,10 @@
 <?php
 
-namespace UMA;
+namespace UMA\Psr\Http\Message\Security;
 
 use Psr\Http\Message\MessageInterface;
 use Psr\Http\Message\RequestInterface;
+use UMA\Psr\Http\Message\Serializer\MessageSerializer;
 
 class HMACAuth
 {

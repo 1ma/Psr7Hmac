@@ -1,6 +1,6 @@
 <?php
 
-namespace UMA\Tests;
+namespace UMA\Tests\Psr\Http\Message;
 
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;

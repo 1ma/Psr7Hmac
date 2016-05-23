@@ -1,9 +1,10 @@
 <?php
 
-namespace UMA\Tests;
+namespace UMA\Tests\Psr\Http\Message\Security;
 
 use Psr\Http\Message\MessageInterface;
-use UMA\HMACAuth;
+use UMA\Psr\Http\Message\Security\HMACAuth;
+use UMA\Tests\Psr\Http\Message\BaseTestCase;
 
 class HMACAuthTest extends BaseTestCase
 {

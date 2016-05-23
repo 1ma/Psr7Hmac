@@ -1,6 +1,6 @@
 {
     "name": "uma/psr7-hmac",
-    "description": "HMAC authentication library based on PSR-7 message interfaces",
+    "description": "An HMAC authentication library built on top of the PSR-7 specification",
     "type": "library",
     "license": "MIT",
     "authors": [
@@ -30,12 +30,12 @@
     },
     "autoload": {
         "psr-4": {
-            "UMA\\": "src/"
+            "UMA\\Psr\\Http\\Message\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "UMA\\Tests\\": "tests/"
+            "UMA\\Tests\\Psr\\Http\\Message\\": "tests/"
         }
     }
 }

@@ -1,8 +1,9 @@
 <?php
 
-namespace UMA\Tests;
+namespace UMA\Tests\Psr\Http\Message\Serializer;
 
-use UMA\MessageSerializer;
+use UMA\Psr\Http\Message\Serializer\MessageSerializer;
+use UMA\Tests\Psr\Http\Message\BaseTestCase;
 
 class MessageSerializerTest extends BaseTestCase
 {

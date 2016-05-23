@@ -1,6 +1,6 @@
 <?php
 
-namespace UMA;
+namespace UMA\Psr\Http\Message\Serializer;
 
 use Psr\Http\Message\MessageInterface;
 use Psr\Http\Message\RequestInterface;
