@@ -20,7 +20,7 @@ class HMACAuthenticator
      */
     public function sign(MessageInterface $message, $secret)
     {
-        $preSignedMessage = $message->withHeader('Signed-Headers', $this->getSignedHeadersString($message));
+        $preSignedMessage = $message->withHeader(HMACSpecification::SIGN_HEADER, $this->getSignedHeadersString($message));
 
         return $preSignedMessage->withHeader(
             HMACSpecification::AUTH_HEADER,

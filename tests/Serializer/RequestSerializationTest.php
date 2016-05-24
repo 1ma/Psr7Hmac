@@ -11,13 +11,13 @@ class RequestSerializationTest extends BaseTestCase
      * @dataProvider requestsProvider
      *
      * @param string   $method
-     * @param string   $uri
+     * @param string   $url
      * @param string[] $headers
      * @param string   $expectedSerialization
      */
-    public function testRequests($method, $uri, array $headers, $expectedSerialization)
+    public function testRequests($method, $url, array $headers, $expectedSerialization)
     {
-        foreach ($this->psr7RequestShotgun($method, $uri, $headers) as $request) {
+        foreach ($this->psr7RequestShotgun($method, $url, $headers) as $request) {
             $actualSerialization = MessageSerializer::serialize($request);
 
             $this->assertSame($expectedSerialization, $actualSerialization, get_class($request));
