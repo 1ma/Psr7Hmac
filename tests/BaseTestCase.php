@@ -10,6 +10,7 @@ abstract class BaseTestCase extends \PHPUnit_Framework_TestCase
     /**
      * @param string $method
      * @param string $url
+     * @param string[] $headers
      *
      * @return RequestInterface[]
      */
@@ -35,20 +36,21 @@ abstract class BaseTestCase extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param int $status
+     * @param int      $status
+     * @param string[] $headers
      *
      * @return ResponseInterface[]
      */
-    protected function psr7ResponseShotgun($status)
+    protected function psr7ResponseShotgun($status, array $headers = [])
     {
         return [
-            new \Asika\Http\Response('php://memory', $status),
-            new \GuzzleHttp\Psr7\Response($status),
-            new \Phyrexia\Http\Response($status),
-            new \RingCentral\Psr7\Response($status),
-            new \Slim\Http\Response($status),
-            new \Wandu\Http\Psr\Response($status),
-            new \Zend\Diactoros\Response('php://memory', $status),
+            new \Asika\Http\Response('php://memory', $status, $headers),
+            new \GuzzleHttp\Psr7\Response($status, $headers),
+            new \Phyrexia\Http\Response($status, $headers),
+            new \RingCentral\Psr7\Response($status, $headers),
+            new \Slim\Http\Response($status, new \Slim\Http\Headers($headers)),
+            new \Wandu\Http\Psr\Response($status, '', '1.1', $headers),
+            new \Zend\Diactoros\Response('php://memory', $status, $headers),
         ];
     }
 }
