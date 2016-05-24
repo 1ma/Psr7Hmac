@@ -7,7 +7,7 @@ use UMA\Psr\Http\Message\Security\HMACAuthenticator;
 use UMA\Psr\Http\Message\Security\HMACSpecification;
 use UMA\Tests\Psr\Http\Message\BaseTestCase;
 
-class HMACAuthTest extends BaseTestCase
+class HMACAuthenticatorTest extends BaseTestCase
 {
     /**
      * @var HMACAuthenticator
@@ -23,7 +23,7 @@ class HMACAuthTest extends BaseTestCase
 
     public function testSimpleRequests()
     {
-        $expectedSignature = 'ws9P+LKeAplOT2ergYhdJpb9QeXZF3mUJSYcLEX40fI=';
+        $expectedSignature = 'gQ40JfujwnnE5/pjfb0Et2uHzxGYMJbODuUb8cFLxrA=';
 
         foreach ($this->psr7RequestShotgun('GET', 'http://www.example.com/index.html') as $request) {
             $signedRequest = $this->authenticator->sign($request, '$ecr3t');
@@ -36,7 +36,7 @@ class HMACAuthTest extends BaseTestCase
 
     public function testSimpleResponses()
     {
-        $expectedSignature = 'VyDIPfyx+SO53fiQc3lNq03urAKIgeDyiGGZww9ccRU=';
+        $expectedSignature = 'ItmODW3lxpRTblMD4MT6zxC0oblu2RezNkun8Tr4D+Q=';
 
         foreach ($this->psr7ResponseShotgun(200) as $response) {
             $signedResponse = $this->authenticator->sign($response, '$ecr3t');
@@ -68,6 +68,7 @@ class HMACAuthTest extends BaseTestCase
     private function assertRequestHasSignature(MessageInterface $signedMessage, $signature)
     {
         $this->assertTrue($signedMessage->hasHeader(HMACSpecification::AUTH_HEADER));
-        $this->assertSame(HMACSpecification::AUTH_PREFIX.' '.$signature, $signedMessage->getHeaderLine(HMACSpecification::AUTH_HEADER));
+        $this->assertTrue($signedMessage->hasHeader(HMACSpecification::SIGN_HEADER));
+        $this->assertSame(HMACSpecification::AUTH_PREFIX.' '.$signature, $signedMessage->getHeaderLine(HMACSpecification::AUTH_HEADER), get_class($signedMessage));
     }
 }

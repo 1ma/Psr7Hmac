@@ -30,8 +30,8 @@ abstract class BaseTestCase extends \PHPUnit_Framework_TestCase
                 [],
                 [],
                 new \Slim\Http\RequestBody()),
-            new \Zend\Diactoros\Request($url, $method, 'php://temp', $headers),
             new \Wandu\Http\Psr\Request('GET', new \Wandu\Http\Psr\Uri($url), '1.1', $headers),
+            new \Zend\Diactoros\Request($url, $method, 'php://temp', $headers),
         ];
     }
 

@@ -20,11 +20,16 @@ class HMACAuthenticator
      */
     public function sign(MessageInterface $message, $secret)
     {
-        $preSignedMessage = $message->withHeader(HMACSpecification::SIGN_HEADER, $this->getSignedHeadersString($message));
+        $preSignedMessage = $message->withHeader(
+            HMACSpecification::SIGN_HEADER,
+            $this->getSignedHeadersString($message)
+        );
+
+        $serialization = MessageSerializer::serialize($preSignedMessage);
 
         return $preSignedMessage->withHeader(
             HMACSpecification::AUTH_HEADER,
-            HMACSpecification::AUTH_PREFIX.' '.HMACSpecification::doHMACSignature(MessageSerializer::serialize($preSignedMessage), $secret)
+            HMACSpecification::AUTH_PREFIX.' '.HMACSpecification::doHMACSignature($serialization, $secret)
         );
     }
 
@@ -65,20 +70,20 @@ class HMACAuthenticator
      */
     private function getSignedHeadersString(MessageInterface $message)
     {
-        $headers = $message->getHeaders();
+        $headers = array_keys($message->getHeaders());
+        array_push($headers, HMACSpecification::SIGN_HEADER);
 
         // Some of the tested RequestInterface implementations do not include
-        // the Host header in $message->getHeaders(), so it is explicitly set
-        if ($message instanceof RequestInterface) {
-            $headers['Host'] = $message->getUri()->getHost();
+        // the Host header in $message->getHeaders(), so it is explicitly set when needed
+        if ($message instanceof RequestInterface && !in_array('Host', $headers)) {
+            array_push($headers, 'Host');
         }
 
         // There is no guarantee about the order of the headers returned by
         // $message->getHeaders(), so they are explicitly sorted in order
-        // to get the same signature every time
-        ksort($headers);
+        // to produce the exact same string regardless of the underlying implementation
+        sort($headers);
 
-        return empty(implode(',', array_keys($headers))) ?
-            '(none)' : implode(',', array_keys($headers));
+        return implode(',', $headers);
     }
 }

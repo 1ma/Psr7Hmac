@@ -35,17 +35,18 @@ final class HMACSpecification
      * An HTTP message without the Signed-Headers header cannot
      * pass the HMAC verification.
      *
+     * An HTTP message with a Signed-Headers header that is not covered
+     * by the HMAC signature will neither pass the HMAC verification.
+     *
      * The list itself consists of an alphanumerically sorted sequence of header names
-     * concatenated by commas, or "(none)" if no header was present at the time
-     * the HMAC signature was performed.
+     * concatenated by commas. A valid Signed-Headers header must include its own
+     * header name, so at the very least it will be the only header in the list.
      *
-     * As per RFC 7230 Section 3.2 neither the comma nor the parentheses are
-     * legal characters in a header name, hence there cannot be any ambiguity
-     * when parsing the header value.
+     * As per RFC 7230 Section 3.2 commas are not legal characters in a header name,
+     * hence there cannot be any ambiguity when parsing the header value.
      *
-     * @example Signed-Headers: Api-Key,Content-Type,Host
-     * @example Signed-Headers: Host
-     * @example Signed-Headers: (none)
+     * @example Signed-Headers: Api-Key,Content-Type,Host,Signed-Headers
+     * @example Signed-Headers: Signed-Headers
      */
     const SIGN_HEADER = 'Signed-Headers';
 
