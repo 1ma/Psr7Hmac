@@ -7,32 +7,41 @@ use UMA\Tests\Psr\Http\Message\BaseTestCase;
 
 class ResponseSerializationTest extends BaseTestCase
 {
-    public function testSimpleResponses()
+    /**
+     * @dataProvider provider
+     *
+     * @param int      $statusCode
+     * @param string[] $headers
+     * @param string   $expectedSerialization
+     */
+    public function testHeadedResponses($statusCode, $headers, $expectedSerialization)
     {
-        $expectedSerialization = "HTTP/1.1 200 OK\r\n\r\n";
-
-        foreach ($this->psr7ResponseShotgun(200) as $response) {
-            $actualSerialization = MessageSerializer::serialize($response);
+        foreach ($this->psr7ResponseShotgun($statusCode, $headers) as $request) {
+            $actualSerialization = MessageSerializer::serialize($request);
 
             $this->assertSame($expectedSerialization, $actualSerialization);
         }
     }
 
-    public function testHeadedResponses()
+    public function provider()
     {
-        $expectedSerialization = "HTTP/1.1 200 OK\r\nAccept-Ranges: bytes\r\nContent-Encoding: gzip\r\nContent-Length: 606\r\nContent-Type: text/html\r\n\r\n";
+        return [
+            'simple responses' => [
+                200,
+                [],
+                "HTTP/1.1 200 OK\r\n\r\n",
+            ],
 
-        $requests = $this->psr7ResponseShotgun(200, [
-            'Content-Type' => 'text/html',
-            'Content-Encoding' => 'gzip',
-            'Accept-Ranges' => 'bytes',
-            'Content-Length' => '606',
-        ]);
-
-        foreach ($requests as $request) {
-            $actualSerialization = MessageSerializer::serialize($request);
-
-            $this->assertSame($expectedSerialization, $actualSerialization);
-        }
+            'headed responses' => [
+                200,
+                [
+                    'Content-Type' => 'text/html',
+                    'Content-Encoding' => 'gzip',
+                    'Accept-Ranges' => 'bytes',
+                    'Content-Length' => '606',
+                ],
+                "HTTP/1.1 200 OK\r\nAccept-Ranges: bytes\r\nContent-Encoding: gzip\r\nContent-Length: 606\r\nContent-Type: text/html\r\n\r\n",
+            ],
+        ];
     }
 }

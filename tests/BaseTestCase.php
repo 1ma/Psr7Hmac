@@ -8,8 +8,8 @@ use Psr\Http\Message\ResponseInterface;
 abstract class BaseTestCase extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @param string $method
-     * @param string $url
+     * @param string   $method
+     * @param string   $url
      * @param string[] $headers
      *
      * @return RequestInterface[]
