@@ -36,7 +36,12 @@ class MessageSerializer
         $headers = $message->getHeaders();
         unset($headers['Host']);
 
+        ksort($headers);
+
         foreach ($headers as $name => $values) {
+            $values = is_array($values) ?
+                $values : [$values];
+
             $msg .= "\r\n{$name}: ".implode(', ', $values);
         }
 
