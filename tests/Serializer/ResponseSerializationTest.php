@@ -8,22 +8,22 @@ use UMA\Tests\Psr\Http\Message\BaseTestCase;
 class ResponseSerializationTest extends BaseTestCase
 {
     /**
-     * @dataProvider provider
+     * @dataProvider responsesProvider
      *
      * @param int      $statusCode
      * @param string[] $headers
      * @param string   $expectedSerialization
      */
-    public function testHeadedResponses($statusCode, $headers, $expectedSerialization)
+    public function testResponses($statusCode, array $headers, $expectedSerialization)
     {
         foreach ($this->psr7ResponseShotgun($statusCode, $headers) as $request) {
             $actualSerialization = MessageSerializer::serialize($request);
 
-            $this->assertSame($expectedSerialization, $actualSerialization);
+            $this->assertSame($expectedSerialization, $actualSerialization, get_class($request));
         }
     }
 
-    public function provider()
+    public function responsesProvider()
     {
         return [
             'simple responses' => [
