@@ -1,12 +1,12 @@
 <?php
 
-namespace UMA\Psr\Http\Message\Security;
+namespace UMA\Psr\Http\Message\HMAC;
 
 use Psr\Http\Message\MessageInterface;
 use Psr\Http\Message\RequestInterface;
 use UMA\Psr\Http\Message\Serializer\MessageSerializer;
 
-class HMACAuthenticator
+class Authenticator
 {
     /**
      * @param MessageInterface $message
@@ -21,15 +21,15 @@ class HMACAuthenticator
     public function sign(MessageInterface $message, $secret)
     {
         $preSignedMessage = $message->withHeader(
-            HMACSpecification::SIGN_HEADER,
+            Specification::SIGN_HEADER,
             $this->getSignedHeadersString($message)
         );
 
         $serialization = MessageSerializer::serialize($preSignedMessage);
 
         return $preSignedMessage->withHeader(
-            HMACSpecification::AUTH_HEADER,
-            HMACSpecification::AUTH_PREFIX.' '.HMACSpecification::doHMACSignature($serialization, $secret)
+            Specification::AUTH_HEADER,
+            Specification::AUTH_PREFIX.' '.Specification::doHMACSignature($serialization, $secret)
         );
     }
 
@@ -45,18 +45,18 @@ class HMACAuthenticator
      */
     public function verify(MessageInterface $message, $secret)
     {
-        if (empty($authHeader = $message->getHeaderLine(HMACSpecification::AUTH_HEADER))) {
+        if (empty($authHeader = $message->getHeaderLine(Specification::AUTH_HEADER))) {
             return false;
         }
 
-        if (0 === preg_match('#^'.HMACSpecification::AUTH_PREFIX.' ([+/0-9A-Za-z]{43}=)$#', $authHeader, $matches)) {
+        if (0 === preg_match('#^'.Specification::AUTH_PREFIX.' ([+/0-9A-Za-z]{43}=)$#', $authHeader, $matches)) {
             return false;
         }
 
         $clientSideSignature = $matches[1];
 
-        $serverSideSignature = HMACSpecification::doHMACSignature(
-            MessageSerializer::serialize($message->withoutHeader(HMACSpecification::AUTH_HEADER)),
+        $serverSideSignature = Specification::doHMACSignature(
+            MessageSerializer::serialize($message->withoutHeader(Specification::AUTH_HEADER)),
             $secret
         );
 
@@ -71,7 +71,7 @@ class HMACAuthenticator
     private function getSignedHeadersString(MessageInterface $message)
     {
         $headers = array_keys($message->getHeaders());
-        array_push($headers, HMACSpecification::SIGN_HEADER);
+        array_push($headers, Specification::SIGN_HEADER);
 
         // Some of the tested RequestInterface implementations do not include
         // the Host header in $message->getHeaders(), so it is explicitly set when needed

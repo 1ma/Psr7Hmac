@@ -1,22 +1,22 @@
 <?php
 
-namespace UMA\Tests\Psr\Http\Message\Security;
+namespace UMA\Tests\Psr\Http\Message\HMAC;
 
 use Psr\Http\Message\MessageInterface;
-use UMA\Psr\Http\Message\Security\HMACAuthenticator;
-use UMA\Psr\Http\Message\Security\HMACSpecification;
+use UMA\Psr\Http\Message\HMAC\Authenticator;
+use UMA\Psr\Http\Message\HMAC\Specification;
 use UMA\Tests\Psr\Http\Message\BaseTestCase;
 
-class HMACAuthenticatorTest extends BaseTestCase
+class AuthenticatorTest extends BaseTestCase
 {
     /**
-     * @var HMACAuthenticator
+     * @var Authenticator
      */
     private $authenticator;
 
     protected function setUp()
     {
-        $this->authenticator = new HMACAuthenticator();
+        $this->authenticator = new Authenticator();
     }
 
     /**
@@ -115,7 +115,7 @@ class HMACAuthenticatorTest extends BaseTestCase
 
     public function testBadFormattedSignature()
     {
-        $request = new \GuzzleHttp\Psr7\Request('GET', 'http://example.com', [HMACSpecification::AUTH_HEADER => 'HMAC-SHA256 herpder=']);
+        $request = new \GuzzleHttp\Psr7\Request('GET', 'http://example.com', [Specification::AUTH_HEADER => 'HMAC-SHA256 herpder=']);
 
         $this->assertFalse($this->authenticator->verify($request, 'irrelevant'));
     }
@@ -126,8 +126,8 @@ class HMACAuthenticatorTest extends BaseTestCase
      */
     private function assertRequestHasSignature(MessageInterface $signedMessage, $signature)
     {
-        $this->assertTrue($signedMessage->hasHeader(HMACSpecification::AUTH_HEADER));
-        $this->assertTrue($signedMessage->hasHeader(HMACSpecification::SIGN_HEADER));
-        $this->assertSame(HMACSpecification::AUTH_PREFIX.' '.$signature, $signedMessage->getHeaderLine(HMACSpecification::AUTH_HEADER), get_class($signedMessage));
+        $this->assertTrue($signedMessage->hasHeader(Specification::AUTH_HEADER));
+        $this->assertTrue($signedMessage->hasHeader(Specification::SIGN_HEADER));
+        $this->assertSame(Specification::AUTH_PREFIX.' '.$signature, $signedMessage->getHeaderLine(Specification::AUTH_HEADER), get_class($signedMessage));
     }
 }

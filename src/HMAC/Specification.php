@@ -1,8 +1,8 @@
 <?php
 
-namespace UMA\Psr\Http\Message\Security;
+namespace UMA\Psr\Http\Message\HMAC;
 
-final class HMACSpecification
+final class Specification
 {
     /**
      * Name of the HTTP header that will hold the authentication
