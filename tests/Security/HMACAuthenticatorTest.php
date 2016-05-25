@@ -47,7 +47,7 @@ class HMACAuthenticatorTest extends BaseTestCase
                 'GET',
                 'http://www.example.com/index.html',
                 [],
-                'l0xjvO5WlJLQnanAQ3UVeujg70qPTjRr6AIQDOW1Grg=',
+                'gQ40JfujwnnE5/pjfb0Et2uHzxGYMJbODuUb8cFLxrA=',
             ],
 
             'headed requests' => [
@@ -59,7 +59,7 @@ class HMACAuthenticatorTest extends BaseTestCase
                     'Connection' => 'keep-alive',
                     'Accept-Encoding' => 'gzip, deflate',
                 ],
-                '6QzCTRpsU3N4I0K49QAJU23VdFLme22cp8kFORQnTBg=',
+                'eqzqnfLxcnxSj8zaUqNaFVwObLEgmZSAkq6T6CyvaWE=',
             ],
         ];
     }
@@ -90,7 +90,7 @@ class HMACAuthenticatorTest extends BaseTestCase
             'simple responses' => [
                 200,
                 [],
-                'HSH6h1ORWt5ig0SnSW4COvUGodu3lBHYBC/iLiQyxcE=',
+                'ItmODW3lxpRTblMD4MT6zxC0oblu2RezNkun8Tr4D+Q=',
             ],
 
             'headed responses' => [
@@ -101,7 +101,7 @@ class HMACAuthenticatorTest extends BaseTestCase
                     'Accept-Ranges' => 'bytes',
                     'Content-Length' => '606',
                 ],
-                'btpfn0fDZgVURq3sAFaoUzXidl16U27tiCJO7Ntzavw=',
+                'sQJZRllkAlcqNOTXBOamAMskxrjZdCiqk5dYqP0uizk=',
             ],
         ];
     }

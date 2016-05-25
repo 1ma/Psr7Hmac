@@ -29,7 +29,7 @@ class ResponseSerializationTest extends BaseTestCase
             'simple responses' => [
                 200,
                 [],
-                "HTTP/1.1 200 OK\r\n",
+                "HTTP/1.1 200 OK\r\n\r\n",
             ],
 
             'headed responses' => [
@@ -40,7 +40,7 @@ class ResponseSerializationTest extends BaseTestCase
                     'Accept-Ranges' => 'bytes',
                     'Content-Length' => '606',
                 ],
-                "HTTP/1.1 200 OK\r\nAccept-Ranges: bytes\r\nContent-Encoding: gzip\r\nContent-Length: 606\r\nContent-Type: text/html\r\n",
+                "HTTP/1.1 200 OK\r\nAccept-Ranges: bytes\r\nContent-Encoding: gzip\r\nContent-Length: 606\r\nContent-Type: text/html\r\n\r\n",
             ],
         ];
     }

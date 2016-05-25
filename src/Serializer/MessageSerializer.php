@@ -52,7 +52,7 @@ class MessageSerializer
             $values = is_array($values) ?
                 $values : [$values];
 
-            $msg .= self::CRLF.$name.':'.self::SP.implode(',', $values);
+            $msg .= $name.':'.self::SP.implode(',', $values).self::CRLF;
         }
 
         return $msg;
@@ -65,7 +65,7 @@ class MessageSerializer
         $protocol = 'HTTP/'.$request->getProtocolVersion();
         $host = $request->getUri()->getHost();
 
-        return $method.self::SP.$target.self::SP.$protocol.self::CRLF."Host: $host";
+        return $method.self::SP.$target.self::SP.$protocol.self::CRLF."Host: $host".self::CRLF;
     }
 
     private static function statusLine(ResponseInterface $response)
@@ -74,6 +74,6 @@ class MessageSerializer
         $statusCode = $response->getStatusCode();
         $reasonPhrase = $response->getReasonPhrase();
 
-        return $protocol.self::SP.$statusCode.self::SP.$reasonPhrase;
+        return $protocol.self::SP.$statusCode.self::SP.$reasonPhrase.self::CRLF;
     }
 }
