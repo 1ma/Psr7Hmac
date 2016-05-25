@@ -8,6 +8,9 @@ use Psr\Http\Message\ResponseInterface;
 
 class MessageSerializer
 {
+    const SP = ' ';
+    const CRLF = "\r\n";
+
     /**
      * Returns the string representation of an HTTP message.
      *
@@ -20,31 +23,56 @@ class MessageSerializer
      */
     public static function serialize(MessageInterface $message)
     {
+        return self::startLine($message)
+            .self::headers($message)
+            .self::CRLF
+            .$message->getBody();
+    }
+
+    private static function startLine(MessageInterface $message)
+    {
         if ($message instanceof RequestInterface) {
-            $msg = trim($message->getMethod().' '
-                .$message->getRequestTarget())
-                .' HTTP/'.$message->getProtocolVersion()
-                ."\r\nHost: ".$message->getUri()->getHost();
+            return self::requestLine($message);
         } elseif ($message instanceof ResponseInterface) {
-            $msg = 'HTTP/'.$message->getProtocolVersion().' '
-                .$message->getStatusCode().' '
-                .$message->getReasonPhrase();
+            return self::statusLine($message);
         } else {
             throw new \InvalidArgumentException('Unknown message type');
         }
+    }
 
+    private static function headers(MessageInterface $message)
+    {
         $headers = $message->getHeaders();
         unset($headers['Host']);
 
         ksort($headers);
-
+        $msg = '';
         foreach ($headers as $name => $values) {
             $values = is_array($values) ?
                 $values : [$values];
 
-            $msg .= "\r\n{$name}: ".implode(', ', $values);
+            $msg .= self::CRLF.$name.':'.self::SP.implode(',', $values);
         }
 
-        return "{$msg}\r\n\r\n".$message->getBody();
+        return $msg;
+    }
+
+    private static function requestLine(RequestInterface $request)
+    {
+        $method = $request->getMethod();
+        $target = trim($request->getRequestTarget());
+        $protocol = 'HTTP/'.$request->getProtocolVersion();
+        $host = $request->getUri()->getHost();
+
+        return $method.self::SP.$target.self::SP.$protocol.self::CRLF."Host: $host";
+    }
+
+    private static function statusLine(ResponseInterface $response)
+    {
+        $protocol = 'HTTP/'.$response->getProtocolVersion();
+        $statusCode = $response->getStatusCode();
+        $reasonPhrase = $response->getReasonPhrase();
+
+        return $protocol.self::SP.$statusCode.self::SP.$reasonPhrase;
     }
 }

@@ -31,7 +31,7 @@ class RequestSerializationTest extends BaseTestCase
                 'GET',
                 'http://www.example.com/index.html',
                 [],
-                "GET /index.html HTTP/1.1\r\nHost: www.example.com\r\n\r\n",
+                "GET /index.html HTTP/1.1\r\nHost: www.example.com\r\n",
             ],
             'headed requests' => [
                 'GET',
@@ -42,7 +42,7 @@ class RequestSerializationTest extends BaseTestCase
                     'Connection' => 'keep-alive',
                     'Accept-Encoding' => 'gzip, deflate',
                 ],
-                "GET /index.html HTTP/1.1\r\nHost: www.example.com\r\nAccept: */*\r\nAccept-Encoding: gzip, deflate\r\nConnection: keep-alive\r\nUser-Agent: PHP/5.6.21\r\n\r\n",
+                "GET /index.html HTTP/1.1\r\nHost: www.example.com\r\nAccept: */*\r\nAccept-Encoding: gzip, deflate\r\nConnection: keep-alive\r\nUser-Agent: PHP/5.6.21\r\n",
             ],
         ];
     }

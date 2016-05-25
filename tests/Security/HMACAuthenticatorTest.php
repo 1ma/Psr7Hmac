@@ -16,35 +16,71 @@ class HMACAuthenticatorTest extends BaseTestCase
 
     protected function setUp()
     {
-        parent::setUp();
-
         $this->authenticator = new HMACAuthenticator();
     }
 
-    public function testSimpleRequests()
+    /**
+     * @dataProvider requestsProvider
+     *
+     * @param string   $method
+     * @param string   $url
+     * @param string[] $headers
+     * @param string   $expectedSignature
+     */
+    public function testRequests($method, $url, array $headers, $expectedSignature)
     {
-        $expectedSignature = 'gQ40JfujwnnE5/pjfb0Et2uHzxGYMJbODuUb8cFLxrA=';
+        $secret = '$ecr3t';
 
-        foreach ($this->psr7RequestShotgun('GET', 'http://www.example.com/index.html') as $request) {
-            $signedRequest = $this->authenticator->sign($request, '$ecr3t');
+        foreach ($this->psr7RequestShotgun($method, $url) as $request) {
+            $signedRequest = $this->authenticator->sign($request, $secret);
 
             $this->assertRequestHasSignature($signedRequest, $expectedSignature);
-            $this->assertTrue($this->authenticator->verify($signedRequest, '$ecr3t'));
+            $this->assertTrue($this->authenticator->verify($signedRequest, $secret));
             $this->assertFalse($this->authenticator->verify($signedRequest, 'wr0ng_$ecr3t'));
         }
     }
 
-    public function testSimpleResponses()
+    public function requestsProvider()
     {
-        $expectedSignature = 'ItmODW3lxpRTblMD4MT6zxC0oblu2RezNkun8Tr4D+Q=';
+        return [
+            'simple requests' => [
+                'GET',
+                'http://www.example.com/index.html',
+                [],
+                'l0xjvO5WlJLQnanAQ3UVeujg70qPTjRr6AIQDOW1Grg=',
+            ],
+        ];
+    }
 
-        foreach ($this->psr7ResponseShotgun(200) as $response) {
-            $signedResponse = $this->authenticator->sign($response, '$ecr3t');
+    /**
+     * @dataProvider responsesProvider
+     *
+     * @param int      $statusCode
+     * @param string[] $headers
+     * @param string   $expectedSignature
+     */
+    public function testSimpleResponses($statusCode, array $headers, $expectedSignature)
+    {
+        $secret = '$ecr3t';
+
+        foreach ($this->psr7ResponseShotgun($statusCode) as $response) {
+            $signedResponse = $this->authenticator->sign($response, $secret);
 
             $this->assertRequestHasSignature($signedResponse, $expectedSignature);
-            $this->assertTrue($this->authenticator->verify($signedResponse, '$ecr3t'));
+            $this->assertTrue($this->authenticator->verify($signedResponse, $secret));
             $this->assertFalse($this->authenticator->verify($signedResponse, 'wr0ng_$ecr3t'));
         }
+    }
+
+    public function responsesProvider()
+    {
+        return [
+            'simple responses' => [
+                200,
+                [],
+                'HSH6h1ORWt5ig0SnSW4COvUGodu3lBHYBC/iLiQyxcE=',
+            ],
+        ];
     }
 
     public function testMissingAuthorizationHeader()
