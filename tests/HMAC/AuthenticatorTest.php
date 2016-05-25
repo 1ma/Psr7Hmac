@@ -5,17 +5,22 @@ namespace UMA\Tests\Psr\Http\Message\HMAC;
 use Psr\Http\Message\MessageInterface;
 use UMA\Psr\Http\Message\HMAC\Authenticator;
 use UMA\Psr\Http\Message\HMAC\Specification;
-use UMA\Tests\Psr\Http\Message\BaseTestCase;
+use UMA\Tests\Psr\Http\Message\AbstractTestCase;
 
-class AuthenticatorTest extends BaseTestCase
+class AuthenticatorTest extends AbstractTestCase
 {
     /**
      * @var Authenticator
      */
     private $authenticator;
 
+    /**
+     * {@inheritdoc}
+     */
     protected function setUp()
     {
+        parent::setUp();
+
         $this->authenticator = new Authenticator();
     }
 
@@ -31,7 +36,7 @@ class AuthenticatorTest extends BaseTestCase
     {
         $secret = '$ecr3t';
 
-        foreach ($this->psr7RequestShotgun($method, $url, $headers) as $request) {
+        foreach (self::$requestProvider->shotgun($method, $url, $headers, null) as $request) {
             $signedRequest = $this->authenticator->sign($request, $secret);
 
             $this->assertRequestHasSignature($signedRequest, $expectedSignature);
@@ -75,7 +80,7 @@ class AuthenticatorTest extends BaseTestCase
     {
         $secret = '$ecr3t';
 
-        foreach ($this->psr7ResponseShotgun($statusCode, $headers) as $response) {
+        foreach (self::$responseProvider->shotgun($statusCode, $headers, null) as $response) {
             $signedResponse = $this->authenticator->sign($response, $secret);
 
             $this->assertRequestHasSignature($signedResponse, $expectedSignature);

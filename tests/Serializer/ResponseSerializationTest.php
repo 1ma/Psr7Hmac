@@ -3,9 +3,9 @@
 namespace UMA\Tests\Psr\Http\Message\Serializer;
 
 use UMA\Psr\Http\Message\Serializer\MessageSerializer;
-use UMA\Tests\Psr\Http\Message\BaseTestCase;
+use UMA\Tests\Psr\Http\Message\AbstractTestCase;
 
-class ResponseSerializationTest extends BaseTestCase
+class ResponseSerializationTest extends AbstractTestCase
 {
     /**
      * @dataProvider responsesProvider
@@ -16,7 +16,7 @@ class ResponseSerializationTest extends BaseTestCase
      */
     public function testResponses($statusCode, array $headers, $expectedSerialization)
     {
-        foreach ($this->psr7ResponseShotgun($statusCode, $headers) as $request) {
+        foreach (self::$responseProvider->shotgun($statusCode, $headers, null) as $request) {
             $actualSerialization = MessageSerializer::serialize($request);
 
             $this->assertSame($expectedSerialization, $actualSerialization, get_class($request));
