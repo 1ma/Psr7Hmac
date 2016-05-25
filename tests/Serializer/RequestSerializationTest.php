@@ -33,6 +33,7 @@ class RequestSerializationTest extends BaseTestCase
                 [],
                 "GET /index.html HTTP/1.1\r\nHost: www.example.com\r\n",
             ],
+
             'headed requests' => [
                 'GET',
                 'http://www.example.com/index.html',

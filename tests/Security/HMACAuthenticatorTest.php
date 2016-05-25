@@ -31,7 +31,7 @@ class HMACAuthenticatorTest extends BaseTestCase
     {
         $secret = '$ecr3t';
 
-        foreach ($this->psr7RequestShotgun($method, $url) as $request) {
+        foreach ($this->psr7RequestShotgun($method, $url, $headers) as $request) {
             $signedRequest = $this->authenticator->sign($request, $secret);
 
             $this->assertRequestHasSignature($signedRequest, $expectedSignature);
@@ -49,6 +49,18 @@ class HMACAuthenticatorTest extends BaseTestCase
                 [],
                 'l0xjvO5WlJLQnanAQ3UVeujg70qPTjRr6AIQDOW1Grg=',
             ],
+
+            'headed requests' => [
+                'GET',
+                'http://www.example.com/index.html',
+                [
+                    'User-Agent' => 'PHP/5.6.21',
+                    'Accept' => '*/*',
+                    'Connection' => 'keep-alive',
+                    'Accept-Encoding' => 'gzip, deflate',
+                ],
+                '6QzCTRpsU3N4I0K49QAJU23VdFLme22cp8kFORQnTBg=',
+            ],
         ];
     }
 
@@ -59,11 +71,11 @@ class HMACAuthenticatorTest extends BaseTestCase
      * @param string[] $headers
      * @param string   $expectedSignature
      */
-    public function testSimpleResponses($statusCode, array $headers, $expectedSignature)
+    public function testResponses($statusCode, array $headers, $expectedSignature)
     {
         $secret = '$ecr3t';
 
-        foreach ($this->psr7ResponseShotgun($statusCode) as $response) {
+        foreach ($this->psr7ResponseShotgun($statusCode, $headers) as $response) {
             $signedResponse = $this->authenticator->sign($response, $secret);
 
             $this->assertRequestHasSignature($signedResponse, $expectedSignature);
@@ -79,6 +91,17 @@ class HMACAuthenticatorTest extends BaseTestCase
                 200,
                 [],
                 'HSH6h1ORWt5ig0SnSW4COvUGodu3lBHYBC/iLiQyxcE=',
+            ],
+
+            'headed responses' => [
+                200,
+                [
+                    'Content-Type' => 'text/html',
+                    'Content-Encoding' => 'gzip',
+                    'Accept-Ranges' => 'bytes',
+                    'Content-Length' => '606',
+                ],
+                'btpfn0fDZgVURq3sAFaoUzXidl16U27tiCJO7Ntzavw=',
             ],
         ];
     }

@@ -23,10 +23,11 @@ class MessageSerializer
      */
     public static function serialize(MessageInterface $message)
     {
-        return self::startLine($message)
-            .self::headers($message)
-            .self::CRLF
-            .$message->getBody();
+        return
+            self::startLine($message).
+            self::headers($message).
+            self::CRLF.
+            $message->getBody();
     }
 
     private static function startLine(MessageInterface $message)
