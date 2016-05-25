@@ -28,21 +28,21 @@ abstract class AbstractTestCase extends \PHPUnit_Framework_TestCase
     public static function setUpBeforeClass()
     {
         self::$requestProvider = (new RequestProvider())
-            ->addFactory(new AsikaFactory())
-            ->addFactory(new GuzzleFactory())
-            ->addFactory(new PhyrexiaFactory())
-            ->addFactory(new RingCentralFactory())
-            ->addFactory(new SlimFactory())
-            ->addFactory(new WanduFactory())
-            ->addFactory(new ZendFactory());
+            ->addFactory($asikaFactory = new AsikaFactory())
+            ->addFactory($guzzleFactory = new GuzzleFactory())
+            ->addFactory($phyrexiaFactory = new PhyrexiaFactory())
+            ->addFactory($ringCentralFactory = new RingCentralFactory())
+            ->addFactory($slimFactory = new SlimFactory())
+            ->addFactory($wanduFactory = new WanduFactory())
+            ->addFactory($zendFactory = new ZendFactory());
 
         self::$responseProvider = (new ResponseProvider())
-            ->addFactory(new AsikaFactory())
-            ->addFactory(new GuzzleFactory())
-            ->addFactory(new PhyrexiaFactory())
-            ->addFactory(new RingCentralFactory())
-            ->addFactory(new SlimFactory())
-            ->addFactory(new WanduFactory())
-            ->addFactory(new ZendFactory());
+            ->addFactory($asikaFactory)
+            ->addFactory($guzzleFactory)
+            ->addFactory($phyrexiaFactory)
+            ->addFactory($ringCentralFactory)
+            ->addFactory($slimFactory)
+            ->addFactory($wanduFactory)
+            ->addFactory($zendFactory);
     }
 }
