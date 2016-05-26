@@ -2,94 +2,110 @@
 
 namespace UMA\Tests\Psr\Http\Message\Serializer;
 
+use Asika\Http\Test\Stub\StubMessage;
+use Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\ResponseInterface;
 use UMA\Psr\Http\Message\Serializer\MessageSerializer;
-use UMA\Tests\Psr\Http\Message\AbstractTestCase;
+use UMA\Tests\Psr\Http\Message\MessageProviderTrait;
 
-class MessageSerializerTest extends AbstractTestCase
+class MessageSerializerTest extends \PHPUnit_Framework_TestCase
 {
-    /**
-     * @dataProvider requestsProvider
-     *
-     * @param string   $method
-     * @param string   $url
-     * @param string[] $headers
-     * @param string   $expectedSerialization
-     */
-    public function testRequests($method, $url, array $headers, $expectedSerialization)
-    {
-        foreach (self::$requestProvider->shotgun($method, $url, $headers, null) as $request) {
-            $actualSerialization = MessageSerializer::serialize($request);
-
-            $this->assertSame($expectedSerialization, $actualSerialization, get_class($request));
-        }
-    }
-
-    public function requestsProvider()
-    {
-        return [
-            'simple requests' => [
-                'GET',
-                'http://www.example.com/index.html',
-                [],
-                "GET /index.html HTTP/1.1\r\nHost: www.example.com\r\n\r\n",
-            ],
-
-            'headed requests' => [
-                'GET',
-                'http://www.example.com/index.html',
-                [
-                    'User-Agent' => 'PHP/5.6.21',
-                    'Accept' => '*/*',
-                    'Connection' => 'keep-alive',
-                    'Accept-Encoding' => 'gzip, deflate',
-                ],
-                "GET /index.html HTTP/1.1\r\nHost: www.example.com\r\nAccept: */*\r\nAccept-Encoding: gzip, deflate\r\nConnection: keep-alive\r\nUser-Agent: PHP/5.6.21\r\n\r\n",
-            ],
-        ];
-    }
-
-    /**
-     * @dataProvider responsesProvider
-     *
-     * @param int      $statusCode
-     * @param string[] $headers
-     * @param string   $expectedSerialization
-     */
-    public function testResponses($statusCode, array $headers, $expectedSerialization)
-    {
-        foreach (self::$responseProvider->shotgun($statusCode, $headers, null) as $request) {
-            $actualSerialization = MessageSerializer::serialize($request);
-
-            $this->assertSame($expectedSerialization, $actualSerialization, get_class($request));
-        }
-    }
-
-    public function responsesProvider()
-    {
-        return [
-            'simple responses' => [
-                200,
-                [],
-                "HTTP/1.1 200 OK\r\n\r\n",
-            ],
-
-            'headed responses' => [
-                200,
-                [
-                    'Content-Type' => 'text/html',
-                    'Content-Encoding' => 'gzip',
-                    'Accept-Ranges' => 'bytes',
-                    'Content-Length' => '606',
-                ],
-                "HTTP/1.1 200 OK\r\nAccept-Ranges: bytes\r\nContent-Encoding: gzip\r\nContent-Length: 606\r\nContent-Type: text/html\r\n\r\n",
-            ],
-        ];
-    }
+    use MessageProviderTrait;
 
     public function testSerializeNeitherRequestNorResponse()
     {
         $this->setExpectedException(\InvalidArgumentException::class);
 
-        MessageSerializer::serialize(new \Asika\Http\Test\Stub\StubMessage());
+        MessageSerializer::serialize(new StubMessage());
+    }
+
+    /**
+     * @dataProvider simplestRequestProvider
+     *
+     * @param RequestInterface $request
+     */
+    public function testSimplestRequest(RequestInterface $request)
+    {
+        $expectedSerialization = "GET /index.html HTTP/1.1\r\nHost: www.example.com\r\n\r\n";
+
+        $actualSerialization = MessageSerializer::serialize($request);
+
+        $this->assertSame($expectedSerialization, $actualSerialization);
+    }
+
+    public function simplestRequestProvider()
+    {
+        return $this->requests('GET', 'http://www.example.com/index.html');
+    }
+
+    /**
+     * @dataProvider simplestResponseProvider
+     *
+     * @param ResponseInterface $response
+     */
+    public function testSimplestResponse(ResponseInterface $response)
+    {
+        $expectedSerialization = "HTTP/1.1 200 OK\r\n\r\n";
+
+        $actualSerialization = MessageSerializer::serialize($response);
+
+        $this->assertSame($expectedSerialization, $actualSerialization);
+    }
+
+    public function simplestResponseProvider()
+    {
+        return $this->responses(200);
+    }
+
+    /**
+     * @dataProvider emptyRequestWithHeadersProvider
+     *
+     * @param RequestInterface $request
+     */
+    public function testEmptyRequestWithHeaders(RequestInterface $request)
+    {
+        $expectedSerialization = "GET /index.html HTTP/1.1\r\nHost: www.example.com\r\nAccept: */*\r\nAccept-Encoding: gzip, deflate\r\nConnection: keep-alive\r\nUser-Agent: PHP/5.6.21\r\n\r\n";
+
+        $actualSerialization = MessageSerializer::serialize($request);
+
+        $this->assertSame($expectedSerialization, $actualSerialization);
+    }
+
+    public function emptyRequestWithHeadersProvider()
+    {
+        $headers = [
+            'User-Agent' => 'PHP/5.6.21',
+            'Accept' => '*/*',
+            'Connection' => 'keep-alive',
+            'Accept-Encoding' => 'gzip, deflate',
+        ];
+
+        return $this->requests('GET', 'http://www.example.com/index.html', $headers);
+    }
+
+    /**
+     * @dataProvider emptyResponseWithHeadersProvider
+     *
+     * @param ResponseInterface $response
+     */
+    public function testEmptyResponseWithHeaders(ResponseInterface $response)
+    {
+        $expectedSerialization = "HTTP/1.1 200 OK\r\nAccept-Ranges: bytes\r\nContent-Encoding: gzip\r\nContent-Length: 606\r\nContent-Type: text/html\r\n\r\n";
+
+        $actualSerialization = MessageSerializer::serialize($response);
+
+        $this->assertSame($expectedSerialization, $actualSerialization);
+    }
+
+    public function emptyResponseWithHeadersProvider()
+    {
+        $headers = [
+            'Content-Type' => 'text/html',
+            'Content-Encoding' => 'gzip',
+            'Accept-Ranges' => 'bytes',
+            'Content-Length' => '606',
+        ];
+
+        return $this->responses(200, $headers);
     }
 }

@@ -8,7 +8,7 @@ use Slim\Http\Request;
 use Slim\Http\Response;
 use Slim\Http\Uri;
 
-class SlimFactory implements RequestFactoryInterface, ResponseFactoryInterface
+class SlimFactory implements FactoryInterface
 {
     use StreamTrait;
 
@@ -17,23 +17,13 @@ class SlimFactory implements RequestFactoryInterface, ResponseFactoryInterface
      *
      * @return Request
      */
-    public function createRequest($method, $url, array $headers = [], $body = null)
+    public static function request($method, $url, array $headers = [], $body = null)
     {
         $parseUrl = parse_url($url);
 
         $uri = new Uri($parseUrl['scheme'], $parseUrl['host'], null, $parseUrl['path']);
 
-        $streamedBody = $this->createStream($body);
-
-        return new Request($method, $uri, new Headers($headers), [], [], new Body($streamedBody));
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function requestType()
-    {
-        return Request::class;
+        return new Request($method, $uri, new Headers($headers), [], [], new Body(self::stream($body)));
     }
 
     /**
@@ -41,17 +31,23 @@ class SlimFactory implements RequestFactoryInterface, ResponseFactoryInterface
      *
      * @return Response
      */
-    public function createResponse($statusCode, array $headers = [], $body = null)
+    public static function response($statusCode, array $headers = [], $body = null)
     {
-        $streamedBody = $this->createStream($body);
-
-        return new Response($statusCode, new Headers($headers), new Body($streamedBody));
+        return new Response($statusCode, new Headers($headers), new Body(self::stream($body)));
     }
 
     /**
      * {@inheritdoc}
      */
-    public function responseType()
+    public static function requestClass()
+    {
+        return Request::class;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function responseClass()
     {
         return Response::class;
     }

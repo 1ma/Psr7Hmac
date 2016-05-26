@@ -2,13 +2,18 @@
 
 namespace UMA\Tests\Psr\Http\Message\HMAC;
 
+use GuzzleHttp\Psr7\Request as GuzzleRequest;
 use Psr\Http\Message\MessageInterface;
+use Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\ResponseInterface;
 use UMA\Psr\Http\Message\HMAC\Authenticator;
 use UMA\Psr\Http\Message\HMAC\Specification;
-use UMA\Tests\Psr\Http\Message\AbstractTestCase;
+use UMA\Tests\Psr\Http\Message\MessageProviderTrait;
 
-class AuthenticatorTest extends AbstractTestCase
+class AuthenticatorTest extends \PHPUnit_Framework_TestCase
 {
+    use MessageProviderTrait;
+
     /**
      * @var Authenticator
      */
@@ -19,110 +24,119 @@ class AuthenticatorTest extends AbstractTestCase
      */
     protected function setUp()
     {
-        parent::setUp();
-
         $this->authenticator = new Authenticator();
-    }
-
-    /**
-     * @dataProvider requestsProvider
-     *
-     * @param string   $method
-     * @param string   $url
-     * @param string[] $headers
-     * @param string   $expectedSignature
-     */
-    public function testRequests($method, $url, array $headers, $expectedSignature)
-    {
-        $secret = '$ecr3t';
-
-        foreach (self::$requestProvider->shotgun($method, $url, $headers, null) as $request) {
-            $signedRequest = $this->authenticator->sign($request, $secret);
-
-            $this->assertRequestHasSignature($signedRequest, $expectedSignature);
-            $this->assertTrue($this->authenticator->verify($signedRequest, $secret));
-            $this->assertFalse($this->authenticator->verify($signedRequest, 'wr0ng_$ecr3t'));
-        }
-    }
-
-    public function requestsProvider()
-    {
-        return [
-            'simple requests' => [
-                'GET',
-                'http://www.example.com/index.html',
-                [],
-                'gQ40JfujwnnE5/pjfb0Et2uHzxGYMJbODuUb8cFLxrA=',
-            ],
-
-            'headed requests' => [
-                'GET',
-                'http://www.example.com/index.html',
-                [
-                    'User-Agent' => 'PHP/5.6.21',
-                    'Accept' => '*/*',
-                    'Connection' => 'keep-alive',
-                    'Accept-Encoding' => 'gzip, deflate',
-                ],
-                'eqzqnfLxcnxSj8zaUqNaFVwObLEgmZSAkq6T6CyvaWE=',
-            ],
-        ];
-    }
-
-    /**
-     * @dataProvider responsesProvider
-     *
-     * @param int      $statusCode
-     * @param string[] $headers
-     * @param string   $expectedSignature
-     */
-    public function testResponses($statusCode, array $headers, $expectedSignature)
-    {
-        $secret = '$ecr3t';
-
-        foreach (self::$responseProvider->shotgun($statusCode, $headers, null) as $response) {
-            $signedResponse = $this->authenticator->sign($response, $secret);
-
-            $this->assertRequestHasSignature($signedResponse, $expectedSignature);
-            $this->assertTrue($this->authenticator->verify($signedResponse, $secret));
-            $this->assertFalse($this->authenticator->verify($signedResponse, 'wr0ng_$ecr3t'));
-        }
-    }
-
-    public function responsesProvider()
-    {
-        return [
-            'simple responses' => [
-                200,
-                [],
-                'ItmODW3lxpRTblMD4MT6zxC0oblu2RezNkun8Tr4D+Q=',
-            ],
-
-            'headed responses' => [
-                200,
-                [
-                    'Content-Type' => 'text/html',
-                    'Content-Encoding' => 'gzip',
-                    'Accept-Ranges' => 'bytes',
-                    'Content-Length' => '606',
-                ],
-                'sQJZRllkAlcqNOTXBOamAMskxrjZdCiqk5dYqP0uizk=',
-            ],
-        ];
     }
 
     public function testMissingAuthorizationHeader()
     {
-        $request = new \GuzzleHttp\Psr7\Request('GET', 'http://example.com');
+        $request = new GuzzleRequest('GET', 'http://example.com');
 
         $this->assertFalse($this->authenticator->verify($request, 'irrelevant'));
     }
 
-    public function testBadFormattedSignature()
+    public function testBadlyFormattedSignature()
     {
-        $request = new \GuzzleHttp\Psr7\Request('GET', 'http://example.com', [Specification::AUTH_HEADER => 'HMAC-SHA256 herpder=']);
+        $request = new GuzzleRequest('GET', 'http://example.com', [Specification::AUTH_HEADER => Specification::AUTH_PREFIX.' herpder=']);
 
         $this->assertFalse($this->authenticator->verify($request, 'irrelevant'));
+    }
+
+    /**
+     * @dataProvider simplestRequestProvider
+     *
+     * @param RequestInterface $request
+     */
+    public function testSimplestRequest(RequestInterface $request)
+    {
+        $expectedSignature = 'gQ40JfujwnnE5/pjfb0Et2uHzxGYMJbODuUb8cFLxrA=';
+
+        $signedRequest = $this->authenticator->sign($request, '$ecr3t');
+
+        $this->assertRequestHasSignature($signedRequest, $expectedSignature);
+        $this->assertTrue($this->authenticator->verify($signedRequest, '$ecr3t'));
+        $this->assertFalse($this->authenticator->verify($signedRequest, 'wr0ng_$ecr3t'));
+    }
+
+    public function simplestRequestProvider()
+    {
+        return $this->requests('GET', 'http://www.example.com/index.html');
+    }
+
+    /**
+     * @dataProvider simplestResponseProvider
+     *
+     * @param ResponseInterface $response
+     */
+    public function testSimplestResponse(ResponseInterface $response)
+    {
+        $expectedSignature = 'ItmODW3lxpRTblMD4MT6zxC0oblu2RezNkun8Tr4D+Q=';
+
+        $signedResponse = $this->authenticator->sign($response, '$ecr3t');
+
+        $this->assertRequestHasSignature($signedResponse, $expectedSignature);
+        $this->assertTrue($this->authenticator->verify($signedResponse, '$ecr3t'));
+        $this->assertFalse($this->authenticator->verify($signedResponse, 'wr0ng_$ecr3t'));
+    }
+
+    public function simplestResponseProvider()
+    {
+        return $this->responses(200);
+    }
+
+    /**
+     * @dataProvider emptyRequestWithHeadersProvider
+     *
+     * @param RequestInterface $request
+     */
+    public function testEmptyRequestWithHeaders(RequestInterface $request)
+    {
+        $expectedSignature = 'eqzqnfLxcnxSj8zaUqNaFVwObLEgmZSAkq6T6CyvaWE=';
+
+        $signedRequest = $this->authenticator->sign($request, '$ecr3t');
+
+        $this->assertRequestHasSignature($signedRequest, $expectedSignature);
+        $this->assertTrue($this->authenticator->verify($signedRequest, '$ecr3t'));
+        $this->assertFalse($this->authenticator->verify($signedRequest, 'wr0ng_$ecr3t'));
+    }
+
+    public function emptyRequestWithHeadersProvider()
+    {
+        $headers = [
+            'User-Agent' => 'PHP/5.6.21',
+            'Accept' => '*/*',
+            'Connection' => 'keep-alive',
+            'Accept-Encoding' => 'gzip, deflate',
+        ];
+
+        return $this->requests('GET', 'http://www.example.com/index.html', $headers);
+    }
+
+    /**
+     * @dataProvider emptyResponseWithHeadersProvider
+     *
+     * @param ResponseInterface $response
+     */
+    public function testEmptyResponseWithHeaders(ResponseInterface $response)
+    {
+        $expectedSignature = 'sQJZRllkAlcqNOTXBOamAMskxrjZdCiqk5dYqP0uizk=';
+
+        $signedResponse = $this->authenticator->sign($response, '$ecr3t');
+
+        $this->assertRequestHasSignature($signedResponse, $expectedSignature);
+        $this->assertTrue($this->authenticator->verify($signedResponse, '$ecr3t'));
+        $this->assertFalse($this->authenticator->verify($signedResponse, 'wr0ng_$ecr3t'));
+    }
+
+    public function emptyResponseWithHeadersProvider()
+    {
+        $headers = [
+            'Content-Type' => 'text/html',
+            'Content-Encoding' => 'gzip',
+            'Accept-Ranges' => 'bytes',
+            'Content-Length' => '606',
+        ];
+
+        return $this->responses(200, $headers);
     }
 
     /**

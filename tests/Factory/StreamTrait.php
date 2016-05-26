@@ -9,7 +9,7 @@ trait StreamTrait
      *
      * @return resource
      */
-    private function createStream($data)
+    private static function stream($data)
     {
         $stream = fopen('php://memory', 'r+');
 

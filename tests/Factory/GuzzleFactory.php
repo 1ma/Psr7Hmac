@@ -5,24 +5,16 @@ namespace UMA\Tests\Psr\Http\Message\Factory;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\Response;
 
-class GuzzleFactory implements RequestFactoryInterface, ResponseFactoryInterface
+class GuzzleFactory implements FactoryInterface
 {
     /**
      * {@inheritdoc}
      *
      * @return Request
      */
-    public function createRequest($method, $url, array $headers = [], $body = null)
+    public static function request($method, $url, array $headers = [], $body = null)
     {
         return new Request($method, $url, $headers, $body);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function requestType()
-    {
-        return Request::class;
     }
 
     /**
@@ -30,7 +22,7 @@ class GuzzleFactory implements RequestFactoryInterface, ResponseFactoryInterface
      *
      * @return Response
      */
-    public function createResponse($statusCode, array $headers = [], $body = null)
+    public static function response($statusCode, array $headers = [], $body = null)
     {
         return new Response($statusCode, $headers, $body);
     }
@@ -38,7 +30,15 @@ class GuzzleFactory implements RequestFactoryInterface, ResponseFactoryInterface
     /**
      * {@inheritdoc}
      */
-    public function responseType()
+    public static function requestClass()
+    {
+        return Request::class;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function responseClass()
     {
         return Response::class;
     }

@@ -6,7 +6,7 @@ use Asika\Http\Request;
 use Asika\Http\Response;
 use Asika\Http\Stream\Stream;
 
-class AsikaFactory implements RequestFactoryInterface, ResponseFactoryInterface
+class AsikaFactory implements FactoryInterface
 {
     use StreamTrait;
 
@@ -15,19 +15,9 @@ class AsikaFactory implements RequestFactoryInterface, ResponseFactoryInterface
      *
      * @return Request
      */
-    public function createRequest($method, $url, array $headers = [], $body = null)
+    public static function request($method, $url, array $headers = [], $body = null)
     {
-        $streamedBody = $this->createStream($body);
-
-        return new Request($url, $method, new Stream($streamedBody), $headers);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function requestType()
-    {
-        return Request::class;
+        return new Request($url, $method, new Stream(self::stream($body)), $headers);
     }
 
     /**
@@ -35,17 +25,23 @@ class AsikaFactory implements RequestFactoryInterface, ResponseFactoryInterface
      *
      * @return Response
      */
-    public function createResponse($statusCode, array $headers = [], $body = null)
+    public static function response($statusCode, array $headers = [], $body = null)
     {
-        $streamedBody = $this->createStream($body);
-
-        return new Response(new Stream($streamedBody), $statusCode, $headers);
+        return new Response(new Stream(self::stream($body)), $statusCode, $headers);
     }
 
     /**
      * {@inheritdoc}
      */
-    public function responseType()
+    public static function requestClass()
+    {
+        return Request::class;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function responseClass()
     {
         return Response::class;
     }

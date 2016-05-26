@@ -7,14 +7,14 @@ use Wandu\Http\Psr\Response;
 use Wandu\Http\Psr\Stream;
 use Wandu\Http\Psr\Uri;
 
-class WanduFactory implements RequestFactoryInterface, ResponseFactoryInterface
+class WanduFactory implements FactoryInterface
 {
     /**
      * {@inheritdoc}
      *
      * @return Request
      */
-    public function createRequest($method, $url, array $headers = [], $body = null)
+    public static function request($method, $url, array $headers = [], $body = null)
     {
         $streamedBody = new Stream('php://memory', 'r+');
         $streamedBody->write($body);
@@ -24,18 +24,10 @@ class WanduFactory implements RequestFactoryInterface, ResponseFactoryInterface
 
     /**
      * {@inheritdoc}
-     */
-    public function requestType()
-    {
-        return Request::class;
-    }
-
-    /**
-     * {@inheritdoc}
      *
      * @return Response
      */
-    public function createResponse($statusCode, array $headers = [], $body = null)
+    public static function response($statusCode, array $headers = [], $body = null)
     {
         $streamedBody = new Stream('php://memory', 'r+');
         $streamedBody->write($body);
@@ -46,7 +38,15 @@ class WanduFactory implements RequestFactoryInterface, ResponseFactoryInterface
     /**
      * {@inheritdoc}
      */
-    public function responseType()
+    public static function requestClass()
+    {
+        return Request::class;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function responseClass()
     {
         return Response::class;
     }
