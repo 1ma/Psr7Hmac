@@ -2,14 +2,16 @@
 
 namespace UMA\Tests\Psr\Http\Message\Factory;
 
+use Slim\Http\Body;
 use Slim\Http\Headers;
 use Slim\Http\Request;
-use Slim\Http\RequestBody;
 use Slim\Http\Response;
 use Slim\Http\Uri;
 
 class SlimFactory implements RequestFactoryInterface, ResponseFactoryInterface
 {
+    use StreamTrait;
+
     /**
      * {@inheritdoc}
      *
@@ -21,7 +23,9 @@ class SlimFactory implements RequestFactoryInterface, ResponseFactoryInterface
 
         $uri = new Uri($parseUrl['scheme'], $parseUrl['host'], null, $parseUrl['path']);
 
-        return new Request($method, $uri, new Headers($headers), [], [], new RequestBody());
+        $streamedBody = $this->createStream($body);
+
+        return new Request($method, $uri, new Headers($headers), [], [], new Body($streamedBody));
     }
 
     /**
@@ -39,7 +43,9 @@ class SlimFactory implements RequestFactoryInterface, ResponseFactoryInterface
      */
     public function createResponse($statusCode, array $headers = [], $body = null)
     {
-        return new Response($statusCode, new Headers($headers));
+        $streamedBody = $this->createStream($body);
+
+        return new Response($statusCode, new Headers($headers), new Body($streamedBody));
     }
 
     /**

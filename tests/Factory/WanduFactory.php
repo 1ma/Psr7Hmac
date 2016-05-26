@@ -4,6 +4,7 @@ namespace UMA\Tests\Psr\Http\Message\Factory;
 
 use Wandu\Http\Psr\Request;
 use Wandu\Http\Psr\Response;
+use Wandu\Http\Psr\Stream;
 use Wandu\Http\Psr\Uri;
 
 class WanduFactory implements RequestFactoryInterface, ResponseFactoryInterface
@@ -15,7 +16,10 @@ class WanduFactory implements RequestFactoryInterface, ResponseFactoryInterface
      */
     public function createRequest($method, $url, array $headers = [], $body = null)
     {
-        return new Request('GET', new Uri($url), '1.1', $headers);
+        $streamedBody = new Stream('php://memory', 'r+');
+        $streamedBody->write($body);
+
+        return new Request('GET', new Uri($url), '1.1', $headers, $streamedBody);
     }
 
     /**
@@ -33,7 +37,10 @@ class WanduFactory implements RequestFactoryInterface, ResponseFactoryInterface
      */
     public function createResponse($statusCode, array $headers = [], $body = null)
     {
-        return new Response($statusCode, '', '1.1', $headers);
+        $streamedBody = new Stream('php://memory', 'r+');
+        $streamedBody->write($body);
+
+        return new Response($statusCode, '', '1.1', $headers, $streamedBody);
     }
 
     /**

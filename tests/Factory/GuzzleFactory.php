@@ -14,7 +14,7 @@ class GuzzleFactory implements RequestFactoryInterface, ResponseFactoryInterface
      */
     public function createRequest($method, $url, array $headers = [], $body = null)
     {
-        return new Request($method, $url, $headers);
+        return new Request($method, $url, $headers, $body);
     }
 
     /**
@@ -32,7 +32,7 @@ class GuzzleFactory implements RequestFactoryInterface, ResponseFactoryInterface
      */
     public function createResponse($statusCode, array $headers = [], $body = null)
     {
-        return new Response($statusCode, $headers);
+        return new Response($statusCode, $headers, $body);
     }
 
     /**

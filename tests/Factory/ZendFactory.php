@@ -4,9 +4,12 @@ namespace UMA\Tests\Psr\Http\Message\Factory;
 
 use Zend\Diactoros\Request;
 use Zend\Diactoros\Response;
+use Zend\Diactoros\Stream;
 
 class ZendFactory implements RequestFactoryInterface, ResponseFactoryInterface
 {
+    use StreamTrait;
+
     /**
      * {@inheritdoc}
      *
@@ -14,7 +17,9 @@ class ZendFactory implements RequestFactoryInterface, ResponseFactoryInterface
      */
     public function createRequest($method, $url, array $headers = [], $body = null)
     {
-        return new Request($url, $method, 'php://memory', $headers);
+        $streamedBody = $this->createStream($body);
+
+        return new Request($url, $method, new Stream($streamedBody), $headers);
     }
 
     /**
@@ -32,7 +37,9 @@ class ZendFactory implements RequestFactoryInterface, ResponseFactoryInterface
      */
     public function createResponse($statusCode, array $headers = [], $body = null)
     {
-        return new Response('php://memory', $statusCode, $headers);
+        $streamedBody = $this->createStream($body);
+
+        return new Response(new Stream($streamedBody), $statusCode, $headers);
     }
 
     /**
