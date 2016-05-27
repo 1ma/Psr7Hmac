@@ -4,11 +4,14 @@ An HMAC authentication library built on top of the PSR-7 specification.
 
 [![Build Status](https://travis-ci.org/1ma/Psr7Hmac.svg?branch=master)](https://travis-ci.org/1ma/Psr7Hmac) [![Coverage Status](https://coveralls.io/repos/github/1ma/Psr7Hmac/badge.svg?branch=master)](https://coveralls.io/github/1ma/Psr7Hmac?branch=master&bust=1) [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/1ma/Psr7Hmac/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/1ma/Psr7Hmac/?branch=master) [![SensioLabsInsight](https://insight.sensiolabs.com/projects/8c7c772a-5819-426d-bef9-eb9f2b4a3102/mini.png)](https://insight.sensiolabs.com/projects/8c7c772a-5819-426d-bef9-eb9f2b4a3102)
 
+
 ## Library API
 
 ```php
-
-new Authenticator('secret');
+/**
+ * @param string $secret
+ */
+Authenticator::__construct($secret);
 
 /**
  * @param MessageInterface $message
@@ -51,9 +54,9 @@ MessageSerializer::serialize($signedRequest);
 $authenticator->verify($signedRequest);
 // true
 
-$otherAuthenticator = new Authenticator('superSecret');
+$anotherAuthenticator = new Authenticator('another secret');
 
-$otherAuthenticator->verify($signedRequest);
+$anotherAuthenticator->verify($signedRequest);
 // false
 ```
 
