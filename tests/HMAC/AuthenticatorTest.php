@@ -21,34 +21,34 @@ class AuthenticatorTest extends \PHPUnit_Framework_TestCase
     /**
      * @var Authenticator
      */
-    private $authenticatorA;
+    private $authA;
 
     /**
      * @var Authenticator
      */
-    private $authenticatorB;
+    private $authB;
 
     /**
      * {@inheritdoc}
      */
     protected function setUp()
     {
-        $this->authenticatorA = new Authenticator(self::SECRET);
-        $this->authenticatorB = new Authenticator('SuperSecret');
+        $this->authA = new Authenticator(self::SECRET);
+        $this->authB = new Authenticator('an0ther $ecr3t');
     }
 
     public function testMissingAuthorizationHeader()
     {
         $request = new GuzzleRequest('GET', 'http://example.com');
 
-        $this->assertFalse($this->authenticatorA->verify($request));
+        $this->assertFalse($this->authA->verify($request));
     }
 
     public function testBadlyFormattedSignature()
     {
         $request = new GuzzleRequest('GET', 'http://example.com', [Specification::AUTH_HEADER => Specification::AUTH_PREFIX.' herpder=']);
 
-        $this->assertFalse($this->authenticatorA->verify($request));
+        $this->assertFalse($this->authA->verify($request));
     }
 
     /**
@@ -60,11 +60,11 @@ class AuthenticatorTest extends \PHPUnit_Framework_TestCase
     {
         $expectedSignature = 'gQ40JfujwnnE5/pjfb0Et2uHzxGYMJbODuUb8cFLxrA=';
 
-        $signedRequest = $this->authenticatorA->sign($request);
+        $signedRequest = $this->authA->sign($request);
 
         $this->assertRequestHasSignature($signedRequest, $expectedSignature);
-        $this->assertTrue($this->authenticatorA->verify($signedRequest));
-        $this->assertFalse($this->authenticatorB->verify($signedRequest));
+        $this->assertTrue($this->authA->verify($signedRequest));
+        $this->assertFalse($this->authB->verify($signedRequest));
     }
 
     /**
@@ -76,11 +76,11 @@ class AuthenticatorTest extends \PHPUnit_Framework_TestCase
     {
         $expectedSignature = 'ItmODW3lxpRTblMD4MT6zxC0oblu2RezNkun8Tr4D+Q=';
 
-        $signedResponse = $this->authenticatorA->sign($response);
+        $signedResponse = $this->authA->sign($response);
 
         $this->assertRequestHasSignature($signedResponse, $expectedSignature);
-        $this->assertTrue($this->authenticatorA->verify($signedResponse));
-        $this->assertFalse($this->authenticatorB->verify($signedResponse));
+        $this->assertTrue($this->authA->verify($signedResponse));
+        $this->assertFalse($this->authB->verify($signedResponse));
     }
 
     /**
@@ -92,11 +92,11 @@ class AuthenticatorTest extends \PHPUnit_Framework_TestCase
     {
         $expectedSignature = 'eqzqnfLxcnxSj8zaUqNaFVwObLEgmZSAkq6T6CyvaWE=';
 
-        $signedRequest = $this->authenticatorA->sign($request);
+        $signedRequest = $this->authA->sign($request);
 
         $this->assertRequestHasSignature($signedRequest, $expectedSignature);
-        $this->assertTrue($this->authenticatorA->verify($signedRequest));
-        $this->assertFalse($this->authenticatorB->verify($signedRequest));
+        $this->assertTrue($this->authA->verify($signedRequest));
+        $this->assertFalse($this->authB->verify($signedRequest));
     }
 
     /**
@@ -108,11 +108,11 @@ class AuthenticatorTest extends \PHPUnit_Framework_TestCase
     {
         $expectedSignature = 'sQJZRllkAlcqNOTXBOamAMskxrjZdCiqk5dYqP0uizk=';
 
-        $signedResponse = $this->authenticatorA->sign($response);
+        $signedResponse = $this->authA->sign($response);
 
         $this->assertRequestHasSignature($signedResponse, $expectedSignature);
-        $this->assertTrue($this->authenticatorA->verify($signedResponse));
-        $this->assertFalse($this->authenticatorB->verify($signedResponse));
+        $this->assertTrue($this->authA->verify($signedResponse));
+        $this->assertFalse($this->authB->verify($signedResponse));
     }
 
     /**
@@ -124,11 +124,11 @@ class AuthenticatorTest extends \PHPUnit_Framework_TestCase
     {
         $expectedSignature = 'vc6RVMtO8KvxcsT1itDVy1tvApMPfV8/jaSuHfrmi80=';
 
-        $signedRequest = $this->authenticatorA->sign($request);
+        $signedRequest = $this->authA->sign($request);
 
         $this->assertRequestHasSignature($signedRequest, $expectedSignature);
-        $this->assertTrue($this->authenticatorA->verify($signedRequest));
-        $this->assertFalse($this->authenticatorB->verify($signedRequest));
+        $this->assertTrue($this->authA->verify($signedRequest));
+        $this->assertFalse($this->authB->verify($signedRequest));
     }
 
     /**
@@ -140,11 +140,11 @@ class AuthenticatorTest extends \PHPUnit_Framework_TestCase
     {
         $expectedSignature = 'Ix+BdOyDHLANIAbBhvSRPS9DzhXJN2JAFWzlflj8XJE=';
 
-        $signedRequest = $this->authenticatorA->sign($request);
+        $signedRequest = $this->authA->sign($request);
 
         $this->assertRequestHasSignature($signedRequest, $expectedSignature);
-        $this->assertTrue($this->authenticatorA->verify($signedRequest));
-        $this->assertFalse($this->authenticatorB->verify($signedRequest));
+        $this->assertTrue($this->authA->verify($signedRequest));
+        $this->assertFalse($this->authB->verify($signedRequest));
     }
 
     /**
@@ -156,11 +156,11 @@ class AuthenticatorTest extends \PHPUnit_Framework_TestCase
     {
         $expectedSignature = 'zxw8sFPd/bFS3HKGcyGCbh4jp57nGn+DCf/k9MCh6ak=';
 
-        $signedResponse = $this->authenticatorA->sign($response);
+        $signedResponse = $this->authA->sign($response);
 
         $this->assertRequestHasSignature($signedResponse, $expectedSignature);
-        $this->assertTrue($this->authenticatorA->verify($signedResponse));
-        $this->assertFalse($this->authenticatorB->verify($signedResponse));
+        $this->assertTrue($this->authA->verify($signedResponse));
+        $this->assertFalse($this->authB->verify($signedResponse));
     }
 
     /**

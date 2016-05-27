@@ -14,8 +14,6 @@ class Authenticator
     private $secret;
 
     /**
-     * Authenticator constructor.
-     *
      * @param string $secret
      */
     public function __construct($secret)
