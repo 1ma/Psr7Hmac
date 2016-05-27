@@ -70,6 +70,18 @@ class MessageSerializerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @dataProvider simpleFormRequestProvider
+     *
+     * @param RequestInterface $request
+     */
+    public function testSimpleFormRequest(RequestInterface $request)
+    {
+        $expectedSerialization = "POST /login.php HTTP/1.1\r\nHost: www.example.com\r\nContent-Length: 51\r\nContent-Type: application/x-www-form-urlencoded; charset=utf-8\r\n\r\nuser=john.doe&password=battery+horse+correct+staple";
+
+        $this->assertSame($expectedSerialization, MessageSerializer::serialize($request));
+    }
+
+    /**
      * @dataProvider binaryRequestProvider
      *
      * @param RequestInterface $request

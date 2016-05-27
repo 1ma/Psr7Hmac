@@ -29,6 +29,18 @@ trait RequestsProvider
         return $this->requests('GET', 'http://www.example.com/index.html', $headers);
     }
 
+    public function simpleFormRequestProvider()
+    {
+        $headers = [
+            'Content-Length' => 51,
+            'Content-Type' => 'application/x-www-form-urlencoded; charset=utf-8',
+        ];
+
+        $body = 'user=john.doe&password=battery+horse+correct+staple';
+
+        return $this->requests('POST', 'http://www.example.com/login.php', $headers, $body);
+    }
+
     public function binaryRequestProvider()
     {
         $fh = fopen(__DIR__.'/fixtures/avatar.png', 'r');

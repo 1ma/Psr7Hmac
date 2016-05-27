@@ -116,6 +116,22 @@ class AuthenticatorTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @dataProvider simpleFormRequestProvider
+     *
+     * @param RequestInterface $request
+     */
+    public function testSimpleFormRequest(RequestInterface $request)
+    {
+        $expectedSignature = 'vc6RVMtO8KvxcsT1itDVy1tvApMPfV8/jaSuHfrmi80=';
+
+        $signedRequest = $this->authenticatorA->sign($request);
+
+        $this->assertRequestHasSignature($signedRequest, $expectedSignature);
+        $this->assertTrue($this->authenticatorA->verify($signedRequest));
+        $this->assertFalse($this->authenticatorB->verify($signedRequest));
+    }
+
+    /**
      * @dataProvider binaryRequestProvider
      *
      * @param RequestInterface $request
