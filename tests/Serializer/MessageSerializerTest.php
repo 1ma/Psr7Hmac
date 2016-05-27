@@ -70,11 +70,11 @@ class MessageSerializerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @dataProvider bodiedRequestProvider
+     * @dataProvider binaryRequestProvider
      *
      * @param RequestInterface $request
      */
-    public function testBodiedRequest(RequestInterface $request)
+    public function testBinaryRequest(RequestInterface $request)
     {
         $fh = fopen(__DIR__.'/../fixtures/avatar.png', 'r');
 
@@ -84,11 +84,11 @@ class MessageSerializerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @dataProvider bodiedResponseProvider
+     * @dataProvider binaryResponseProvider
      *
      * @param ResponseInterface $response
      */
-    public function testBodiedResponse(ResponseInterface $response)
+    public function testBinaryResponse(ResponseInterface $response)
     {
         $fh = fopen(__DIR__.'/../fixtures/avatar.png', 'r');
 

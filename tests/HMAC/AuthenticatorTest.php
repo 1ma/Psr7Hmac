@@ -116,11 +116,11 @@ class AuthenticatorTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @dataProvider bodiedRequestProvider
+     * @dataProvider binaryRequestProvider
      *
      * @param RequestInterface $request
      */
-    public function testBodiedRequest(RequestInterface $request)
+    public function testBinaryRequest(RequestInterface $request)
     {
         $expectedSignature = 'Ix+BdOyDHLANIAbBhvSRPS9DzhXJN2JAFWzlflj8XJE=';
 
@@ -132,11 +132,11 @@ class AuthenticatorTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @dataProvider bodiedResponseProvider
+     * @dataProvider binaryResponseProvider
      *
      * @param ResponseInterface $response
      */
-    public function testBodiedResponse(ResponseInterface $response)
+    public function testBinaryResponse(ResponseInterface $response)
     {
         $expectedSignature = 'zxw8sFPd/bFS3HKGcyGCbh4jp57nGn+DCf/k9MCh6ak=';
 

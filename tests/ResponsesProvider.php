@@ -29,7 +29,7 @@ trait ResponsesProvider
         return $this->responses(200, $headers);
     }
 
-    public function bodiedResponseProvider()
+    public function binaryResponseProvider()
     {
         $fh = fopen(__DIR__.'/fixtures/avatar.png', 'r');
 

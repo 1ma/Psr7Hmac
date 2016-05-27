@@ -29,7 +29,7 @@ trait RequestsProvider
         return $this->requests('GET', 'http://www.example.com/index.html', $headers);
     }
 
-    public function bodiedRequestProvider()
+    public function binaryRequestProvider()
     {
         $fh = fopen(__DIR__.'/fixtures/avatar.png', 'r');
 
