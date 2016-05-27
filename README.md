@@ -7,21 +7,22 @@ An HMAC authentication library built on top of the PSR-7 specification.
 ## Library API
 
 ```php
-/**
- * @param MessageInterface $message
- * @param string           $secret
- *
- * @return MessageInterface
- */
-Authenticator::sign(MessageInterface $message, $secret);
+
+new Authenticator('secret');
 
 /**
  * @param MessageInterface $message
- * @param string           $secret
+ *
+ * @return MessageInterface
+ */
+Authenticator::sign(MessageInterface $message);
+
+/**
+ * @param MessageInterface $message
  *
  * @return bool
  */
-Authenticator::verify(MessageInterface $message, $secret);
+Authenticator::verify(MessageInterface $message);
 ```
 
 
@@ -32,15 +33,14 @@ use UMA\Psr\Http\Message\HMAC\Authenticator;
 use UMA\Psr\Http\Message\Serializer\MessageSerializer;
 use Zend\Diactoros\Request;
 
-
 $psr7request = new Request('http://www.example.com/index.html', 'GET');
 
 MessageSerializer::serialize($psr7request);
 // GET /index.html HTTP/1.1
 // Host: www.example.com
 
-$authenticator = new Authenticator();
-$signedRequest = $authenticator->sign($psr7request, 'secret');
+$authenticator = new Authenticator('secret');
+$signedRequest = $authenticator->sign($psr7request);
 
 MessageSerializer::serialize($signedRequest);
 // GET /index.html HTTP/1.1
@@ -48,10 +48,12 @@ MessageSerializer::serialize($signedRequest);
 // Authorization: HMAC-SHA256 VxY9dnOd8jjuXuzaC5/Gp9GQ5whB9a3X+BJlgAfD/7g=
 // Signed-Headers: Host,Signed-Headers
 
-$authenticator->verify($signedRequest, 'secret');
+$authenticator->verify($signedRequest);
 // true
 
-$authenticator->verify($signedRequest, '1234');
+$otherAuthenticator = new Authenticator('superSecret');
+
+$otherAuthenticator->verify($signedRequest);
 // false
 ```
 
