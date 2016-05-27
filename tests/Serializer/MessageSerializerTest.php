@@ -94,6 +94,18 @@ class MessageSerializerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @dataProvider queryParamsRequestProvider
+     *
+     * @param RequestInterface $request
+     */
+    public function testQueryParamsRequest(RequestInterface $request)
+    {
+        $expectedSerialization = "GET /search?q=search+term&limit=10&offset=50 HTTP/1.1\r\nHost: www.example.com\r\nAccept: application/json; charset=utf-8\r\n\r\n";
+
+        $this->assertSame($expectedSerialization, MessageSerializer::serialize($request));
+    }
+
+    /**
      * @dataProvider simpleFormRequestProvider
      *
      * @param RequestInterface $request

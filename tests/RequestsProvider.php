@@ -29,6 +29,15 @@ trait RequestsProvider
         return $this->requests('GET', 'http://www.example.com/index.html', $headers);
     }
 
+    public function queryParamsRequestProvider()
+    {
+        $headers = [
+            'Accept' => 'application/json; charset=utf-8',
+        ];
+
+        return $this->requests('GET', 'http://www.example.com/search?q=search+term&limit=10&offset=50', $headers);
+    }
+
     public function jsonRequestProvider()
     {
         $headers = [

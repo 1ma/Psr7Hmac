@@ -21,7 +21,10 @@ class SlimFactory implements FactoryInterface
     {
         $parseUrl = parse_url($url);
 
-        $uri = new Uri($parseUrl['scheme'], $parseUrl['host'], null, $parseUrl['path']);
+        $query = array_key_exists('query', $parseUrl) ?
+            $parseUrl['query'] : null;
+
+        $uri = new Uri($parseUrl['scheme'], $parseUrl['host'], null, $parseUrl['path'], $query);
 
         return new Request($method, $uri, new Headers($headers), [], [], new Body(self::stream($body)));
     }
