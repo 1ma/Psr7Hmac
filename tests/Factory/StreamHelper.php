@@ -2,7 +2,7 @@
 
 namespace UMA\Tests\Psr\Http\Message\Factory;
 
-trait StreamTrait
+trait StreamHelper
 {
     /**
      * @param string $data

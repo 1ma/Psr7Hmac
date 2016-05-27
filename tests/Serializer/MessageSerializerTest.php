@@ -6,11 +6,13 @@ use Asika\Http\Test\Stub\StubMessage;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use UMA\Psr\Http\Message\Serializer\MessageSerializer;
-use UMA\Tests\Psr\Http\Message\MessageProviderTrait;
+use UMA\Tests\Psr\Http\Message\RequestsProvider;
+use UMA\Tests\Psr\Http\Message\ResponsesProvider;
 
 class MessageSerializerTest extends \PHPUnit_Framework_TestCase
 {
-    use MessageProviderTrait;
+    use RequestsProvider;
+    use ResponsesProvider;
 
     public function testSerializeNeitherRequestNorResponse()
     {
@@ -28,14 +30,7 @@ class MessageSerializerTest extends \PHPUnit_Framework_TestCase
     {
         $expectedSerialization = "GET /index.html HTTP/1.1\r\nHost: www.example.com\r\n\r\n";
 
-        $actualSerialization = MessageSerializer::serialize($request);
-
-        $this->assertSame($expectedSerialization, $actualSerialization);
-    }
-
-    public function simplestRequestProvider()
-    {
-        return $this->requests('GET', 'http://www.example.com/index.html');
+        $this->assertSame($expectedSerialization, MessageSerializer::serialize($request));
     }
 
     /**
@@ -47,14 +42,7 @@ class MessageSerializerTest extends \PHPUnit_Framework_TestCase
     {
         $expectedSerialization = "HTTP/1.1 200 OK\r\n\r\n";
 
-        $actualSerialization = MessageSerializer::serialize($response);
-
-        $this->assertSame($expectedSerialization, $actualSerialization);
-    }
-
-    public function simplestResponseProvider()
-    {
-        return $this->responses(200);
+        $this->assertSame($expectedSerialization, MessageSerializer::serialize($response));
     }
 
     /**
@@ -66,21 +54,7 @@ class MessageSerializerTest extends \PHPUnit_Framework_TestCase
     {
         $expectedSerialization = "GET /index.html HTTP/1.1\r\nHost: www.example.com\r\nAccept: */*\r\nAccept-Encoding: gzip, deflate\r\nConnection: keep-alive\r\nUser-Agent: PHP/5.6.21\r\n\r\n";
 
-        $actualSerialization = MessageSerializer::serialize($request);
-
-        $this->assertSame($expectedSerialization, $actualSerialization);
-    }
-
-    public function emptyRequestWithHeadersProvider()
-    {
-        $headers = [
-            'User-Agent' => 'PHP/5.6.21',
-            'Accept' => '*/*',
-            'Connection' => 'keep-alive',
-            'Accept-Encoding' => 'gzip, deflate',
-        ];
-
-        return $this->requests('GET', 'http://www.example.com/index.html', $headers);
+        $this->assertSame($expectedSerialization, MessageSerializer::serialize($request));
     }
 
     /**
@@ -92,20 +66,34 @@ class MessageSerializerTest extends \PHPUnit_Framework_TestCase
     {
         $expectedSerialization = "HTTP/1.1 200 OK\r\nAccept-Ranges: bytes\r\nContent-Encoding: gzip\r\nContent-Length: 606\r\nContent-Type: text/html\r\n\r\n";
 
-        $actualSerialization = MessageSerializer::serialize($response);
-
-        $this->assertSame($expectedSerialization, $actualSerialization);
+        $this->assertSame($expectedSerialization, MessageSerializer::serialize($response));
     }
 
-    public function emptyResponseWithHeadersProvider()
+    /**
+     * @dataProvider bodiedRequestProvider
+     *
+     * @param RequestInterface $request
+     */
+    public function testBodiedRequest(RequestInterface $request)
     {
-        $headers = [
-            'Content-Type' => 'text/html',
-            'Content-Encoding' => 'gzip',
-            'Accept-Ranges' => 'bytes',
-            'Content-Length' => '606',
-        ];
+        $fh = fopen(__DIR__.'/../fixtures/avatar.png', 'r');
 
-        return $this->responses(200, $headers);
+        $expectedSerialization = "POST /avatar/upload.php HTTP/1.1\r\nHost: www.example.com\r\nContent-Length: 13360\r\nContent-Type: image/png\r\n\r\n".stream_get_contents($fh);
+
+        $this->assertSame($expectedSerialization, MessageSerializer::serialize($request));
+    }
+
+    /**
+     * @dataProvider bodiedResponseProvider
+     *
+     * @param ResponseInterface $response
+     */
+    public function testBodiedResponse(ResponseInterface $response)
+    {
+        $fh = fopen(__DIR__.'/../fixtures/avatar.png', 'r');
+
+        $expectedSerialization = "HTTP/1.1 200 OK\r\nContent-Length: 13360\r\nContent-Type: image/png\r\n\r\n".stream_get_contents($fh);
+
+        $this->assertSame($expectedSerialization, MessageSerializer::serialize($response));
     }
 }

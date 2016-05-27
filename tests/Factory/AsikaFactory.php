@@ -8,7 +8,7 @@ use Asika\Http\Stream\Stream;
 
 class AsikaFactory implements FactoryInterface
 {
-    use StreamTrait;
+    use StreamHelper;
 
     /**
      * {@inheritdoc}

@@ -19,7 +19,7 @@ class WanduFactory implements FactoryInterface
         $streamedBody = new Stream('php://memory', 'r+');
         $streamedBody->write($body);
 
-        return new Request('GET', new Uri($url), '1.1', $headers, $streamedBody);
+        return new Request($method, new Uri($url), '1.1', $headers, $streamedBody);
     }
 
     /**

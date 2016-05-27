@@ -10,7 +10,7 @@ use Slim\Http\Uri;
 
 class SlimFactory implements FactoryInterface
 {
-    use StreamTrait;
+    use StreamHelper;
 
     /**
      * {@inheritdoc}

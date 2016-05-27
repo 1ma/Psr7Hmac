@@ -8,11 +8,13 @@ use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use UMA\Psr\Http\Message\HMAC\Authenticator;
 use UMA\Psr\Http\Message\HMAC\Specification;
-use UMA\Tests\Psr\Http\Message\MessageProviderTrait;
+use UMA\Tests\Psr\Http\Message\RequestsProvider;
+use UMA\Tests\Psr\Http\Message\ResponsesProvider;
 
 class AuthenticatorTest extends \PHPUnit_Framework_TestCase
 {
-    use MessageProviderTrait;
+    use RequestsProvider;
+    use ResponsesProvider;
 
     /**
      * @var Authenticator
@@ -57,11 +59,6 @@ class AuthenticatorTest extends \PHPUnit_Framework_TestCase
         $this->assertFalse($this->authenticator->verify($signedRequest, 'wr0ng_$ecr3t'));
     }
 
-    public function simplestRequestProvider()
-    {
-        return $this->requests('GET', 'http://www.example.com/index.html');
-    }
-
     /**
      * @dataProvider simplestResponseProvider
      *
@@ -76,11 +73,6 @@ class AuthenticatorTest extends \PHPUnit_Framework_TestCase
         $this->assertRequestHasSignature($signedResponse, $expectedSignature);
         $this->assertTrue($this->authenticator->verify($signedResponse, '$ecr3t'));
         $this->assertFalse($this->authenticator->verify($signedResponse, 'wr0ng_$ecr3t'));
-    }
-
-    public function simplestResponseProvider()
-    {
-        return $this->responses(200);
     }
 
     /**
@@ -99,18 +91,6 @@ class AuthenticatorTest extends \PHPUnit_Framework_TestCase
         $this->assertFalse($this->authenticator->verify($signedRequest, 'wr0ng_$ecr3t'));
     }
 
-    public function emptyRequestWithHeadersProvider()
-    {
-        $headers = [
-            'User-Agent' => 'PHP/5.6.21',
-            'Accept' => '*/*',
-            'Connection' => 'keep-alive',
-            'Accept-Encoding' => 'gzip, deflate',
-        ];
-
-        return $this->requests('GET', 'http://www.example.com/index.html', $headers);
-    }
-
     /**
      * @dataProvider emptyResponseWithHeadersProvider
      *
@@ -127,16 +107,36 @@ class AuthenticatorTest extends \PHPUnit_Framework_TestCase
         $this->assertFalse($this->authenticator->verify($signedResponse, 'wr0ng_$ecr3t'));
     }
 
-    public function emptyResponseWithHeadersProvider()
+    /**
+     * @dataProvider bodiedRequestProvider
+     *
+     * @param RequestInterface $request
+     */
+    public function testBodiedRequest(RequestInterface $request)
     {
-        $headers = [
-            'Content-Type' => 'text/html',
-            'Content-Encoding' => 'gzip',
-            'Accept-Ranges' => 'bytes',
-            'Content-Length' => '606',
-        ];
+        $expectedSignature = 'Ix+BdOyDHLANIAbBhvSRPS9DzhXJN2JAFWzlflj8XJE=';
 
-        return $this->responses(200, $headers);
+        $signedRequest = $this->authenticator->sign($request, '$ecr3t');
+
+        $this->assertRequestHasSignature($signedRequest, $expectedSignature);
+        $this->assertTrue($this->authenticator->verify($signedRequest, '$ecr3t'));
+        $this->assertFalse($this->authenticator->verify($signedRequest, 'wr0ng_$ecr3t'));
+    }
+
+    /**
+     * @dataProvider bodiedResponseProvider
+     *
+     * @param ResponseInterface $response
+     */
+    public function testBodiedResponse(ResponseInterface $response)
+    {
+        $expectedSignature = 'zxw8sFPd/bFS3HKGcyGCbh4jp57nGn+DCf/k9MCh6ak=';
+
+        $signedResponse = $this->authenticator->sign($response, '$ecr3t');
+
+        $this->assertRequestHasSignature($signedResponse, $expectedSignature);
+        $this->assertTrue($this->authenticator->verify($signedResponse, '$ecr3t'));
+        $this->assertFalse($this->authenticator->verify($signedResponse, 'wr0ng_$ecr3t'));
     }
 
     /**
@@ -147,6 +147,6 @@ class AuthenticatorTest extends \PHPUnit_Framework_TestCase
     {
         $this->assertTrue($signedMessage->hasHeader(Specification::AUTH_HEADER));
         $this->assertTrue($signedMessage->hasHeader(Specification::SIGN_HEADER));
-        $this->assertSame(Specification::AUTH_PREFIX.' '.$signature, $signedMessage->getHeaderLine(Specification::AUTH_HEADER), get_class($signedMessage));
+        $this->assertSame(Specification::AUTH_PREFIX.' '.$signature, $signedMessage->getHeaderLine(Specification::AUTH_HEADER));
     }
 }

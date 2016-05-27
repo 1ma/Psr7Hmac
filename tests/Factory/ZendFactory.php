@@ -8,7 +8,7 @@ use Zend\Diactoros\Stream;
 
 class ZendFactory implements FactoryInterface
 {
-    use StreamTrait;
+    use StreamHelper;
 
     /**
      * {@inheritdoc}
