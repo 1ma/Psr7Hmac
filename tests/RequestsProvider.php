@@ -29,6 +29,33 @@ trait RequestsProvider
         return $this->requests('GET', 'http://www.example.com/index.html', $headers);
     }
 
+    public function jsonRequestProvider()
+    {
+        $headers = [
+            'Content-Type' => 'application/json; charset=utf-8',
+            'Content-Length' => 134,
+        ];
+
+        $body = [
+            'employees' => [
+                [
+                    'firstName' => 'John',
+                    'lastName' => 'Doe',
+                ],
+                [
+                    'firstName' => 'Anna',
+                    'lastName' => 'Smith',
+                ],
+                [
+                    'firstName' => 'Peter',
+                    'lastName' => 'Jones',
+                ],
+            ],
+        ];
+
+        return $this->requests('POST', 'http://www.example.com/api/record.php', $headers, json_encode($body));
+    }
+
     public function simpleFormRequestProvider()
     {
         $headers = [

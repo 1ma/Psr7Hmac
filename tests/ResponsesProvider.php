@@ -29,6 +29,33 @@ trait ResponsesProvider
         return $this->responses(200, $headers);
     }
 
+    public function jsonResponseProvider()
+    {
+        $headers = [
+            'Content-Type' => 'application/json; charset=utf-8',
+            'Content-Length' => 134,
+        ];
+
+        $body = [
+            'employees' => [
+                [
+                    'firstName' => 'John',
+                    'lastName' => 'Doe',
+                ],
+                [
+                    'firstName' => 'Anna',
+                    'lastName' => 'Smith',
+                ],
+                [
+                    'firstName' => 'Peter',
+                    'lastName' => 'Jones',
+                ],
+            ],
+        ];
+
+        return $this->responses(200, $headers, json_encode($body));
+    }
+
     public function binaryResponseProvider()
     {
         $fh = fopen(__DIR__.'/fixtures/avatar.png', 'r');

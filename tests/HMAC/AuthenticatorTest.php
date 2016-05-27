@@ -116,6 +116,38 @@ class AuthenticatorTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @dataProvider jsonRequestProvider
+     *
+     * @param RequestInterface $request
+     */
+    public function testJsonRequest(RequestInterface $request)
+    {
+        $expectedSignature = 'Gt8eMD3W97b0mhBzdfXCkl9beR6h0sI/XzjojJ3+a6Y=';
+
+        $signedRequest = $this->authA->sign($request);
+
+        $this->assertRequestHasSignature($signedRequest, $expectedSignature);
+        $this->assertTrue($this->authA->verify($signedRequest));
+        $this->assertFalse($this->authB->verify($signedRequest));
+    }
+
+    /**
+     * @dataProvider jsonResponseProvider
+     *
+     * @param ResponseInterface $response
+     */
+    public function testJsonResponse(ResponseInterface $response)
+    {
+        $expectedSignature = 'pY/S1repUENl6VGjszGWxhMVfCmYULvUs4/DoyG9DvM=';
+
+        $signedResponse = $this->authA->sign($response);
+
+        $this->assertRequestHasSignature($signedResponse, $expectedSignature);
+        $this->assertTrue($this->authA->verify($signedResponse));
+        $this->assertFalse($this->authB->verify($signedResponse));
+    }
+
+    /**
      * @dataProvider simpleFormRequestProvider
      *
      * @param RequestInterface $request

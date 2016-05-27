@@ -70,6 +70,30 @@ class MessageSerializerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @dataProvider jsonRequestProvider
+     *
+     * @param RequestInterface $request
+     */
+    public function testJsonRequest(RequestInterface $request)
+    {
+        $expectedSerialization = "POST /api/record.php HTTP/1.1\r\nHost: www.example.com\r\nContent-Length: 134\r\nContent-Type: application/json; charset=utf-8\r\n\r\n".'{"employees":[{"firstName":"John","lastName":"Doe"},{"firstName":"Anna","lastName":"Smith"},{"firstName":"Peter","lastName":"Jones"}]}';
+
+        $this->assertSame($expectedSerialization, MessageSerializer::serialize($request));
+    }
+
+    /**
+     * @dataProvider jsonResponseProvider
+     *
+     * @param ResponseInterface $response
+     */
+    public function testJsonResponse(ResponseInterface $response)
+    {
+        $expectedSerialization = "HTTP/1.1 200 OK\r\nContent-Length: 134\r\nContent-Type: application/json; charset=utf-8\r\n\r\n".'{"employees":[{"firstName":"John","lastName":"Doe"},{"firstName":"Anna","lastName":"Smith"},{"firstName":"Peter","lastName":"Jones"}]}';
+
+        $this->assertSame($expectedSerialization, MessageSerializer::serialize($response));
+    }
+
+    /**
      * @dataProvider simpleFormRequestProvider
      *
      * @param RequestInterface $request
