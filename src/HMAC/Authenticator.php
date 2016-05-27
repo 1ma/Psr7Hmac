@@ -9,8 +9,22 @@ use UMA\Psr\Http\Message\Serializer\MessageSerializer;
 class Authenticator
 {
     /**
+     * @var string
+     */
+    private $secret;
+
+    /**
+     * Authenticator constructor.
+     *
+     * @param string $secret
+     */
+    public function __construct($secret)
+    {
+        $this->secret = $secret;
+    }
+
+    /**
      * @param MessageInterface $message
-     * @param string           $secret
      *
      * @return MessageInterface The signed message.
      *
@@ -18,7 +32,7 @@ class Authenticator
      *                                   MessageInterface that cannot be
      *                                   serialized and thus neither signed.
      */
-    public function sign(MessageInterface $message, $secret)
+    public function sign(MessageInterface $message)
     {
         $preSignedMessage = $message->withHeader(
             Specification::SIGN_HEADER,
@@ -29,13 +43,12 @@ class Authenticator
 
         return $preSignedMessage->withHeader(
             Specification::AUTH_HEADER,
-            Specification::AUTH_PREFIX.' '.Specification::doHMACSignature($serialization, $secret)
+            Specification::AUTH_PREFIX.' '.Specification::doHMACSignature($serialization, $this->secret)
         );
     }
 
     /**
      * @param MessageInterface $message
-     * @param string           $secret
      *
      * @return bool Signature verification outcome.
      *
@@ -43,7 +56,7 @@ class Authenticator
      *                                   MessageInterface that cannot be
      *                                   serialized and thus neither verified.
      */
-    public function verify(MessageInterface $message, $secret)
+    public function verify(MessageInterface $message)
     {
         if (empty($authHeader = $message->getHeaderLine(Specification::AUTH_HEADER))) {
             return false;
@@ -57,7 +70,7 @@ class Authenticator
 
         $serverSideSignature = Specification::doHMACSignature(
             MessageSerializer::serialize($message->withoutHeader(Specification::AUTH_HEADER)),
-            $secret
+            $this->secret
         );
 
         return hash_equals($serverSideSignature, $clientSideSignature);

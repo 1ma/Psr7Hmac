@@ -6,7 +6,7 @@ use Psr\Http\Message\MessageInterface;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 
-class MessageSerializer
+final class MessageSerializer
 {
     const SP = ' ';
     const CRLF = "\r\n";

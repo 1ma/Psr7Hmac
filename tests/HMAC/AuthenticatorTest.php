@@ -16,31 +16,39 @@ class AuthenticatorTest extends \PHPUnit_Framework_TestCase
     use RequestsProvider;
     use ResponsesProvider;
 
+    const SECRET = '$ecr3t';
+
     /**
      * @var Authenticator
      */
-    private $authenticator;
+    private $authenticatorA;
+
+    /**
+     * @var Authenticator
+     */
+    private $authenticatorB;
 
     /**
      * {@inheritdoc}
      */
     protected function setUp()
     {
-        $this->authenticator = new Authenticator();
+        $this->authenticatorA = new Authenticator(self::SECRET);
+        $this->authenticatorB = new Authenticator('SuperSecret');
     }
 
     public function testMissingAuthorizationHeader()
     {
         $request = new GuzzleRequest('GET', 'http://example.com');
 
-        $this->assertFalse($this->authenticator->verify($request, 'irrelevant'));
+        $this->assertFalse($this->authenticatorA->verify($request));
     }
 
     public function testBadlyFormattedSignature()
     {
         $request = new GuzzleRequest('GET', 'http://example.com', [Specification::AUTH_HEADER => Specification::AUTH_PREFIX.' herpder=']);
 
-        $this->assertFalse($this->authenticator->verify($request, 'irrelevant'));
+        $this->assertFalse($this->authenticatorA->verify($request));
     }
 
     /**
@@ -52,11 +60,11 @@ class AuthenticatorTest extends \PHPUnit_Framework_TestCase
     {
         $expectedSignature = 'gQ40JfujwnnE5/pjfb0Et2uHzxGYMJbODuUb8cFLxrA=';
 
-        $signedRequest = $this->authenticator->sign($request, '$ecr3t');
+        $signedRequest = $this->authenticatorA->sign($request);
 
         $this->assertRequestHasSignature($signedRequest, $expectedSignature);
-        $this->assertTrue($this->authenticator->verify($signedRequest, '$ecr3t'));
-        $this->assertFalse($this->authenticator->verify($signedRequest, 'wr0ng_$ecr3t'));
+        $this->assertTrue($this->authenticatorA->verify($signedRequest));
+        $this->assertFalse($this->authenticatorB->verify($signedRequest));
     }
 
     /**
@@ -68,11 +76,11 @@ class AuthenticatorTest extends \PHPUnit_Framework_TestCase
     {
         $expectedSignature = 'ItmODW3lxpRTblMD4MT6zxC0oblu2RezNkun8Tr4D+Q=';
 
-        $signedResponse = $this->authenticator->sign($response, '$ecr3t');
+        $signedResponse = $this->authenticatorA->sign($response);
 
         $this->assertRequestHasSignature($signedResponse, $expectedSignature);
-        $this->assertTrue($this->authenticator->verify($signedResponse, '$ecr3t'));
-        $this->assertFalse($this->authenticator->verify($signedResponse, 'wr0ng_$ecr3t'));
+        $this->assertTrue($this->authenticatorA->verify($signedResponse));
+        $this->assertFalse($this->authenticatorB->verify($signedResponse));
     }
 
     /**
@@ -84,11 +92,11 @@ class AuthenticatorTest extends \PHPUnit_Framework_TestCase
     {
         $expectedSignature = 'eqzqnfLxcnxSj8zaUqNaFVwObLEgmZSAkq6T6CyvaWE=';
 
-        $signedRequest = $this->authenticator->sign($request, '$ecr3t');
+        $signedRequest = $this->authenticatorA->sign($request);
 
         $this->assertRequestHasSignature($signedRequest, $expectedSignature);
-        $this->assertTrue($this->authenticator->verify($signedRequest, '$ecr3t'));
-        $this->assertFalse($this->authenticator->verify($signedRequest, 'wr0ng_$ecr3t'));
+        $this->assertTrue($this->authenticatorA->verify($signedRequest));
+        $this->assertFalse($this->authenticatorB->verify($signedRequest));
     }
 
     /**
@@ -100,11 +108,11 @@ class AuthenticatorTest extends \PHPUnit_Framework_TestCase
     {
         $expectedSignature = 'sQJZRllkAlcqNOTXBOamAMskxrjZdCiqk5dYqP0uizk=';
 
-        $signedResponse = $this->authenticator->sign($response, '$ecr3t');
+        $signedResponse = $this->authenticatorA->sign($response);
 
         $this->assertRequestHasSignature($signedResponse, $expectedSignature);
-        $this->assertTrue($this->authenticator->verify($signedResponse, '$ecr3t'));
-        $this->assertFalse($this->authenticator->verify($signedResponse, 'wr0ng_$ecr3t'));
+        $this->assertTrue($this->authenticatorA->verify($signedResponse));
+        $this->assertFalse($this->authenticatorB->verify($signedResponse));
     }
 
     /**
@@ -116,11 +124,11 @@ class AuthenticatorTest extends \PHPUnit_Framework_TestCase
     {
         $expectedSignature = 'Ix+BdOyDHLANIAbBhvSRPS9DzhXJN2JAFWzlflj8XJE=';
 
-        $signedRequest = $this->authenticator->sign($request, '$ecr3t');
+        $signedRequest = $this->authenticatorA->sign($request);
 
         $this->assertRequestHasSignature($signedRequest, $expectedSignature);
-        $this->assertTrue($this->authenticator->verify($signedRequest, '$ecr3t'));
-        $this->assertFalse($this->authenticator->verify($signedRequest, 'wr0ng_$ecr3t'));
+        $this->assertTrue($this->authenticatorA->verify($signedRequest));
+        $this->assertFalse($this->authenticatorB->verify($signedRequest));
     }
 
     /**
@@ -132,11 +140,11 @@ class AuthenticatorTest extends \PHPUnit_Framework_TestCase
     {
         $expectedSignature = 'zxw8sFPd/bFS3HKGcyGCbh4jp57nGn+DCf/k9MCh6ak=';
 
-        $signedResponse = $this->authenticator->sign($response, '$ecr3t');
+        $signedResponse = $this->authenticatorA->sign($response);
 
         $this->assertRequestHasSignature($signedResponse, $expectedSignature);
-        $this->assertTrue($this->authenticator->verify($signedResponse, '$ecr3t'));
-        $this->assertFalse($this->authenticator->verify($signedResponse, 'wr0ng_$ecr3t'));
+        $this->assertTrue($this->authenticatorA->verify($signedResponse));
+        $this->assertFalse($this->authenticatorB->verify($signedResponse));
     }
 
     /**
