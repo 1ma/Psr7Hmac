@@ -182,5 +182,11 @@ class AuthenticatorTest extends \PHPUnit_Framework_TestCase
 
         $this->assertTrue($this->authA->verify($signedMessage));
         $this->assertFalse($this->authB->verify($signedMessage));
+
+        $modifiedMessage = $signedMessage->withHeader('X-Foo', 'Bar');
+        $this->assertTrue($this->authA->verify($modifiedMessage));
+
+        $tamperByModifying = $signedMessage->withHeader(Specification::SIGN_HEADER, 'tampered,signed-header,list');
+        $this->assertFalse($this->authA->verify($tamperByModifying));
     }
 }

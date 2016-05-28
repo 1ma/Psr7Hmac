@@ -64,10 +64,18 @@ class Authenticator
             return false;
         }
 
+        $coveredHeaders = explode(',', $message->getHeaderLine(Specification::SIGN_HEADER));
+
+        foreach ($message->getHeaders() as $name => $value) {
+            if (!in_array(mb_strtolower($name), $coveredHeaders)) {
+                $message = $message->withoutHeader($name);
+            }
+        }
+
         $clientSideSignature = $matches[1];
 
         $serverSideSignature = Specification::doHMACSignature(
-            MessageSerializer::serialize($message->withoutHeader(Specification::AUTH_HEADER)),
+            MessageSerializer::serialize($message),
             $this->secret
         );
 
