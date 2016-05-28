@@ -7,6 +7,7 @@ use UMA\Tests\Psr\Http\Message\Factory\AsikaFactory;
 use UMA\Tests\Psr\Http\Message\Factory\GuzzleFactory;
 use UMA\Tests\Psr\Http\Message\Factory\RingCentralFactory;
 use UMA\Tests\Psr\Http\Message\Factory\SlimFactory;
+use UMA\Tests\Psr\Http\Message\Factory\SymfonyFactory;
 use UMA\Tests\Psr\Http\Message\Factory\WanduFactory;
 use UMA\Tests\Psr\Http\Message\Factory\ZendFactory;
 
@@ -82,6 +83,7 @@ trait ResponsesProvider
             GuzzleFactory::responseClass() => [GuzzleFactory::response($statusCode, $headers, $body)],
             RingCentralFactory::responseClass() => [RingCentralFactory::response($statusCode, $headers, $body)],
             SlimFactory::responseClass() => [SlimFactory::response($statusCode, $headers, $body)],
+            SymfonyFactory::responseClass() => [SymfonyFactory::response($statusCode, $headers, $body)],
             WanduFactory::responseClass() => [WanduFactory::response($statusCode, $headers, $body)],
             ZendFactory::responseClass() => [ZendFactory::response($statusCode, $headers, $body)],
         ];

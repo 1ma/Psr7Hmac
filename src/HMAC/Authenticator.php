@@ -81,13 +81,13 @@ class Authenticator
      */
     private function getSignedHeadersString(MessageInterface $message)
     {
-        $headers = array_keys($message->getHeaders());
-        array_push($headers, Specification::SIGN_HEADER);
+        $headers = array_keys(array_change_key_case($message->getHeaders(), CASE_LOWER));
+        array_push($headers, mb_strtolower(Specification::SIGN_HEADER));
 
         // Some of the tested RequestInterface implementations do not include
         // the Host header in $message->getHeaders(), so it is explicitly set when needed
-        if ($message instanceof RequestInterface && !in_array('Host', $headers)) {
-            array_push($headers, 'Host');
+        if ($message instanceof RequestInterface && !in_array('host', $headers)) {
+            array_push($headers, 'host');
         }
 
         // There is no guarantee about the order of the headers returned by

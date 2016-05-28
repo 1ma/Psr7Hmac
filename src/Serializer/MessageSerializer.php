@@ -39,10 +39,12 @@ final class MessageSerializer
 
     private static function headers(MessageInterface $message)
     {
-        $headers = $message->getHeaders();
-        unset($headers['Host']);
+        $headers = array_change_key_case($message->getHeaders(), CASE_LOWER);
+
+        unset($headers['host']);
 
         ksort($headers);
+
         $msg = '';
         foreach ($headers as $name => $values) {
             $values = is_array($values) ?
@@ -57,7 +59,7 @@ final class MessageSerializer
     private static function requestLine(RequestInterface $request)
     {
         $method = $request->getMethod();
-        $target = trim($request->getRequestTarget());
+        $target = self::fixTarget(trim($request->getRequestTarget()));
         $protocol = 'HTTP/'.$request->getProtocolVersion();
         $host = $request->getUri()->getHost();
 
@@ -71,5 +73,20 @@ final class MessageSerializer
         $reasonPhrase = $response->getReasonPhrase();
 
         return $protocol.self::SP.$statusCode.self::SP.$reasonPhrase.self::CRLF;
+    }
+
+    private static function fixTarget($target)
+    {
+        $parsedTarget = parse_url($target);
+
+        if (!array_key_exists('query', $parsedTarget)) {
+            return $target;
+        }
+
+        parse_str($parsedTarget['query'], $query);
+
+        ksort($query);
+
+        return $parsedTarget['path'].'?'.http_build_query($query);
     }
 }

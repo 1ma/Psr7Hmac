@@ -7,6 +7,7 @@ use UMA\Tests\Psr\Http\Message\Factory\AsikaFactory;
 use UMA\Tests\Psr\Http\Message\Factory\GuzzleFactory;
 use UMA\Tests\Psr\Http\Message\Factory\RingCentralFactory;
 use UMA\Tests\Psr\Http\Message\Factory\SlimFactory;
+use UMA\Tests\Psr\Http\Message\Factory\SymfonyFactory;
 use UMA\Tests\Psr\Http\Message\Factory\WanduFactory;
 use UMA\Tests\Psr\Http\Message\Factory\ZendFactory;
 
@@ -104,6 +105,7 @@ trait RequestsProvider
             GuzzleFactory::requestClass() => [GuzzleFactory::request($method, $url, $headers, $body)],
             RingCentralFactory::requestClass() => [RingCentralFactory::request($method, $url, $headers, $body)],
             SlimFactory::requestClass() => [SlimFactory::request($method, $url, $headers, $body)],
+            SymfonyFactory::requestClass() => [SymfonyFactory::request($method, $url, $headers, $body)],
             WanduFactory::requestClass() => [WanduFactory::request($method, $url, $headers, $body)],
             ZendFactory::requestClass() => [ZendFactory::request($method, $url, $headers, $body)],
         ];
