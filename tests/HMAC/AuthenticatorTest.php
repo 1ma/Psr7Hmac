@@ -58,11 +58,7 @@ class AuthenticatorTest extends \PHPUnit_Framework_TestCase
     {
         $expectedSignature = 'hCMNbSsUWmyt8bGrNWGOz4tZ9wZfyc8Boiv/pZxFeuI=';
 
-        $signedRequest = $this->authA->sign($request);
-
-        $this->assertRequestHasSignature($signedRequest, $expectedSignature);
-        $this->assertTrue($this->authA->verify($signedRequest));
-        $this->assertFalse($this->authB->verify($signedRequest));
+        $this->inspectSignedMessage($this->authA->sign($request), $expectedSignature);
     }
 
     /**
@@ -74,11 +70,7 @@ class AuthenticatorTest extends \PHPUnit_Framework_TestCase
     {
         $expectedSignature = 'Wu7OtxsSWYWk547ChUiRKIS7Vcbwesz1HwNUwW9LOe8=';
 
-        $signedResponse = $this->authA->sign($response);
-
-        $this->assertRequestHasSignature($signedResponse, $expectedSignature);
-        $this->assertTrue($this->authA->verify($signedResponse));
-        $this->assertFalse($this->authB->verify($signedResponse));
+        $this->inspectSignedMessage($this->authA->sign($response), $expectedSignature);
     }
 
     /**
@@ -90,11 +82,7 @@ class AuthenticatorTest extends \PHPUnit_Framework_TestCase
     {
         $expectedSignature = 'XQPzyELbSxz2iprdoTiyP6hJqyvD6mz+Ho51UZp4nE4=';
 
-        $signedRequest = $this->authA->sign($request);
-
-        $this->assertRequestHasSignature($signedRequest, $expectedSignature);
-        $this->assertTrue($this->authA->verify($signedRequest));
-        $this->assertFalse($this->authB->verify($signedRequest));
+        $this->inspectSignedMessage($this->authA->sign($request), $expectedSignature);
     }
 
     /**
@@ -106,11 +94,7 @@ class AuthenticatorTest extends \PHPUnit_Framework_TestCase
     {
         $expectedSignature = 'BAiw7Lk3ImTu9qmEPbZXnJcqYmgky09alQWzCCQ3E3k=';
 
-        $signedResponse = $this->authA->sign($response);
-
-        $this->assertRequestHasSignature($signedResponse, $expectedSignature);
-        $this->assertTrue($this->authA->verify($signedResponse));
-        $this->assertFalse($this->authB->verify($signedResponse));
+        $this->inspectSignedMessage($this->authA->sign($response), $expectedSignature);
     }
 
     /**
@@ -122,11 +106,7 @@ class AuthenticatorTest extends \PHPUnit_Framework_TestCase
     {
         $expectedSignature = 'iL3PfGt8crLuUEubRXbXfXEnE2GyQhuNuEirTMrIiFY=';
 
-        $signedRequest = $this->authA->sign($request);
-
-        $this->assertRequestHasSignature($signedRequest, $expectedSignature);
-        $this->assertTrue($this->authA->verify($signedRequest));
-        $this->assertFalse($this->authB->verify($signedRequest));
+        $this->inspectSignedMessage($this->authA->sign($request), $expectedSignature);
     }
 
     /**
@@ -138,11 +118,7 @@ class AuthenticatorTest extends \PHPUnit_Framework_TestCase
     {
         $expectedSignature = '37m7Y5EtVot5tP8vMw+nk+2lRUW5muM25E2sKevkbCk=';
 
-        $signedResponse = $this->authA->sign($response);
-
-        $this->assertRequestHasSignature($signedResponse, $expectedSignature);
-        $this->assertTrue($this->authA->verify($signedResponse));
-        $this->assertFalse($this->authB->verify($signedResponse));
+        $this->inspectSignedMessage($this->authA->sign($response), $expectedSignature);
     }
 
     /**
@@ -154,11 +130,7 @@ class AuthenticatorTest extends \PHPUnit_Framework_TestCase
     {
         $expectedSignature = 'U8ELXTtMz1El1KIVJbQk+F5uLonKbRts/CSGXQY80Ro=';
 
-        $signedRequest = $this->authA->sign($request);
-
-        $this->assertRequestHasSignature($signedRequest, $expectedSignature);
-        $this->assertTrue($this->authA->verify($signedRequest));
-        $this->assertFalse($this->authB->verify($signedRequest));
+        $this->inspectSignedMessage($this->authA->sign($request), $expectedSignature);
     }
 
     /**
@@ -170,11 +142,7 @@ class AuthenticatorTest extends \PHPUnit_Framework_TestCase
     {
         $expectedSignature = 'OS0lrf0CI6/HSoipkdoyPdmtjBBAfhZF12UWva3LTYg=';
 
-        $signedRequest = $this->authA->sign($request);
-
-        $this->assertRequestHasSignature($signedRequest, $expectedSignature);
-        $this->assertTrue($this->authA->verify($signedRequest));
-        $this->assertFalse($this->authB->verify($signedRequest));
+        $this->inspectSignedMessage($this->authA->sign($request), $expectedSignature);
     }
 
     /**
@@ -186,11 +154,7 @@ class AuthenticatorTest extends \PHPUnit_Framework_TestCase
     {
         $expectedSignature = 'EAAUAb/VY6pSHVJheEcD1RA6/YhRXgVph8H3fQ+GjQc=';
 
-        $signedRequest = $this->authA->sign($request);
-
-        $this->assertRequestHasSignature($signedRequest, $expectedSignature);
-        $this->assertTrue($this->authA->verify($signedRequest));
-        $this->assertFalse($this->authB->verify($signedRequest));
+        $this->inspectSignedMessage($this->authA->sign($request), $expectedSignature);
     }
 
     /**
@@ -202,21 +166,21 @@ class AuthenticatorTest extends \PHPUnit_Framework_TestCase
     {
         $expectedSignature = 'Q0MkgkQpQ8diQKu3v31PvIaVPz4PxZ6zxzSvP0NceUE=';
 
-        $signedResponse = $this->authA->sign($response);
-
-        $this->assertRequestHasSignature($signedResponse, $expectedSignature);
-        $this->assertTrue($this->authA->verify($signedResponse));
-        $this->assertFalse($this->authB->verify($signedResponse));
+        $this->inspectSignedMessage($this->authA->sign($response), $expectedSignature);
     }
 
     /**
      * @param MessageInterface $signedMessage
      * @param string           $signature
      */
-    private function assertRequestHasSignature(MessageInterface $signedMessage, $signature)
+    private function inspectSignedMessage(MessageInterface $signedMessage, $signature)
     {
         $this->assertTrue($signedMessage->hasHeader(Specification::AUTH_HEADER));
         $this->assertTrue($signedMessage->hasHeader(Specification::SIGN_HEADER));
+
         $this->assertSame(Specification::AUTH_PREFIX.' '.$signature, $signedMessage->getHeaderLine(Specification::AUTH_HEADER));
+
+        $this->assertTrue($this->authA->verify($signedMessage));
+        $this->assertFalse($this->authB->verify($signedMessage));
     }
 }
