@@ -58,7 +58,7 @@ class AuthenticatorTest extends \PHPUnit_Framework_TestCase
      */
     public function testSimplestRequest(RequestInterface $request)
     {
-        $expectedSignature = 'gQ40JfujwnnE5/pjfb0Et2uHzxGYMJbODuUb8cFLxrA=';
+        $expectedSignature = 'tCPmkWr72kpjh4x216PP4u2NCSlc7R9lXoAvx53ry4U=';
 
         $signedRequest = $this->authA->sign($request);
 
@@ -74,7 +74,7 @@ class AuthenticatorTest extends \PHPUnit_Framework_TestCase
      */
     public function testSimplestResponse(ResponseInterface $response)
     {
-        $expectedSignature = 'ItmODW3lxpRTblMD4MT6zxC0oblu2RezNkun8Tr4D+Q=';
+        $expectedSignature = 'ZAF0hNrFxjXtbOjN8RVtd1eprtcExMQdliCge5kIIfA=';
 
         $signedResponse = $this->authA->sign($response);
 
@@ -90,7 +90,7 @@ class AuthenticatorTest extends \PHPUnit_Framework_TestCase
      */
     public function testEmptyRequestWithHeaders(RequestInterface $request)
     {
-        $expectedSignature = 'eqzqnfLxcnxSj8zaUqNaFVwObLEgmZSAkq6T6CyvaWE=';
+        $expectedSignature = '4dhPH2FFisH9yKcAfwZaMz2jV/JrhH94mSQ3Sic+Kz0=';
 
         $signedRequest = $this->authA->sign($request);
 
@@ -106,7 +106,7 @@ class AuthenticatorTest extends \PHPUnit_Framework_TestCase
      */
     public function testEmptyResponseWithHeaders(ResponseInterface $response)
     {
-        $expectedSignature = 'sQJZRllkAlcqNOTXBOamAMskxrjZdCiqk5dYqP0uizk=';
+        $expectedSignature = '0ZFlbbKtptgztZEEc3o2xqFENTp4mtm86bSP6YeK59I=';
 
         $signedResponse = $this->authA->sign($response);
 
@@ -122,7 +122,7 @@ class AuthenticatorTest extends \PHPUnit_Framework_TestCase
      */
     public function testJsonRequest(RequestInterface $request)
     {
-        $expectedSignature = 'Gt8eMD3W97b0mhBzdfXCkl9beR6h0sI/XzjojJ3+a6Y=';
+        $expectedSignature = 'UTcToy5vEIE2GjRFEALercuBpxHzcvrxHNR2Tv+lfnw=';
 
         $signedRequest = $this->authA->sign($request);
 
@@ -138,7 +138,7 @@ class AuthenticatorTest extends \PHPUnit_Framework_TestCase
      */
     public function testJsonResponse(ResponseInterface $response)
     {
-        $expectedSignature = 'pY/S1repUENl6VGjszGWxhMVfCmYULvUs4/DoyG9DvM=';
+        $expectedSignature = 'Kv1016HrkvAmeNtTXvK2ca6LmSSwQ6wZ1ZCUBKNQVOk=';
 
         $signedResponse = $this->authA->sign($response);
 
@@ -154,7 +154,7 @@ class AuthenticatorTest extends \PHPUnit_Framework_TestCase
      */
     public function testQueryParamsRequest(RequestInterface $request)
     {
-        $expectedSignature = 'vPj9jJVZZRdpg2WmJ6Sqf3cmJZPj8Re5cmaXZdzkqPw=';
+        $expectedSignature = 'rDiQbpdSirmDobA8kEAmeYGkFLcxfyQ76MWKhg9WoJg=';
 
         $signedRequest = $this->authA->sign($request);
 
@@ -170,7 +170,7 @@ class AuthenticatorTest extends \PHPUnit_Framework_TestCase
      */
     public function testSimpleFormRequest(RequestInterface $request)
     {
-        $expectedSignature = 'vc6RVMtO8KvxcsT1itDVy1tvApMPfV8/jaSuHfrmi80=';
+        $expectedSignature = 'jO4l3Ao0TBeY98jRDJD3WoXft84UNRKRJdn94C4iipo=';
 
         $signedRequest = $this->authA->sign($request);
 
@@ -186,7 +186,7 @@ class AuthenticatorTest extends \PHPUnit_Framework_TestCase
      */
     public function testBinaryRequest(RequestInterface $request)
     {
-        $expectedSignature = 'Ix+BdOyDHLANIAbBhvSRPS9DzhXJN2JAFWzlflj8XJE=';
+        $expectedSignature = 'xbOAlEPMfclLIF6vj+I12SLV0YJogdUkkp8g1+TxeAY=';
 
         $signedRequest = $this->authA->sign($request);
 
@@ -202,7 +202,7 @@ class AuthenticatorTest extends \PHPUnit_Framework_TestCase
      */
     public function testBinaryResponse(ResponseInterface $response)
     {
-        $expectedSignature = 'zxw8sFPd/bFS3HKGcyGCbh4jp57nGn+DCf/k9MCh6ak=';
+        $expectedSignature = 'SeuANaHf2lYMDyErejDuXwfZsowx5sVdfbhWZIQKbEc=';
 
         $signedResponse = $this->authA->sign($response);
 
