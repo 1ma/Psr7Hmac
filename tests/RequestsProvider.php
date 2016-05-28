@@ -80,7 +80,7 @@ trait RequestsProvider
 
     public function binaryRequestProvider()
     {
-        $fh = fopen(__DIR__.'/fixtures/avatar.png', 'r');
+        $fh = fopen(__DIR__.'/resources/avatar.png', 'r');
 
         $headers = [
             'Content-Type' => 'image/png',

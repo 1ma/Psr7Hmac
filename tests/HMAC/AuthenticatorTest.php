@@ -16,8 +16,6 @@ class AuthenticatorTest extends \PHPUnit_Framework_TestCase
     use RequestsProvider;
     use ResponsesProvider;
 
-    const SECRET = '$ecr3t';
-
     /**
      * @var Authenticator
      */
@@ -33,7 +31,7 @@ class AuthenticatorTest extends \PHPUnit_Framework_TestCase
      */
     protected function setUp()
     {
-        $this->authA = new Authenticator(self::SECRET);
+        $this->authA = new Authenticator('$ecr3t');
         $this->authB = new Authenticator('an0ther $ecr3t');
     }
 

@@ -77,9 +77,7 @@ final class MessageSerializer
 
     private static function fixTarget($target)
     {
-        $parsedTarget = parse_url($target);
-
-        if (!array_key_exists('query', $parsedTarget)) {
+        if (!array_key_exists('query', $parsedTarget = parse_url($target))) {
             return $target;
         }
 
