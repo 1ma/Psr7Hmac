@@ -9,20 +9,8 @@ use UMA\Psr\Http\Message\Serializer\MessageSerializer;
 class Authenticator
 {
     /**
-     * @var string
-     */
-    private $secret;
-
-    /**
-     * @param string $secret
-     */
-    public function __construct($secret)
-    {
-        $this->secret = $secret;
-    }
-
-    /**
      * @param MessageInterface $message
+     * @param string           $secret
      *
      * @return MessageInterface The signed message.
      *
@@ -30,7 +18,7 @@ class Authenticator
      *                                   MessageInterface that cannot be
      *                                   serialized and thus neither signed.
      */
-    public function sign(MessageInterface $message)
+    public function sign(MessageInterface $message, $secret)
     {
         $preSignedMessage = $message->withHeader(
             Specification::SIGN_HEADER,
@@ -41,12 +29,13 @@ class Authenticator
 
         return $preSignedMessage->withHeader(
             Specification::AUTH_HEADER,
-            Specification::AUTH_PREFIX.' '.$this->doHMACSignature($serialization, $this->secret)
+            Specification::AUTH_PREFIX.' '.$this->doHMACSignature($serialization, $secret)
         );
     }
 
     /**
      * @param MessageInterface $message
+     * @param string           $secret
      *
      * @return bool Signature verification outcome.
      *
@@ -54,7 +43,7 @@ class Authenticator
      *                                   MessageInterface that cannot be
      *                                   serialized and thus neither verified.
      */
-    public function verify(MessageInterface $message)
+    public function verify(MessageInterface $message, $secret)
     {
         if (0 === preg_match(
             '#^'.Specification::AUTH_PREFIX.' ([+/0-9A-Za-z]{43}=)$#',
@@ -74,7 +63,7 @@ class Authenticator
         $clientSideSignature = $matches[1];
 
         $serverSideSignature = $this->doHMACSignature(
-            MessageSerializer::serialize($message), $this->secret
+            MessageSerializer::serialize($message), $secret
         );
 
         return hash_equals($serverSideSignature, $clientSideSignature);
