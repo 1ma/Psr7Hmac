@@ -41,7 +41,7 @@ class Authenticator
 
         return $preSignedMessage->withHeader(
             Specification::AUTH_HEADER,
-            Specification::AUTH_PREFIX.' '.Specification::doHMACSignature($serialization, $this->secret)
+            Specification::AUTH_PREFIX.' '.$this->doHMACSignature($serialization, $this->secret)
         );
     }
 
@@ -73,11 +73,22 @@ class Authenticator
 
         $clientSideSignature = $matches[1];
 
-        $serverSideSignature = Specification::doHMACSignature(
+        $serverSideSignature = $this->doHMACSignature(
             MessageSerializer::serialize($message), $this->secret
         );
 
         return hash_equals($serverSideSignature, $clientSideSignature);
+    }
+
+    /**
+     * @param string $data The string to be signed
+     * @param string $key  The secret with which to sign it
+     *
+     * @return string A base64-encoded SHA256 hash (so it is guaranteed to be 44 bytes long)
+     */
+    protected function doHMACSignature($data, $key)
+    {
+        return base64_encode(hash_hmac(Specification::HASH_ALGORITHM, $data, $key, true));
     }
 
     /**

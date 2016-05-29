@@ -16,37 +16,44 @@ class AuthenticatorTest extends \PHPUnit_Framework_TestCase
     use RequestsProvider;
     use ResponsesProvider;
 
-    /**
-     * @var Authenticator
-     */
-    private $authA;
+    const SECRET = '$ecr3t';
 
     /**
-     * @var Authenticator
+     * @var Authenticator|\PHPUnit_Framework_MockObject_MockObject
      */
-    private $authB;
+    private $auth;
 
     /**
      * {@inheritdoc}
      */
     protected function setUp()
     {
-        $this->authA = new Authenticator('$ecr3t');
-        $this->authB = new Authenticator('an0ther $ecr3t');
+        $this->auth = $this->getMockBuilder(Authenticator::class)
+            ->setConstructorArgs([self::SECRET])
+            ->setMethods(['doHMACSignature'])
+            ->getMock();
     }
 
     public function testMissingAuthorizationHeader()
     {
         $request = new GuzzleRequest('GET', 'http://example.com');
 
-        $this->assertFalse($this->authA->verify($request));
+        $this->auth
+            ->expects($this->never())
+            ->method('doHMACSignature');
+
+        $this->assertFalse($this->auth->verify($request));
     }
 
     public function testBadlyFormattedSignature()
     {
         $request = new GuzzleRequest('GET', 'http://example.com', [Specification::AUTH_HEADER => Specification::AUTH_PREFIX.' herpder=']);
 
-        $this->assertFalse($this->authA->verify($request));
+        $this->auth
+            ->expects($this->never())
+            ->method('doHMACSignature');
+
+        $this->assertFalse($this->auth->verify($request));
     }
 
     /**
@@ -56,9 +63,11 @@ class AuthenticatorTest extends \PHPUnit_Framework_TestCase
      */
     public function testSimplestRequest(RequestInterface $request)
     {
-        $expectedSignature = 'hCMNbSsUWmyt8bGrNWGOz4tZ9wZfyc8Boiv/pZxFeuI=';
+        $this->setExpectedSerialization(
+            "GET /index.html HTTP/1.1\r\nhost: www.example.com\r\nsigned-headers: host,signed-headers\r\n\r\n"
+        );
 
-        $this->inspectSignedMessage($this->authA->sign($request), $expectedSignature);
+        $this->inspectSignedMessage($this->auth->sign($request));
     }
 
     /**
@@ -68,9 +77,11 @@ class AuthenticatorTest extends \PHPUnit_Framework_TestCase
      */
     public function testSimplestResponse(ResponseInterface $response)
     {
-        $expectedSignature = 'Wu7OtxsSWYWk547ChUiRKIS7Vcbwesz1HwNUwW9LOe8=';
+        $this->setExpectedSerialization(
+            "HTTP/1.1 200 OK\r\nsigned-headers: signed-headers\r\n\r\n"
+        );
 
-        $this->inspectSignedMessage($this->authA->sign($response), $expectedSignature);
+        $this->inspectSignedMessage($this->auth->sign($response));
     }
 
     /**
@@ -80,9 +91,11 @@ class AuthenticatorTest extends \PHPUnit_Framework_TestCase
      */
     public function testEmptyRequestWithHeaders(RequestInterface $request)
     {
-        $expectedSignature = 'XQPzyELbSxz2iprdoTiyP6hJqyvD6mz+Ho51UZp4nE4=';
+        $this->setExpectedSerialization(
+            "GET /index.html HTTP/1.1\r\nhost: www.example.com\r\naccept: */*\r\naccept-encoding: gzip, deflate\r\nconnection: keep-alive\r\nsigned-headers: accept,accept-encoding,connection,host,signed-headers,user-agent\r\nuser-agent: PHP/5.6.21\r\n\r\n"
+        );
 
-        $this->inspectSignedMessage($this->authA->sign($request), $expectedSignature);
+        $this->inspectSignedMessage($this->auth->sign($request));
     }
 
     /**
@@ -92,9 +105,11 @@ class AuthenticatorTest extends \PHPUnit_Framework_TestCase
      */
     public function testEmptyResponseWithHeaders(ResponseInterface $response)
     {
-        $expectedSignature = 'BAiw7Lk3ImTu9qmEPbZXnJcqYmgky09alQWzCCQ3E3k=';
+        $this->setExpectedSerialization(
+            "HTTP/1.1 200 OK\r\naccept-ranges: bytes\r\ncontent-encoding: gzip\r\ncontent-length: 606\r\ncontent-type: text/html\r\nsigned-headers: accept-ranges,content-encoding,content-length,content-type,signed-headers\r\n\r\n"
+        );
 
-        $this->inspectSignedMessage($this->authA->sign($response), $expectedSignature);
+        $this->inspectSignedMessage($this->auth->sign($response));
     }
 
     /**
@@ -104,9 +119,11 @@ class AuthenticatorTest extends \PHPUnit_Framework_TestCase
      */
     public function testJsonRequest(RequestInterface $request)
     {
-        $expectedSignature = 'iL3PfGt8crLuUEubRXbXfXEnE2GyQhuNuEirTMrIiFY=';
+        $this->setExpectedSerialization(
+            "POST /api/record.php HTTP/1.1\r\nhost: www.example.com\r\ncontent-length: 134\r\ncontent-type: application/json; charset=utf-8\r\nsigned-headers: content-length,content-type,host,signed-headers\r\n\r\n{\"employees\":[{\"firstName\":\"John\",\"lastName\":\"Doe\"},{\"firstName\":\"Anna\",\"lastName\":\"Smith\"},{\"firstName\":\"Peter\",\"lastName\":\"Jones\"}]}"
+        );
 
-        $this->inspectSignedMessage($this->authA->sign($request), $expectedSignature);
+        $this->inspectSignedMessage($this->auth->sign($request));
     }
 
     /**
@@ -116,9 +133,11 @@ class AuthenticatorTest extends \PHPUnit_Framework_TestCase
      */
     public function testJsonResponse(ResponseInterface $response)
     {
-        $expectedSignature = '37m7Y5EtVot5tP8vMw+nk+2lRUW5muM25E2sKevkbCk=';
+        $this->setExpectedSerialization(
+            "HTTP/1.1 200 OK\r\ncontent-length: 134\r\ncontent-type: application/json; charset=utf-8\r\nsigned-headers: content-length,content-type,signed-headers\r\n\r\n{\"employees\":[{\"firstName\":\"John\",\"lastName\":\"Doe\"},{\"firstName\":\"Anna\",\"lastName\":\"Smith\"},{\"firstName\":\"Peter\",\"lastName\":\"Jones\"}]}"
+        );
 
-        $this->inspectSignedMessage($this->authA->sign($response), $expectedSignature);
+        $this->inspectSignedMessage($this->auth->sign($response));
     }
 
     /**
@@ -128,9 +147,11 @@ class AuthenticatorTest extends \PHPUnit_Framework_TestCase
      */
     public function testQueryParamsRequest(RequestInterface $request)
     {
-        $expectedSignature = 'U8ELXTtMz1El1KIVJbQk+F5uLonKbRts/CSGXQY80Ro=';
+        $this->setExpectedSerialization(
+            "GET /search?limit=10&offset=50&q=search+term HTTP/1.1\r\nhost: www.example.com\r\naccept: application/json; charset=utf-8\r\nsigned-headers: accept,host,signed-headers\r\n\r\n"
+        );
 
-        $this->inspectSignedMessage($this->authA->sign($request), $expectedSignature);
+        $this->inspectSignedMessage($this->auth->sign($request));
     }
 
     /**
@@ -140,9 +161,11 @@ class AuthenticatorTest extends \PHPUnit_Framework_TestCase
      */
     public function testSimpleFormRequest(RequestInterface $request)
     {
-        $expectedSignature = 'OS0lrf0CI6/HSoipkdoyPdmtjBBAfhZF12UWva3LTYg=';
+        $this->setExpectedSerialization(
+            "POST /login.php HTTP/1.1\r\nhost: www.example.com\r\ncontent-length: 51\r\ncontent-type: application/x-www-form-urlencoded; charset=utf-8\r\nsigned-headers: content-length,content-type,host,signed-headers\r\n\r\nuser=john.doe&password=battery+horse+correct+staple"
+        );
 
-        $this->inspectSignedMessage($this->authA->sign($request), $expectedSignature);
+        $this->inspectSignedMessage($this->auth->sign($request));
     }
 
     /**
@@ -152,9 +175,13 @@ class AuthenticatorTest extends \PHPUnit_Framework_TestCase
      */
     public function testBinaryRequest(RequestInterface $request)
     {
-        $expectedSignature = 'EAAUAb/VY6pSHVJheEcD1RA6/YhRXgVph8H3fQ+GjQc=';
+        $fh = fopen(__DIR__.'/../resources/avatar.png', 'r');
 
-        $this->inspectSignedMessage($this->authA->sign($request), $expectedSignature);
+        $this->setExpectedSerialization(
+            "POST /avatar/upload.php HTTP/1.1\r\nhost: www.example.com\r\ncontent-length: 13360\r\ncontent-type: image/png\r\nsigned-headers: content-length,content-type,host,signed-headers\r\n\r\n".stream_get_contents($fh)
+        );
+
+        $this->inspectSignedMessage($this->auth->sign($request));
     }
 
     /**
@@ -164,32 +191,52 @@ class AuthenticatorTest extends \PHPUnit_Framework_TestCase
      */
     public function testBinaryResponse(ResponseInterface $response)
     {
-        $expectedSignature = 'Q0MkgkQpQ8diQKu3v31PvIaVPz4PxZ6zxzSvP0NceUE=';
+        $fh = fopen(__DIR__.'/../resources/avatar.png', 'r');
 
-        $this->inspectSignedMessage($this->authA->sign($response), $expectedSignature);
+        $this->setExpectedSerialization(
+            "HTTP/1.1 200 OK\r\ncontent-length: 13360\r\ncontent-type: image/png\r\nsigned-headers: content-length,content-type,signed-headers\r\n\r\n".stream_get_contents($fh)
+        );
+
+        $this->inspectSignedMessage($this->auth->sign($response));
+    }
+
+    /**
+     * @param string $serialization
+     */
+    private function setExpectedSerialization($serialization)
+    {
+        $this->auth
+            ->expects($this->once())
+            ->method('doHMACSignature')
+            ->with($serialization, self::SECRET)
+            ->will($this->returnCallback(function ($data, $key) {
+                $method = new \ReflectionMethod(Authenticator::class, 'doHMACSignature');
+                $method->setAccessible(true);
+
+                return $method->invoke(new Authenticator(self::SECRET), $data, $key);
+            }));
     }
 
     /**
      * @param MessageInterface $signedMessage
-     * @param string           $signature
      */
-    private function inspectSignedMessage(MessageInterface $signedMessage, $signature)
+    private function inspectSignedMessage(MessageInterface $signedMessage)
     {
+        $nonMockedAuth = new Authenticator(self::SECRET);
+
         $this->assertTrue($signedMessage->hasHeader(Specification::AUTH_HEADER));
         $this->assertTrue($signedMessage->hasHeader(Specification::SIGN_HEADER));
+        $this->assertTrue($nonMockedAuth->verify($signedMessage));
 
-        $this->assertSame(Specification::AUTH_PREFIX.' '.$signature, $signedMessage->getHeaderLine(Specification::AUTH_HEADER));
-
-        $this->assertTrue($this->authA->verify($signedMessage));
-        $this->assertFalse($this->authB->verify($signedMessage));
+        $this->assertFalse((new Authenticator('an0ther $ecr3t'))->verify($signedMessage));
 
         $modifiedMessage = $signedMessage->withHeader('X-Foo', 'Bar');
-        $this->assertTrue($this->authA->verify($modifiedMessage));
+        $this->assertTrue($nonMockedAuth->verify($modifiedMessage));
 
         $tamperByModifying = $signedMessage->withHeader(Specification::SIGN_HEADER, 'tampered,signed-headers,list');
-        $this->assertFalse($this->authA->verify($tamperByModifying));
+        $this->assertFalse($nonMockedAuth->verify($tamperByModifying));
 
         $tamperByDeleting = $signedMessage->withoutHeader(Specification::SIGN_HEADER);
-        $this->assertFalse($this->authA->verify($tamperByDeleting));
+        $this->assertFalse($nonMockedAuth->verify($tamperByDeleting));
     }
 }
