@@ -56,18 +56,17 @@ class Authenticator
      */
     public function verify(MessageInterface $message)
     {
-        if (empty($authHeader = $message->getHeaderLine(Specification::AUTH_HEADER))) {
+        if (0 === preg_match(
+            '#^'.Specification::AUTH_PREFIX.' ([+/0-9A-Za-z]{43}=)$#',
+            $message->getHeaderLine(Specification::AUTH_HEADER), $matches)
+        ) {
             return false;
         }
 
-        if (0 === preg_match('#^'.Specification::AUTH_PREFIX.' ([+/0-9A-Za-z]{43}=)$#', $authHeader, $matches)) {
-            return false;
-        }
-
-        $coveredHeaders = explode(',', $message->getHeaderLine(Specification::SIGN_HEADER));
+        $signedHeaders = array_filter(explode(',', $message->getHeaderLine(Specification::SIGN_HEADER)));
 
         foreach ($message->getHeaders() as $name => $value) {
-            if (!in_array(mb_strtolower($name), $coveredHeaders)) {
+            if (!in_array(mb_strtolower($name), $signedHeaders)) {
                 $message = $message->withoutHeader($name);
             }
         }
@@ -75,8 +74,7 @@ class Authenticator
         $clientSideSignature = $matches[1];
 
         $serverSideSignature = Specification::doHMACSignature(
-            MessageSerializer::serialize($message),
-            $this->secret
+            MessageSerializer::serialize($message), $this->secret
         );
 
         return hash_equals($serverSideSignature, $clientSideSignature);
