@@ -9,12 +9,16 @@ An HMAC authentication library built on top of the PSR-7 specification.
 
 ```php
 /**
+ * @param string $secret
+ */
+Signer::__construct($secret);
+
+/**
  * @param MessageInterface $message
- * @param string           $secret
  *
  * @return MessageInterface
  */
-Authenticator::sign(MessageInterface $message, $secret);
+Signer::sign(MessageInterface $message);
 
 /**
  * @param MessageInterface $message
@@ -22,7 +26,7 @@ Authenticator::sign(MessageInterface $message, $secret);
  *
  * @return bool
  */
-Authenticator::verify(MessageInterface $message, $secret);
+Verifier::verify(MessageInterface $message, $secret);
 ```
 
 
@@ -33,7 +37,8 @@ Authenticator::verify(MessageInterface $message, $secret);
 
 require_once __DIR__.'/vendor/autoload.php';
 
-use UMA\Psr\Http\Message\HMAC\Authenticator;
+use UMA\Psr\Http\Message\HMAC\Signer;
+use UMA\Psr\Http\Message\HMAC\Verifier;
 use UMA\Psr\Http\Message\Serializer\MessageSerializer;
 
 
@@ -43,8 +48,8 @@ var_dump(MessageSerializer::serialize($psr7request));
 // GET /index.html HTTP/1.1
 // host: www.example.com
 
-$authenticator = new Authenticator();
-$signedRequest = $authenticator->sign($psr7request, 'secret');
+$authenticator = new Signer('secret');
+$signedRequest = $authenticator->sign($psr7request);
 
 var_dump(MessageSerializer::serialize($signedRequest));
 // GET /index.html HTTP/1.1
@@ -52,22 +57,23 @@ var_dump(MessageSerializer::serialize($signedRequest));
 // authorization: HMAC-SHA256 63IQ8RWDbC9p4ipNrkJz0e0UeGiBrR96zkNdujE5cl8=
 // signed-headers: host,signed-headers
 
-var_dump($authenticator->verify($signedRequest, 'secret'));
+$verifier = new Verifier();
+var_dump($verifier->verify($signedRequest, 'secret'));
 // true
 
-var_dump($authenticator->verify($signedRequest, 'another secret'));
+var_dump($verifier->verify($signedRequest, 'another secret'));
 // false
 
 // Headers added after calling sign() do not break the verification, as
 // they are not included in the signed-headers list.
 $signedRequest = $signedRequest->withHeader('User-Agent', 'PHP/5.x');
-var_dump($authenticator->verify($signedRequest, 'secret'));
+var_dump($verifier->verify($signedRequest, 'secret'));
 // true
 
 // Changes made to any chunk of data that was present at the time of the signature
 // are still detected, though.
 $signedRequest = $signedRequest->withHeader('Signed-Headers', 'made,up,list');
-var_dump($authenticator->verify($signedRequest, 'secret'));
+var_dump($verifier->verify($signedRequest, 'secret'));
 // false
 
 ```
