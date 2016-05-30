@@ -3,12 +3,12 @@
     "description": "An HMAC authentication library built on top of the PSR-7 specification",
     "type": "library",
     "license": "MIT",
-    "authors": [
-        {
-            "name": "Marcel Hernandez",
-            "email": "e6990620@gmail.com"
-        }
-    ],
+    "keywords": ["http", "psr7", "hmac"],
+    "homepage": "https://github.com/1ma/Psr7Hmac",
+    "support": {
+        "issues": "https://github.com/1ma/Psr7Hmac/issues",
+        "source": "https://github.com/1ma/Psr7Hmac"
+    },
     "require": {
         "php": ">=5.5.0",
         "ext-hash": "*",
