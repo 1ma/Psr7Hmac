@@ -7,6 +7,7 @@ use Psr\Http\Message\MessageInterface;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use UMA\Psr\Http\Message\HMAC\Authenticator;
+use UMA\Psr\Http\Message\HMAC\Calculator;
 use UMA\Psr\Http\Message\HMAC\Specification;
 use UMA\Tests\Psr\Http\Message\RequestsProvider;
 use UMA\Tests\Psr\Http\Message\ResponsesProvider;
@@ -19,27 +20,39 @@ class AuthenticatorTest extends \PHPUnit_Framework_TestCase
     const SECRET = '$ecr3t';
 
     /**
-     * @var Authenticator|\PHPUnit_Framework_MockObject_MockObject
+     * @var Authenticator
      */
     private $auth;
+
+    /**
+     * @var Calculator|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $calc;
 
     /**
      * {@inheritdoc}
      */
     protected function setUp()
     {
-        $this->auth = $this->getMockBuilder(Authenticator::class)
-            ->setMethods(['doHMACSignature'])
+        $this->calc = $this->getMockBuilder(Calculator::class)
+            ->setMethods(['hmac'])
             ->getMock();
+
+        $this->auth = new Authenticator();
+
+        $prop = (new \ReflectionClass($this->auth))->getProperty('calculator');
+        $prop->setAccessible(true);
+        $prop->setValue($this->auth, $this->calc);
+        $prop->setAccessible(false);
     }
 
     public function testMissingAuthorizationHeader()
     {
         $request = new GuzzleRequest('GET', 'http://example.com');
 
-        $this->auth
+        $this->calc
             ->expects($this->never())
-            ->method('doHMACSignature');
+            ->method('hmac');
 
         $this->assertFalse($this->auth->verify($request, "irrelevant, won't be even checked"));
     }
@@ -48,9 +61,9 @@ class AuthenticatorTest extends \PHPUnit_Framework_TestCase
     {
         $request = new GuzzleRequest('GET', 'http://example.com', [Specification::AUTH_HEADER => Specification::AUTH_PREFIX.' herpder=']);
 
-        $this->auth
+        $this->calc
             ->expects($this->never())
-            ->method('doHMACSignature');
+            ->method('hmac');
 
         $this->assertFalse($this->auth->verify($request, "irrelevant, won't be even checked"));
     }
@@ -204,15 +217,12 @@ class AuthenticatorTest extends \PHPUnit_Framework_TestCase
      */
     private function setExpectedSerialization($serialization)
     {
-        $this->auth
+        $this->calc
             ->expects($this->once())
-            ->method('doHMACSignature')
+            ->method('hmac')
             ->with($serialization, self::SECRET)
             ->will($this->returnCallback(function ($data, $key) {
-                $method = new \ReflectionMethod(Authenticator::class, 'doHMACSignature');
-                $method->setAccessible(true);
-
-                return $method->invoke(new Authenticator(self::SECRET), $data, $key);
+                return (new Calculator())->hmac($data, $key);
             }));
     }
 
@@ -221,21 +231,21 @@ class AuthenticatorTest extends \PHPUnit_Framework_TestCase
      */
     private function inspectSignedMessage(MessageInterface $signedMessage)
     {
-        $nonMockedAuth = new Authenticator();
+        $freshAuth = new Authenticator();
 
         $this->assertTrue($signedMessage->hasHeader(Specification::AUTH_HEADER));
         $this->assertTrue($signedMessage->hasHeader(Specification::SIGN_HEADER));
-        $this->assertTrue($nonMockedAuth->verify($signedMessage, self::SECRET));
+        $this->assertTrue($freshAuth->verify($signedMessage, self::SECRET));
 
-        $this->assertFalse((new Authenticator())->verify($signedMessage, 'an0ther $ecr3t'));
+        $this->assertFalse($freshAuth->verify($signedMessage, 'an0ther $ecr3t'));
 
         $modifiedMessage = $signedMessage->withHeader('X-Foo', 'Bar');
-        $this->assertTrue($nonMockedAuth->verify($modifiedMessage, self::SECRET));
+        $this->assertTrue($freshAuth->verify($modifiedMessage, self::SECRET));
 
         $tamperByModifying = $signedMessage->withHeader(Specification::SIGN_HEADER, 'tampered,signed-headers,list');
-        $this->assertFalse($nonMockedAuth->verify($tamperByModifying, self::SECRET));
+        $this->assertFalse($freshAuth->verify($tamperByModifying, self::SECRET));
 
         $tamperByDeleting = $signedMessage->withoutHeader(Specification::SIGN_HEADER);
-        $this->assertFalse($nonMockedAuth->verify($tamperByDeleting, self::SECRET));
+        $this->assertFalse($freshAuth->verify($tamperByDeleting, self::SECRET));
     }
 }

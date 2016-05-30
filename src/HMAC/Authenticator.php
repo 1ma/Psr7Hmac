@@ -9,6 +9,16 @@ use UMA\Psr\Http\Message\Serializer\MessageSerializer;
 class Authenticator
 {
     /**
+     * @var Calculator
+     */
+    private $calculator;
+
+    public function __construct()
+    {
+        $this->calculator = new Calculator();
+    }
+
+    /**
      * @param MessageInterface $message
      * @param string           $secret
      *
@@ -29,7 +39,7 @@ class Authenticator
 
         return $preSignedMessage->withHeader(
             Specification::AUTH_HEADER,
-            Specification::AUTH_PREFIX.' '.$this->doHMACSignature($serialization, $secret)
+            Specification::AUTH_PREFIX.' '.$this->calculator->hmac($serialization, $secret)
         );
     }
 
@@ -62,22 +72,10 @@ class Authenticator
 
         $clientSideSignature = $matches[1];
 
-        $serverSideSignature = $this->doHMACSignature(
-            MessageSerializer::serialize($message), $secret
-        );
+        $serverSideSignature = $this->calculator
+            ->hmac(MessageSerializer::serialize($message), $secret);
 
         return hash_equals($serverSideSignature, $clientSideSignature);
-    }
-
-    /**
-     * @param string $data The string to be signed
-     * @param string $key  The secret with which to sign it
-     *
-     * @return string A base64-encoded SHA256 hash (so it is guaranteed to be 44 bytes long)
-     */
-    protected function doHMACSignature($data, $key)
-    {
-        return base64_encode(hash_hmac(Specification::HASH_ALGORITHM, $data, $key, true));
     }
 
     /**
