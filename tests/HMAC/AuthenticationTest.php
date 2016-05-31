@@ -2,7 +2,6 @@
 
 namespace UMA\Tests\Psr\Http\Message\HMAC;
 
-use GuzzleHttp\Psr7\Request as GuzzleRequest;
 use Psr\Http\Message\MessageInterface;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -57,24 +56,56 @@ class AuthenticationTest extends \PHPUnit_Framework_TestCase
         $prop->setAccessible(false);
     }
 
-    public function testMissingAuthorizationHeader()
+    /**
+     * @dataProvider simplestRequestProvider
+     *
+     * @param RequestInterface $request
+     */
+    public function testMissingAuthorizationHeader(RequestInterface $request)
     {
-        $request = new GuzzleRequest('GET', 'http://example.com');
-
         $this->calculator
             ->expects($this->never())
             ->method('hmac');
+
+        $request = (new Signer(self::SECRET))
+            ->sign($request)
+            ->withoutHeader(Specification::AUTH_HEADER);
 
         $this->assertFalse($this->verifier->verify($request, "irrelevant, won't be even checked"));
     }
 
-    public function testBadlyFormattedSignature()
+    /**
+     * @dataProvider simplestRequestProvider
+     *
+     * @param RequestInterface $request
+     */
+    public function testMissingSignedHeadersHeader(RequestInterface $request)
     {
-        $request = new GuzzleRequest('GET', 'http://example.com', [Specification::AUTH_HEADER => Specification::AUTH_PREFIX.' herpder=']);
-
         $this->calculator
             ->expects($this->never())
             ->method('hmac');
+
+        $request = (new Signer(self::SECRET))
+            ->sign($request)
+            ->withoutHeader(Specification::SIGN_HEADER);
+
+        $this->assertFalse($this->verifier->verify($request, "irrelevant, won't be even checked"));
+    }
+
+    /**
+     * @dataProvider simplestRequestProvider
+     *
+     * @param RequestInterface $request
+     */
+    public function testBadlyFormattedSignature(RequestInterface $request)
+    {
+        $this->calculator
+            ->expects($this->never())
+            ->method('hmac');
+
+        $request = (new Signer(self::SECRET))
+            ->sign($request)
+            ->withHeader(Specification::AUTH_HEADER, Specification::AUTH_PREFIX.' herpder=');
 
         $this->assertFalse($this->verifier->verify($request, "irrelevant, won't be even checked"));
     }
