@@ -36,6 +36,10 @@ class Verifier
             return false;
         }
 
+        if (!$message->hasHeader(Specification::SIGN_HEADER)) {
+            return false;
+        }
+
         $clientSideSignature = $matches[1];
 
         $serverSideSignature = $this->calculator
