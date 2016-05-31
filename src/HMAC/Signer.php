@@ -44,7 +44,7 @@ class Signer
 
         return $preSignedMessage->withHeader(
             Specification::AUTH_HEADER,
-            Specification::AUTH_PREFIX.' '.$this->calculator->hmac($serialization, $this->secret)
+            Specification::AUTH_PREFIX.$this->calculator->hmac($serialization, $this->secret)
         );
     }
 

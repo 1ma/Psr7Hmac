@@ -105,7 +105,7 @@ class AuthenticationTest extends \PHPUnit_Framework_TestCase
 
         $request = (new Signer(self::SECRET))
             ->sign($request)
-            ->withHeader(Specification::AUTH_HEADER, Specification::AUTH_PREFIX.' herpder=');
+            ->withHeader(Specification::AUTH_HEADER, Specification::AUTH_PREFIX.'herpder=');
 
         $this->assertFalse($this->verifier->verify($request, "irrelevant, won't be even checked"));
     }

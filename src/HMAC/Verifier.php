@@ -30,13 +30,16 @@ class Verifier
     public function verify(MessageInterface $message, $secret)
     {
         if (0 === preg_match(
-            '#^'.Specification::AUTH_PREFIX.' ([+/0-9A-Za-z]{43}=)$#',
-            $message->getHeaderLine(Specification::AUTH_HEADER), $matches)
+            Specification::SIGN_REGEXP,
+            $message->getHeaderLine(Specification::SIGN_HEADER), $matches)
         ) {
             return false;
         }
 
-        if (!$message->hasHeader(Specification::SIGN_HEADER)) {
+        if (0 === preg_match(
+            Specification::AUTH_REGEXP,
+            $message->getHeaderLine(Specification::AUTH_HEADER), $matches)
+        ) {
             return false;
         }
 
