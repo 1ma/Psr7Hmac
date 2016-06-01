@@ -11,5 +11,5 @@ build:
             -
                 command: 'wget https://phar.phpunit.de/phpunit-4.8.26.phar && php phpunit-4.8.26.phar'
                 coverage:
-                    file: 'build/clover.xml'
+                    file: 'build/logs/clover.xml'
                     format: 'clover'
