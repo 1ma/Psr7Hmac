@@ -4,6 +4,7 @@ namespace UMA\Psr\Http\Message\HMAC;
 
 use Psr\Http\Message\MessageInterface;
 use Psr\Http\Message\RequestInterface;
+use UMA\Psr\Http\Message\Internal\HashCalculator;
 use UMA\Psr\Http\Message\Serializer\MessageSerializer;
 
 class Signer
@@ -14,7 +15,7 @@ class Signer
     private $secret;
 
     /**
-     * @var Calculator
+     * @var HashCalculator
      */
     private $calculator;
 
@@ -24,7 +25,7 @@ class Signer
     public function __construct($secret)
     {
         $this->secret = $secret;
-        $this->calculator = new Calculator();
+        $this->calculator = new HashCalculator();
     }
 
     /**

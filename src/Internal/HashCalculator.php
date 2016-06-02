@@ -1,8 +1,10 @@
 <?php
 
-namespace UMA\Psr\Http\Message\HMAC;
+namespace UMA\Psr\Http\Message\Internal;
 
-class Calculator
+use UMA\Psr\Http\Message\HMAC\Specification;
+
+class HashCalculator
 {
     /**
      * @param string $data The string to be signed

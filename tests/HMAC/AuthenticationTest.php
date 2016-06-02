@@ -5,10 +5,10 @@ namespace UMA\Tests\Psr\Http\Message\HMAC;
 use Psr\Http\Message\MessageInterface;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
-use UMA\Psr\Http\Message\HMAC\Calculator;
 use UMA\Psr\Http\Message\HMAC\Signer;
 use UMA\Psr\Http\Message\HMAC\Specification;
 use UMA\Psr\Http\Message\HMAC\Verifier;
+use UMA\Psr\Http\Message\Internal\HashCalculator;
 use UMA\Tests\Psr\Http\Message\RequestsProvider;
 use UMA\Tests\Psr\Http\Message\ResponsesProvider;
 
@@ -20,7 +20,7 @@ class AuthenticationTest extends \PHPUnit_Framework_TestCase
     const SECRET = '$ecr3t';
 
     /**
-     * @var Calculator|\PHPUnit_Framework_MockObject_MockObject
+     * @var HashCalculator|\PHPUnit_Framework_MockObject_MockObject
      */
     private $calculator;
 
@@ -39,7 +39,7 @@ class AuthenticationTest extends \PHPUnit_Framework_TestCase
      */
     protected function setUp()
     {
-        $this->calculator = $this->getMockBuilder(Calculator::class)
+        $this->calculator = $this->getMockBuilder(HashCalculator::class)
             ->setMethods(['hmac'])
             ->getMock();
 
@@ -264,7 +264,7 @@ class AuthenticationTest extends \PHPUnit_Framework_TestCase
             ->method('hmac')
             ->with($serialization, self::SECRET)
             ->will($this->returnCallback(function ($data, $key) {
-                return (new Calculator())->hmac($data, $key);
+                return (new HashCalculator())->hmac($data, $key);
             }));
     }
 

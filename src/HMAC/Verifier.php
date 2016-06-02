@@ -3,13 +3,14 @@
 namespace UMA\Psr\Http\Message\HMAC;
 
 use Psr\Http\Message\MessageInterface;
+use UMA\Psr\Http\Message\Internal\HashCalculator;
 use UMA\Psr\Http\Message\Internal\HeaderValidator;
 use UMA\Psr\Http\Message\Serializer\MessageSerializer;
 
 class Verifier
 {
     /**
-     * @var Calculator
+     * @var HashCalculator
      */
     private $calculator;
 
@@ -20,7 +21,7 @@ class Verifier
 
     public function __construct()
     {
-        $this->calculator = new Calculator();
+        $this->calculator = new HashCalculator();
         $this->validator = (new HeaderValidator())
             ->addRule(Specification::AUTH_HEADER, Specification::AUTH_REGEXP)
             ->addRule(Specification::SIGN_HEADER, Specification::SIGN_REGEXP);
