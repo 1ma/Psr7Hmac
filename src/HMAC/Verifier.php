@@ -3,6 +3,7 @@
 namespace UMA\Psr\Http\Message\HMAC;
 
 use Psr\Http\Message\MessageInterface;
+use UMA\Psr\Http\Message\Internal\HeaderValidator;
 use UMA\Psr\Http\Message\Serializer\MessageSerializer;
 
 class Verifier
@@ -12,9 +13,17 @@ class Verifier
      */
     private $calculator;
 
+    /**
+     * @var HeaderValidator
+     */
+    private $validator;
+
     public function __construct()
     {
         $this->calculator = new Calculator();
+        $this->validator = (new HeaderValidator())
+            ->addRule(Specification::AUTH_HEADER, Specification::AUTH_REGEXP)
+            ->addRule(Specification::SIGN_HEADER, Specification::SIGN_REGEXP);
     }
 
     /**
@@ -29,21 +38,11 @@ class Verifier
      */
     public function verify(MessageInterface $message, $secret)
     {
-        if (0 === preg_match(
-            Specification::SIGN_REGEXP,
-            $message->getHeaderLine(Specification::SIGN_HEADER), $matches)
-        ) {
+        if (false === $matches = $this->validator->conforms($message)) {
             return false;
         }
 
-        if (0 === preg_match(
-            Specification::AUTH_REGEXP,
-            $message->getHeaderLine(Specification::AUTH_HEADER), $matches)
-        ) {
-            return false;
-        }
-
-        $clientSideSignature = $matches[1];
+        $clientSideSignature = $matches[Specification::AUTH_HEADER][1];
 
         $serverSideSignature = $this->calculator
             ->hmac(MessageSerializer::serialize($this->withoutUnsignedHeaders($message)), $secret);
