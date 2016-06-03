@@ -28,16 +28,14 @@ class HeaderValidator
      */
     public function conforms(MessageInterface $message)
     {
-        $allMatches = [];
+        $matches = [];
 
         foreach ($this->rules as $header => $rule) {
-            if (0 === preg_match($rule, $message->getHeaderLine($header), $matches)) {
+            if (0 === preg_match($rule, $message->getHeaderLine($header), $matches[$header])) {
                 return false;
             }
-
-            $allMatches[$header] = $matches;
         }
 
-        return $allMatches;
+        return $matches;
     }
 }
