@@ -11,11 +11,13 @@ use UMA\Psr\Http\Message\HMAC\Verifier;
 use UMA\Psr\Http\Message\Internal\HashCalculator;
 use UMA\Psr\Http\Message\Internal\NonceProvider;
 use UMA\Psr\Http\Message\Internal\TimeProvider;
+use UMA\Tests\Psr\Http\Message\ReflectionUtil;
 use UMA\Tests\Psr\Http\Message\RequestsProvider;
 use UMA\Tests\Psr\Http\Message\ResponsesProvider;
 
-class AuthenticationTest extends \PHPUnit_Framework_TestCase
+class FullSpectrumTest extends \PHPUnit_Framework_TestCase
 {
+    use ReflectionUtil;
     use RequestsProvider;
     use ResponsesProvider;
 
@@ -316,18 +318,5 @@ class AuthenticationTest extends \PHPUnit_Framework_TestCase
 
         $deletedSignedHeader = $signedMessage->withoutHeader(Specification::SIGN_HEADER);
         $this->assertFalse($freshVerifier->verify($deletedSignedHeader, self::SECRET));
-    }
-
-    /**
-     * @param object $instance
-     * @param string $propertyName
-     * @param mixed  $misteryMeat
-     */
-    private function replaceInstanceProperty($instance, $propertyName, $misteryMeat)
-    {
-        $reflectionProp = (new \ReflectionClass($instance))->getProperty($propertyName);
-        $reflectionProp->setAccessible(true);
-        $reflectionProp->setValue($instance, $misteryMeat);
-        $reflectionProp->setAccessible(false);
     }
 }
