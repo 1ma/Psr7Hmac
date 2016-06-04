@@ -27,6 +27,14 @@ final class Specification
     const AUTH_REGEXP = '@^HMAC-SHA256 ([+/0-9A-Za-z]{43}=)$@';
 
     /**
+     * The 'Date' header field represents the date and time at which the
+     * message was originated.
+     *
+     * @see https://tools.ietf.org/html/rfc7231#section-7.1.1.2
+     */
+    const DATE_HEADER = 'Date';
+
+    /**
      * Hash algorithm used in conjunction with the HMAC function.
      */
     const HASH_ALGORITHM = 'sha256';

@@ -5,6 +5,7 @@ namespace UMA\Psr\Http\Message\HMAC;
 use Psr\Http\Message\MessageInterface;
 use Psr\Http\Message\RequestInterface;
 use UMA\Psr\Http\Message\Internal\HashCalculator;
+use UMA\Psr\Http\Message\Internal\TimeProvider;
 use UMA\Psr\Http\Message\Serializer\MessageSerializer;
 
 class Signer
@@ -20,12 +21,18 @@ class Signer
     private $calculator;
 
     /**
+     * @var TimeProvider
+     */
+    private $timeProvider;
+
+    /**
      * @param string $secret
      */
     public function __construct($secret)
     {
         $this->secret = $secret;
         $this->calculator = new HashCalculator();
+        $this->timeProvider = new TimeProvider();
     }
 
     /**
@@ -40,7 +47,7 @@ class Signer
     public function sign(MessageInterface $message)
     {
         $serialization = MessageSerializer::serialize(
-            $preSignedMessage = $this->withSignedHeadersHeader($message)
+            $preSignedMessage = $this->withSignedHeadersHeader($this->withDateHeader($message))
         );
 
         return $preSignedMessage->withHeader(
@@ -71,5 +78,15 @@ class Signer
         sort($headers);
 
         return $message->withHeader(Specification::SIGN_HEADER, implode(',', $headers));
+    }
+
+    /**
+     * @param MessageInterface $message
+     *
+     * @return MessageInterface
+     */
+    private function withDateHeader(MessageInterface $message)
+    {
+        return $message->withHeader(Specification::DATE_HEADER, $this->timeProvider->currentTime());
     }
 }
