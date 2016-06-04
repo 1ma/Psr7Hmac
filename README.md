@@ -2,7 +2,7 @@
 
 An HMAC authentication library built on top of the PSR-7 specification.
 
-[![Build Status](https://travis-ci.org/1ma/Psr7Hmac.svg?branch=master)](https://travis-ci.org/1ma/Psr7Hmac) [![Coverage Status](https://coveralls.io/repos/github/1ma/Psr7Hmac/badge.svg?branch=master)](https://coveralls.io/github/1ma/Psr7Hmac?branch=master&bust=1) [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/1ma/Psr7Hmac/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/1ma/Psr7Hmac/?branch=master) [![Code Climate](https://codeclimate.com/github/1ma/Psr7Hmac/badges/gpa.svg)](https://codeclimate.com/github/1ma/Psr7Hmac) [![SensioLabsInsight](https://insight.sensiolabs.com/projects/8c7c772a-5819-426d-bef9-eb9f2b4a3102/mini.png)](https://insight.sensiolabs.com/projects/8c7c772a-5819-426d-bef9-eb9f2b4a3102)
+[![Build Status](https://travis-ci.org/1ma/Psr7Hmac.svg?branch=master)](https://travis-ci.org/1ma/Psr7Hmac) [![Code Coverage](https://scrutinizer-ci.com/g/1ma/Psr7Hmac/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/1ma/Psr7Hmac/?branch=master) [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/1ma/Psr7Hmac/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/1ma/Psr7Hmac/?branch=master) [![Code Climate](https://codeclimate.com/github/1ma/Psr7Hmac/badges/gpa.svg)](https://codeclimate.com/github/1ma/Psr7Hmac) [![SensioLabsInsight](https://insight.sensiolabs.com/projects/8c7c772a-5819-426d-bef9-eb9f2b4a3102/mini.png)](https://insight.sensiolabs.com/projects/8c7c772a-5819-426d-bef9-eb9f2b4a3102)
 
 
 ## Library API
@@ -48,8 +48,8 @@ var_dump(MessageSerializer::serialize($psr7request));
 // GET /index.html HTTP/1.1
 // host: www.example.com
 
-$authenticator = new Signer('secret');
-$signedRequest = $authenticator->sign($psr7request);
+$signer = new Signer('secret');
+$signedRequest = $signer->sign($psr7request);
 
 var_dump(MessageSerializer::serialize($signedRequest));
 // GET /index.html HTTP/1.1
