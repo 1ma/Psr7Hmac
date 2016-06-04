@@ -30,6 +30,9 @@ final class Specification
      * The 'Date' header field represents the date and time at which the
      * message was originated.
      *
+     * The library client may choose to use this field to invalidate
+     * withheld HTTP requests.
+     *
      * @see https://tools.ietf.org/html/rfc7231#section-7.1.1.2
      */
     const DATE_HEADER = 'Date';
@@ -38,6 +41,12 @@ final class Specification
      * Hash algorithm used in conjunction with the HMAC function.
      */
     const HASH_ALGORITHM = 'sha256';
+
+    /**
+     * The 'Nonce' header field holds a random nonce. The library client
+     * may choose to use this field to detect replayed HTTP requests.
+     */
+    const NONCE_HEADER = 'Nonce';
 
     /**
      * Name of the HTTP header that holds the list of signed headers.

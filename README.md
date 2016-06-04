@@ -54,8 +54,10 @@ $signedRequest = $authenticator->sign($psr7request);
 var_dump(MessageSerializer::serialize($signedRequest));
 // GET /index.html HTTP/1.1
 // host: www.example.com
-// authorization: HMAC-SHA256 63IQ8RWDbC9p4ipNrkJz0e0UeGiBrR96zkNdujE5cl8=
-// signed-headers: host,signed-headers
+// authorization: HMAC-SHA256 tBrVPLVL1T7MUy+F3x1jPXsjVIodCtMrSl7EbgTNTGk=
+// date: Sat, 04 Jun 2016 21:29:28 GMT
+// nonce: W642HAT8t1xhWQn5
+// signed-headers: date,host,nonce,signed-headers
 
 $verifier = new Verifier();
 var_dump($verifier->verify($signedRequest, 'secret'));
@@ -75,7 +77,6 @@ var_dump($verifier->verify($signedRequest, 'secret'));
 $signedRequest = $signedRequest->withHeader('Signed-Headers', 'made,up,list');
 var_dump($verifier->verify($signedRequest, 'secret'));
 // false
-
 ```
 
 

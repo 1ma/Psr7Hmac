@@ -5,6 +5,7 @@ namespace UMA\Psr\Http\Message\HMAC;
 use Psr\Http\Message\MessageInterface;
 use Psr\Http\Message\RequestInterface;
 use UMA\Psr\Http\Message\Internal\HashCalculator;
+use UMA\Psr\Http\Message\Internal\NonceProvider;
 use UMA\Psr\Http\Message\Internal\TimeProvider;
 use UMA\Psr\Http\Message\Serializer\MessageSerializer;
 
@@ -21,6 +22,11 @@ class Signer
     private $calculator;
 
     /**
+     * @var NonceProvider
+     */
+    private $nonceProvider;
+
+    /**
      * @var TimeProvider
      */
     private $timeProvider;
@@ -32,6 +38,7 @@ class Signer
     {
         $this->secret = $secret;
         $this->calculator = new HashCalculator();
+        $this->nonceProvider = new NonceProvider();
         $this->timeProvider = new TimeProvider();
     }
 
@@ -47,7 +54,11 @@ class Signer
     public function sign(MessageInterface $message)
     {
         $serialization = MessageSerializer::serialize(
-            $preSignedMessage = $this->withSignedHeadersHeader($this->withDateHeader($message))
+            $preSignedMessage = $this->withSignedHeadersHeader(
+                $message
+                    ->withHeader(Specification::DATE_HEADER, $this->timeProvider->currentTime())
+                    ->withHeader(Specification::NONCE_HEADER, $this->nonceProvider->randomNonce())
+            )
         );
 
         return $preSignedMessage->withHeader(
@@ -78,15 +89,5 @@ class Signer
         sort($headers);
 
         return $message->withHeader(Specification::SIGN_HEADER, implode(',', $headers));
-    }
-
-    /**
-     * @param MessageInterface $message
-     *
-     * @return MessageInterface
-     */
-    private function withDateHeader(MessageInterface $message)
-    {
-        return $message->withHeader(Specification::DATE_HEADER, $this->timeProvider->currentTime());
     }
 }
