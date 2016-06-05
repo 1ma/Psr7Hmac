@@ -21,6 +21,20 @@ Signer::__construct($secret);
 Signer::sign(MessageInterface $message);
 
 /**
+ * @param int $maxDelay
+ *
+ * @return Verifier
+ */
+Verifier::setMaximumDelay($maxDelay);
+
+/**
+ * @param MonitorInterface $monitor
+ *
+ * @return Verifier
+ */
+Verifier::setMonitor(MonitorInterface $monitor);
+
+/**
  * @param MessageInterface $message
  * @param string           $secret
  *
