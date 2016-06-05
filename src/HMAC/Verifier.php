@@ -5,6 +5,8 @@ namespace UMA\Psr\Http\Message\HMAC;
 use Psr\Http\Message\MessageInterface;
 use UMA\Psr\Http\Message\Internal\HashCalculator;
 use UMA\Psr\Http\Message\Internal\HeaderValidator;
+use UMA\Psr\Http\Message\Monitor\BlindMonitor;
+use UMA\Psr\Http\Message\Monitor\MonitorInterface;
 use UMA\Psr\Http\Message\Serializer\MessageSerializer;
 
 class Verifier
@@ -20,6 +22,11 @@ class Verifier
     private $maxDelay = null;
 
     /**
+     * @var MonitorInterface
+     */
+    private $monitor;
+
+    /**
      * @var HeaderValidator
      */
     private $validator;
@@ -27,6 +34,7 @@ class Verifier
     public function __construct()
     {
         $this->calculator = new HashCalculator();
+        $this->monitor = new BlindMonitor();
         $this->validator = (new HeaderValidator())
             ->addRule(Specification::AUTH_HEADER, Specification::AUTH_REGEXP)
             ->addRule(Specification::SIGN_HEADER, Specification::SIGN_REGEXP);
@@ -40,6 +48,18 @@ class Verifier
     public function setMaximumDelay($maxDelay)
     {
         $this->maxDelay = $maxDelay;
+
+        return $this;
+    }
+
+    /**
+     * @param MonitorInterface $monitor
+     *
+     * @return Verifier
+     */
+    public function setMonitor(MonitorInterface $monitor)
+    {
+        $this->monitor = $monitor;
 
         return $this;
     }
@@ -65,7 +85,11 @@ class Verifier
         $serverSideSignature = $this->calculator
             ->hmac(MessageSerializer::serialize($this->withoutUnsignedHeaders($message)), $secret);
 
-        if (!hash_equals($serverSideSignature, $clientSideSignature) || $this->delayed($message)) {
+        if (
+            !hash_equals($serverSideSignature, $clientSideSignature) ||
+            $this->delayed($message) ||
+            $this->monitor->seen($message)
+        ) {
             return false;
         }
 
