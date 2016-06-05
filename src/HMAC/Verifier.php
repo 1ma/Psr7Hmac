@@ -15,6 +15,11 @@ class Verifier
     private $calculator;
 
     /**
+     * @var null|int
+     */
+    private $maxDelay = null;
+
+    /**
      * @var HeaderValidator
      */
     private $validator;
@@ -25,6 +30,18 @@ class Verifier
         $this->validator = (new HeaderValidator())
             ->addRule(Specification::AUTH_HEADER, Specification::AUTH_REGEXP)
             ->addRule(Specification::SIGN_HEADER, Specification::SIGN_REGEXP);
+    }
+
+    /**
+     * @param int $maxDelay
+     *
+     * @return Verifier
+     */
+    public function setMaximumDelay($maxDelay)
+    {
+        $this->maxDelay = $maxDelay;
+
+        return $this;
     }
 
     /**
@@ -48,7 +65,11 @@ class Verifier
         $serverSideSignature = $this->calculator
             ->hmac(MessageSerializer::serialize($this->withoutUnsignedHeaders($message)), $secret);
 
-        return hash_equals($serverSideSignature, $clientSideSignature);
+        if (!hash_equals($serverSideSignature, $clientSideSignature) || $this->delayed($message)) {
+            return false;
+        }
+
+        return true;
     }
 
     /**
@@ -67,5 +88,18 @@ class Verifier
         }
 
         return $message;
+    }
+
+    /**
+     * @param MessageInterface $message
+     *
+     * @return bool
+     */
+    private function delayed(MessageInterface $message)
+    {
+        $currentTimestamp = (new \DateTime('now', new \DateTimeZone('GMT')))->getTimestamp();
+        $messageTimestamp = (new \DateTime($message->getHeaderLine(Specification::DATE_HEADER)))->getTimestamp();
+
+        return is_int($this->maxDelay) && $currentTimestamp - $messageTimestamp > $this->maxDelay;
     }
 }
