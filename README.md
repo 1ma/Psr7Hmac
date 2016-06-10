@@ -98,6 +98,7 @@ var_dump($verifier->verify($signedRequest, 'secret'));
 
 * [[PSR-7] HTTP message interfaces](http://www.php-fig.org/psr/psr-7/)
 * [[RFC 2104] HMAC: Keyed-Hashing for Message Authentication](http://tools.ietf.org/html/rfc2104)
+* [[RFC 4231] Identifiers and Test Vectors for HMAC-SHA-224, HMAC-SHA-256, HMAC-SHA-384, and HMAC-SHA-512](http://tools.ietf.org/html/rfc4231)
 * [[RFC 7230] Hypertext Transfer Protocol (HTTP/1.1): Message Syntax and Routing](http://tools.ietf.org/html/rfc7230)
 * [[RFC 7231] Hypertext Transfer Protocol (HTTP/1.1): Semantics and Content](http://tools.ietf.org/html/rfc7231)
 * [[RFC 7235] Hypertext Transfer Protocol (HTTP/1.1): Authentication](http://tools.ietf.org/html/rfc7235)
