@@ -2,51 +2,57 @@
 
 namespace UMA\Tests\Psr\Http\Message\HMAC;
 
-use GuzzleHttp\Psr7\Request;
-use Psr\Http\Message\MessageInterface;
+use Psr\Http\Message\RequestInterface;
 use UMA\Psr\Http\Message\HMAC\Signer;
 use UMA\Psr\Http\Message\HMAC\Verifier;
 use UMA\Tests\Psr\Http\Message\Monitor\ArrayMonitor;
+use UMA\Tests\Psr\Http\Message\RequestsProvider;
 
 class VerifierTest extends \PHPUnit_Framework_TestCase
 {
     const SECRET = '$ecr3t';
 
+    use RequestsProvider;
+
     /**
-     * @var MessageInterface
+     * @dataProvider simplestRequestProvider
+     *
+     * @param RequestInterface $request
      */
-    private $signedRequest;
-
-    protected function setUp()
+    public function testDelayedMessageDetection(RequestInterface $request)
     {
-        $request = new Request('GET', 'http://www.example.com/index.html');
+        $signedRequest = (new Signer(self::SECRET))
+            ->sign($request);
 
-        $this->signedRequest = (new Signer(self::SECRET))->sign($request);
-    }
-
-    public function testDelayedMessageDetection()
-    {
         $timeSensitiveVerifier = (new Verifier())->setMaximumDelay(0);
 
-        $this->assertTrue($timeSensitiveVerifier->verify($this->signedRequest, self::SECRET));
+        $this->assertTrue($timeSensitiveVerifier->verify($signedRequest, self::SECRET));
 
         sleep(1);
 
-        $this->assertFalse($timeSensitiveVerifier->verify($this->signedRequest, self::SECRET));
+        $this->assertFalse($timeSensitiveVerifier->verify($signedRequest, self::SECRET));
     }
 
-    public function testReplayedMessageDetection()
+    /**
+     * @dataProvider simplestRequestProvider
+     *
+     * @param RequestInterface $request
+     */
+    public function testReplayedMessageDetection(RequestInterface $request)
     {
+        $signedRequest = (new Signer(self::SECRET))
+            ->sign($request);
+
         $regularVerifier = (new Verifier());
-        $this->assertTrue($regularVerifier->verify($this->signedRequest, self::SECRET));
-        $this->assertTrue($regularVerifier->verify($this->signedRequest, self::SECRET));
-        $this->assertTrue($regularVerifier->verify($this->signedRequest, self::SECRET));
-        $this->assertTrue($regularVerifier->verify($this->signedRequest, self::SECRET));
+        $this->assertTrue($regularVerifier->verify($signedRequest, self::SECRET));
+        $this->assertTrue($regularVerifier->verify($signedRequest, self::SECRET));
+        $this->assertTrue($regularVerifier->verify($signedRequest, self::SECRET));
+        $this->assertTrue($regularVerifier->verify($signedRequest, self::SECRET));
 
         $monitoredVerifier = (new Verifier())->setMonitor(new ArrayMonitor());
-        $this->assertTrue($monitoredVerifier->verify($this->signedRequest, self::SECRET));
-        $this->assertFalse($monitoredVerifier->verify($this->signedRequest, self::SECRET));
-        $this->assertFalse($monitoredVerifier->verify($this->signedRequest, self::SECRET));
-        $this->assertFalse($monitoredVerifier->verify($this->signedRequest, self::SECRET));
+        $this->assertTrue($monitoredVerifier->verify($signedRequest, self::SECRET));
+        $this->assertFalse($monitoredVerifier->verify($signedRequest, self::SECRET));
+        $this->assertFalse($monitoredVerifier->verify($signedRequest, self::SECRET));
+        $this->assertFalse($monitoredVerifier->verify($signedRequest, self::SECRET));
     }
 }
