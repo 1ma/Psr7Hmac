@@ -44,11 +44,6 @@ class FullSpectrumTest extends \PHPUnit_Framework_TestCase
     private $signer;
 
     /**
-     * @var Verifier
-     */
-    private $verifier;
-
-    /**
      * {@inheritdoc}
      */
     protected function setUp()
@@ -79,9 +74,6 @@ class FullSpectrumTest extends \PHPUnit_Framework_TestCase
         $this->replaceInstanceProperty($this->signer, 'calculator', $this->calculator);
         $this->replaceInstanceProperty($this->signer, 'nonceProvider', $nonceProvider);
         $this->replaceInstanceProperty($this->signer, 'timeProvider', $timeProvider);
-
-        $this->verifier = new Verifier();
-        $this->replaceInstanceProperty($this->verifier, 'calculator', $this->calculator);
     }
 
     /**

@@ -53,19 +53,16 @@ require_once __DIR__.'/vendor/autoload.php';
 
 use UMA\Psr\Http\Message\HMAC\Signer;
 use UMA\Psr\Http\Message\HMAC\Verifier;
-use UMA\Psr\Http\Message\Serializer\MessageSerializer;
 
 
+//// CLIENT SIDE
 $psr7request = new \Zend\Diactoros\Request('http://www.example.com/index.html', 'GET');
-
-var_dump(MessageSerializer::serialize($psr7request));
 // GET /index.html HTTP/1.1
 // host: www.example.com
 
 $signer = new Signer('secret');
-$signedRequest = $signer->sign($psr7request);
 
-var_dump(MessageSerializer::serialize($signedRequest));
+$signedRequest = $signer->sign($psr7request);
 // GET /index.html HTTP/1.1
 // host: www.example.com
 // authorization: HMAC-SHA256 tBrVPLVL1T7MUy+F3x1jPXsjVIodCtMrSl7EbgTNTGk=
@@ -73,7 +70,10 @@ var_dump(MessageSerializer::serialize($signedRequest));
 // nonce: W642HAT8t1xhWQn5
 // signed-headers: date,host,nonce,signed-headers
 
+
+//// SERVER SIDE
 $verifier = new Verifier();
+
 var_dump($verifier->verify($signedRequest, 'secret'));
 // true
 
