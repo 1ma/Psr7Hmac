@@ -85,15 +85,10 @@ class Verifier
         $serverSideSignature = $this->calculator
             ->hmac(MessageSerializer::serialize($this->withoutUnsignedHeaders($message)), $secret);
 
-        if (
-            !hash_equals($serverSideSignature, $clientSideSignature) ||
-            $this->delayed($message) ||
-            $this->monitor->seen($message)
-        ) {
-            return false;
-        }
-
-        return true;
+        return
+            hash_equals($serverSideSignature, $clientSideSignature) &&
+            !$this->delayed($message) &&
+            !$this->monitor->seen($message);
     }
 
     /**
