@@ -11,7 +11,7 @@ class TimeProvider
      *
      * @example Sat, 04 Jun 2016 18:28:44 GMT
      *
-     * @see http://tools.ietf.org/html/rfc7231#section-7.1.1.1
+     * @see https://tools.ietf.org/html/rfc7231#section-7.1.1.1
      */
     public function currentTime()
     {

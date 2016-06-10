@@ -8,7 +8,7 @@ final class Specification
      * Name of the HTTP header that will hold the authentication
      * credentials (i.e. the HMAC signature). Must conform to RFC7235.
      *
-     * @see http://tools.ietf.org/html/rfc7235#section-4.2
+     * @see https://tools.ietf.org/html/rfc7235#section-4.2
      */
     const AUTH_HEADER = 'Authorization';
 
@@ -91,9 +91,9 @@ final class Specification
      *  DIGIT          =  %x30-39           ; 0-9
      *  ALPHA          =  %x41-5A / %x61-7A ; A-Z / a-z
      *
-     * @see http://tools.ietf.org/html/rfc5234#appendix-B.1
-     * @see http://tools.ietf.org/html/rfc7230#section-3.2
-     * @see http://tools.ietf.org/html/rfc7230#section-3.2.6
+     * @see https://tools.ietf.org/html/rfc5234#appendix-B.1
+     * @see https://tools.ietf.org/html/rfc7230#section-3.2
+     * @see https://tools.ietf.org/html/rfc7230#section-3.2.6
      */
     const SIGN_REGEXP = "@^[-!#$%&'*+.^_`|~0-9a-z]+(,[-!#$%&'*+.^_`|~0-9a-z]+)*$@";
 }
