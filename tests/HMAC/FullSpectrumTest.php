@@ -62,7 +62,7 @@ class FullSpectrumTest extends \PHPUnit_Framework_TestCase
             ->getMock();
 
         $nonceProvider
-            ->expects($this->any())
+            ->expects($this->once())
             ->method('randomNonce')
             ->will($this->returnValue($this->nonce = (new NonceProvider())->randomNonce()));
 
@@ -71,7 +71,7 @@ class FullSpectrumTest extends \PHPUnit_Framework_TestCase
             ->getMock();
 
         $timeProvider
-            ->expects($this->any())
+            ->expects($this->once())
             ->method('currentTime')
             ->will($this->returnValue($this->timestamp = (new TimeProvider())->currentTime()));
 
@@ -82,60 +82,6 @@ class FullSpectrumTest extends \PHPUnit_Framework_TestCase
 
         $this->verifier = new Verifier();
         $this->replaceInstanceProperty($this->verifier, 'calculator', $this->calculator);
-    }
-
-    /**
-     * @dataProvider simplestRequestProvider
-     *
-     * @param RequestInterface $request
-     */
-    public function testMissingAuthorizationHeader(RequestInterface $request)
-    {
-        $this->calculator
-            ->expects($this->never())
-            ->method('hmac');
-
-        $request = (new Signer(self::SECRET))
-            ->sign($request)
-            ->withoutHeader(Specification::AUTH_HEADER);
-
-        $this->assertFalse($this->verifier->verify($request, "irrelevant, won't be even checked"));
-    }
-
-    /**
-     * @dataProvider simplestRequestProvider
-     *
-     * @param RequestInterface $request
-     */
-    public function testMissingSignedHeadersHeader(RequestInterface $request)
-    {
-        $this->calculator
-            ->expects($this->never())
-            ->method('hmac');
-
-        $request = (new Signer(self::SECRET))
-            ->sign($request)
-            ->withoutHeader(Specification::SIGN_HEADER);
-
-        $this->assertFalse($this->verifier->verify($request, "irrelevant, won't be even checked"));
-    }
-
-    /**
-     * @dataProvider simplestRequestProvider
-     *
-     * @param RequestInterface $request
-     */
-    public function testBadlyFormattedSignature(RequestInterface $request)
-    {
-        $this->calculator
-            ->expects($this->never())
-            ->method('hmac');
-
-        $request = (new Signer(self::SECRET))
-            ->sign($request)
-            ->withHeader(Specification::AUTH_HEADER, Specification::AUTH_PREFIX.'herpder=');
-
-        $this->assertFalse($this->verifier->verify($request, "irrelevant, won't be even checked"));
     }
 
     /**
