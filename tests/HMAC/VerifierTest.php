@@ -3,6 +3,7 @@
 namespace UMA\Tests\Psr\Http\Message\HMAC;
 
 use Psr\Http\Message\RequestInterface;
+use Symfony\Bridge\PhpUnit\ClockMock;
 use UMA\Psr\Http\Message\HMAC\Signer;
 use UMA\Psr\Http\Message\HMAC\Specification;
 use UMA\Psr\Http\Message\HMAC\Verifier;
@@ -101,16 +102,21 @@ class VerifierTest extends \PHPUnit_Framework_TestCase
      */
     public function testDelayedMessageDetection(RequestInterface $request)
     {
+        ClockMock::withClockMock(true);
+
         $signedRequest = (new Signer(self::SECRET))
             ->sign($request);
 
-        $timeSensitiveVerifier = (new Verifier())->setMaximumDelay(0);
+        $timeSensitiveVerifier = (new Verifier())
+            ->setMaximumDelay(5);
 
         $this->assertTrue($timeSensitiveVerifier->verify($signedRequest, self::SECRET));
 
-        sleep(1);
+        sleep(10);
 
         $this->assertFalse($timeSensitiveVerifier->verify($signedRequest, self::SECRET));
+
+        ClockMock::withClockMock(false);
     }
 
     /**

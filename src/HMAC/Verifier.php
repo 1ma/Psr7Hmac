@@ -116,7 +116,7 @@ class Verifier
      */
     private function delayed(MessageInterface $message)
     {
-        $currentTimestamp = (new \DateTime('now', new \DateTimeZone('GMT')))->getTimestamp();
+        $currentTimestamp = time();
         $messageTimestamp = (new \DateTime($message->getHeaderLine(Specification::DATE_HEADER)))->getTimestamp();
 
         return is_int($this->maxDelay) && $currentTimestamp - $messageTimestamp > $this->maxDelay;

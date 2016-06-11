@@ -22,4 +22,15 @@
             <directory>src</directory>
         </whitelist>
     </filter>
+
+    <listeners>
+        <listener class="Symfony\Bridge\PhpUnit\SymfonyTestsListener">
+            <arguments>
+                <array>
+                    <element><string>UMA\Tests\Psr\Http\Message\HMAC</string></element>
+                    <element><string>UMA\Psr\Http\Message</string></element>
+                </array>
+            </arguments>
+        </listener>
+    </listeners>
 </phpunit>
