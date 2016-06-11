@@ -28,7 +28,8 @@
             <arguments>
                 <array>
                     <element><string>UMA\Tests\Psr\Http\Message\HMAC</string></element>
-                    <element><string>UMA\Psr\Http\Message</string></element>
+                    <element><string>UMA\Psr\Http\Message\HMAC</string></element>
+                    <element><string>UMA\Psr\Http\Message\Internal</string></element>
                 </array>
             </arguments>
         </listener>
