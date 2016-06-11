@@ -15,7 +15,7 @@ class TimeProvider
      */
     public function currentTime()
     {
-        return (new \DateTime('now', new \DateTimeZone('GMT')))
+        return \DateTime::createFromFormat('U', time(), new \DateTimeZone('GMT'))
             ->format('D, d M Y H:i:s T');
     }
 }
