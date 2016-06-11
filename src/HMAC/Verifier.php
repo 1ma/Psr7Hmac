@@ -100,9 +100,9 @@ class Verifier
     {
         $signedHeaders = array_filter(explode(',', $message->getHeaderLine(Specification::SIGN_HEADER)));
 
-        foreach ($message->getHeaders() as $name => $value) {
-            if (!in_array(mb_strtolower($name), $signedHeaders)) {
-                $message = $message->withoutHeader($name);
+        foreach (array_keys($message->getHeaders()) as $headerName) {
+            if (!in_array(mb_strtolower($headerName), $signedHeaders)) {
+                $message = $message->withoutHeader($headerName);
             }
         }
 
