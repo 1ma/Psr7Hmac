@@ -11,14 +11,16 @@ class HashCalculatorTest extends \PHPUnit_Framework_TestCase
      *
      * @param string $key
      * @param string $data
-     * @param string $digest
+     * @param string $expectedDigest
      */
-    public function testVector($key, $data, $digest)
+    public function testVector($key, $data, $expectedDigest)
     {
-        if (32 > strlen($digest)) { // Test Case 5 happens to be a beautiful, unique snowflake
-            $this->assertStringStartsWith($digest, base64_decode((new HashCalculator())->hmac($data, $key), true));
+        $actualDigest = base64_decode((new HashCalculator())->hmac($data, $key), true);
+
+        if (32 > strlen($expectedDigest)) { // Test Case 5 happens to be a beautiful, unique snowflake
+            $this->assertStringStartsWith($expectedDigest, $actualDigest);
         } else {
-            $this->assertSame($digest, base64_decode((new HashCalculator())->hmac($data, $key), true));
+            $this->assertSame($expectedDigest, $actualDigest);
         }
     }
 
