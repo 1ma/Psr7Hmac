@@ -72,14 +72,18 @@ var_dump($verifier->verify($signedRequest, 'another secret'));
 
 // Headers added after calling sign() do not break the verification, as
 // they are not included in the signed-headers list.
-$signedRequest = $signedRequest->withHeader('User-Agent', 'PHP/5.x');
-var_dump($verifier->verify($signedRequest, 'secret'));
+var_dump($verifier->verify($signedRequest->withHeader('User-Agent', 'PHP/5.x'), 'secret'));
 // true
 
-// Changes made to any chunk of data that was present at the time of the signature
-// are still detected, though.
-$signedRequest = $signedRequest->withHeader('Signed-Headers', 'made,up,list');
-var_dump($verifier->verify($signedRequest, 'secret'));
+// Changes made to any chunk of data that was present at the time of the
+// signature are still detected, though. In this example a signed header
+// is omitted from the Signed-Headers list.
+var_dump($verifier->verify($signedRequest->withHeader('Signed-Headers', 'host,signed-headers'), 'secret'));
+// false
+
+// The verification also fails if any single part of the message is
+// removed altogether after signing it.
+var_dump($verifier->verify($signedRequest->withoutHeader('Nonce'), 'secret'));
 // false
 ```
 
