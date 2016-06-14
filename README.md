@@ -21,11 +21,13 @@ Signer::__construct($secret);
 Signer::sign(MessageInterface $message);
 
 /**
- * @param int $maxDelay
+ * @param MessageInterface $message
+ * @param string           $secret
  *
- * @return Verifier
+ * @return bool
  */
-Verifier::setMaximumDelay($maxDelay);
+
+Verifier::verify(MessageInterface $message, $secret);
 
 /**
  * @param MonitorInterface $monitor
@@ -33,14 +35,6 @@ Verifier::setMaximumDelay($maxDelay);
  * @return Verifier
  */
 Verifier::setMonitor(MonitorInterface $monitor);
-
-/**
- * @param MessageInterface $message
- * @param string           $secret
- *
- * @return bool
- */
-Verifier::verify(MessageInterface $message, $secret);
 ```
 
 
@@ -65,10 +59,9 @@ $signer = new Signer('secret');
 $signedRequest = $signer->sign($psr7request);
 // GET /index.html HTTP/1.1
 // host: www.example.com
-// authorization: HMAC-SHA256 tBrVPLVL1T7MUy+F3x1jPXsjVIodCtMrSl7EbgTNTGk=
-// date: Sat, 04 Jun 2016 21:29:28 GMT
-// nonce: W642HAT8t1xhWQn5
-// signed-headers: date,host,nonce,signed-headers
+// authorization: HMAC-SHA256 mk+D/35wCjsGZR+giPLIM88niBTnVHgfjPBCfvnnfyU=
+// nonce: DyXKHPlVeSI03HdK
+// signed-headers: host,nonce,signed-headers
 
 
 //// SERVER SIDE

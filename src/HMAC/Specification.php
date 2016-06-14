@@ -27,17 +27,6 @@ final class Specification
     const AUTH_REGEXP = '@^HMAC-SHA256 ([+/0-9A-Za-z]{43}=)$@';
 
     /**
-     * The 'Date' header field represents the date and time at which the
-     * message was originated.
-     *
-     * The library client may choose to use this field to invalidate
-     * withheld HTTP requests.
-     *
-     * @see https://tools.ietf.org/html/rfc7231#section-7.1.1.2
-     */
-    const DATE_HEADER = 'Date';
-
-    /**
      * Hash algorithm used in conjunction with the HMAC function.
      */
     const HASH_ALGORITHM = 'sha256';
@@ -47,6 +36,11 @@ final class Specification
      * may choose to use this field to detect replayed HTTP requests.
      */
     const NONCE_HEADER = 'Nonce';
+
+    /**
+     * 'Nonce' header value definition, a 12 byte sequence encoded as base64.
+     */
+    const NONCE_REGEXP = '@^[+/0-9A-Za-z]{16}$@';
 
     /**
      * Name of the HTTP header that holds the list of signed headers.

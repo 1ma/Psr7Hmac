@@ -6,7 +6,6 @@ use Psr\Http\Message\MessageInterface;
 use Psr\Http\Message\RequestInterface;
 use UMA\Psr\Http\Message\Internal\HashCalculator;
 use UMA\Psr\Http\Message\Internal\NonceProvider;
-use UMA\Psr\Http\Message\Internal\TimeProvider;
 use UMA\Psr\Http\Message\Serializer\MessageSerializer;
 
 class Signer
@@ -27,11 +26,6 @@ class Signer
     private $nonceProvider;
 
     /**
-     * @var TimeProvider
-     */
-    private $timeProvider;
-
-    /**
      * @param string $secret
      */
     public function __construct($secret)
@@ -39,7 +33,6 @@ class Signer
         $this->secret = $secret;
         $this->calculator = new HashCalculator();
         $this->nonceProvider = new NonceProvider();
-        $this->timeProvider = new TimeProvider();
     }
 
     /**
@@ -55,9 +48,7 @@ class Signer
     {
         $serialization = MessageSerializer::serialize(
             $preSignedMessage = $this->withSignedHeadersHeader(
-                $message
-                    ->withHeader(Specification::DATE_HEADER, $this->timeProvider->currentTime())
-                    ->withHeader(Specification::NONCE_HEADER, $this->nonceProvider->randomNonce())
+                $message->withHeader(Specification::NONCE_HEADER, $this->nonceProvider->randomNonce())
             )
         );
 
