@@ -110,7 +110,7 @@ class VerifierTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($regularVerifier->verify($signedRequest, self::SECRET));
         $this->assertTrue($regularVerifier->verify($signedRequest, self::SECRET));
 
-        $monitoredVerifier = (new Verifier())->setMonitor(new ArrayMonitor());
+        $monitoredVerifier = (new Verifier(new ArrayMonitor()));
         $this->assertTrue($monitoredVerifier->verify($signedRequest, self::SECRET));
         $this->assertFalse($monitoredVerifier->verify($signedRequest, self::SECRET));
         $this->assertFalse($monitoredVerifier->verify($signedRequest, self::SECRET));

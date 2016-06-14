@@ -26,26 +26,18 @@ class Verifier
      */
     private $validator;
 
-    public function __construct()
+    /**
+     * @param MonitorInterface|null $monitor
+     */
+    public function __construct(MonitorInterface $monitor = null)
     {
         $this->calculator = new HashCalculator();
-        $this->monitor = new BlindMonitor();
+        $this->monitor = null === $monitor ?
+            new BlindMonitor() : $monitor;
         $this->validator = (new HeaderValidator())
             ->addRule(Specification::AUTH_HEADER, Specification::AUTH_REGEXP)
             ->addRule(Specification::NONCE_HEADER, Specification::NONCE_REGEXP)
             ->addRule(Specification::SIGN_HEADER, Specification::SIGN_REGEXP);
-    }
-
-    /**
-     * @param MonitorInterface $monitor
-     *
-     * @return Verifier
-     */
-    public function setMonitor(MonitorInterface $monitor)
-    {
-        $this->monitor = $monitor;
-
-        return $this;
     }
 
     /**

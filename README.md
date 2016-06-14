@@ -21,20 +21,17 @@ Signer::__construct($secret);
 Signer::sign(MessageInterface $message);
 
 /**
+ * @param MonitorInterface|null $monitor
+ */
+Verifier::__construct(MonitorInterface $monitor = null);
+
+/**
  * @param MessageInterface $message
  * @param string           $secret
  *
  * @return bool
  */
-
 Verifier::verify(MessageInterface $message, $secret);
-
-/**
- * @param MonitorInterface $monitor
- *
- * @return Verifier
- */
-Verifier::setMonitor(MonitorInterface $monitor);
 ```
 
 
