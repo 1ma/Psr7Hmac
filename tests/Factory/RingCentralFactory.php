@@ -1,6 +1,6 @@
 <?php
 
-namespace UMA\Tests\Psr\Http\Message\Factory;
+namespace UMA\Tests\Psr7Hmac\Factory;
 
 use RingCentral\Psr7\Request;
 use RingCentral\Psr7\Response;

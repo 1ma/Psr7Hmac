@@ -1,12 +1,12 @@
 <?php
 
-namespace UMA\Psr\Http\Message\HMAC;
+namespace UMA\Psr7Hmac;
 
 use Psr\Http\Message\MessageInterface;
 use Psr\Http\Message\RequestInterface;
-use UMA\Psr\Http\Message\Internal\HashCalculator;
-use UMA\Psr\Http\Message\Internal\NonceProvider;
-use UMA\Psr\Http\Message\Serializer\MessageSerializer;
+use UMA\Psr7Hmac\Internal\HashCalculator;
+use UMA\Psr7Hmac\Internal\MessageSerializer;
+use UMA\Psr7Hmac\Internal\NonceProvider;
 
 class Signer
 {

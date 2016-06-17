@@ -1,13 +1,13 @@
 <?php
 
-namespace UMA\Tests\Psr\Http\Message\Serializer;
+namespace UMA\Tests\Psr7Hmac\Internal;
 
 use Asika\Http\Test\Stub\StubMessage;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
-use UMA\Psr\Http\Message\Serializer\MessageSerializer;
-use UMA\Tests\Psr\Http\Message\RequestsProvider;
-use UMA\Tests\Psr\Http\Message\ResponsesProvider;
+use UMA\Psr7Hmac\Internal\MessageSerializer;
+use UMA\Tests\Psr7Hmac\RequestsProvider;
+use UMA\Tests\Psr7Hmac\ResponsesProvider;
 
 class MessageSerializerTest extends \PHPUnit_Framework_TestCase
 {
@@ -124,7 +124,7 @@ class MessageSerializerTest extends \PHPUnit_Framework_TestCase
      */
     public function testBinaryRequest(RequestInterface $request)
     {
-        $fh = fopen(__DIR__.'/../resources/avatar.png', 'r');
+        $fh = fopen(__DIR__.'/../../resources/avatar.png', 'r');
 
         $expectedSerialization = "POST /avatar/upload.php HTTP/1.1\r\nhost: www.example.com\r\ncontent-length: 13360\r\ncontent-type: image/png\r\n\r\n".stream_get_contents($fh);
 
@@ -138,7 +138,7 @@ class MessageSerializerTest extends \PHPUnit_Framework_TestCase
      */
     public function testBinaryResponse(ResponseInterface $response)
     {
-        $fh = fopen(__DIR__.'/../resources/avatar.png', 'r');
+        $fh = fopen(__DIR__.'/../../resources/avatar.png', 'r');
 
         $expectedSerialization = "HTTP/1.1 200 OK\r\ncontent-length: 13360\r\ncontent-type: image/png\r\n\r\n".stream_get_contents($fh);
 

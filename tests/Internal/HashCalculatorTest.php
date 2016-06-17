@@ -1,8 +1,8 @@
 <?php
 
-namespace UMA\Tests\Psr\Http\Message;
+namespace UMA\Tests\Psr7Hmac;
 
-use UMA\Psr\Http\Message\Internal\HashCalculator;
+use UMA\Psr7Hmac\Internal\HashCalculator;
 
 class HashCalculatorTest extends \PHPUnit_Framework_TestCase
 {

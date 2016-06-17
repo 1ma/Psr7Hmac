@@ -21,9 +21,9 @@ Signer::__construct($secret);
 Signer::sign(MessageInterface $message);
 
 /**
- * @param MonitorInterface|null $monitor
+ * @param InspectorInterface|null $inspector
  */
-Verifier::__construct(MonitorInterface $monitor = null);
+Verifier::__construct(InspectorInterface $inspector = null);
 
 /**
  * @param MessageInterface $message
@@ -42,8 +42,8 @@ Verifier::verify(MessageInterface $message, $secret);
 
 require_once __DIR__.'/vendor/autoload.php';
 
-use UMA\Psr\Http\Message\HMAC\Signer;
-use UMA\Psr\Http\Message\HMAC\Verifier;
+use UMA\Psr7Hmac\Signer;
+use UMA\Psr7Hmac\Verifier;
 
 
 //// CLIENT SIDE

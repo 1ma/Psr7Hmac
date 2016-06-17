@@ -34,12 +34,12 @@
     },
     "autoload": {
         "psr-4": {
-            "UMA\\Psr\\Http\\Message\\": "src/"
+            "UMA\\Psr7Hmac\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "UMA\\Tests\\Psr\\Http\\Message\\": "tests/"
+            "UMA\\Tests\\Psr7Hmac\\": "tests/"
         }
     }
 }

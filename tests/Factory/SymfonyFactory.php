@@ -1,6 +1,6 @@
 <?php
 
-namespace UMA\Tests\Psr\Http\Message\Factory;
+namespace UMA\Tests\Psr7Hmac\Factory;
 
 use Symfony\Bridge\PsrHttpMessage\Factory\DiactorosFactory;
 use Symfony\Component\HttpFoundation\Request as SymfonyRequest;

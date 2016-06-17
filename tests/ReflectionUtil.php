@@ -1,6 +1,6 @@
 <?php
 
-namespace UMA\Tests\Psr\Http\Message;
+namespace UMA\Tests\Psr7Hmac;
 
 trait ReflectionUtil
 {

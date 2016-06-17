@@ -1,13 +1,13 @@
 <?php
 
-namespace UMA\Psr\Http\Message\HMAC;
+namespace UMA\Psr7Hmac;
 
 use Psr\Http\Message\MessageInterface;
-use UMA\Psr\Http\Message\Internal\HashCalculator;
-use UMA\Psr\Http\Message\Internal\HeaderValidator;
-use UMA\Psr\Http\Message\Monitor\BlindMonitor;
-use UMA\Psr\Http\Message\Monitor\MonitorInterface;
-use UMA\Psr\Http\Message\Serializer\MessageSerializer;
+use UMA\Psr7Hmac\Inspector\DefaultInspector;
+use UMA\Psr7Hmac\Inspector\InspectorInterface;
+use UMA\Psr7Hmac\Internal\HashCalculator;
+use UMA\Psr7Hmac\Internal\HeaderValidator;
+use UMA\Psr7Hmac\Internal\MessageSerializer;
 
 class Verifier
 {
@@ -17,9 +17,9 @@ class Verifier
     private $calculator;
 
     /**
-     * @var MonitorInterface
+     * @var InspectorInterface
      */
-    private $monitor;
+    private $inspector;
 
     /**
      * @var HeaderValidator
@@ -27,13 +27,13 @@ class Verifier
     private $validator;
 
     /**
-     * @param MonitorInterface|null $monitor
+     * @param InspectorInterface|null $inspector
      */
-    public function __construct(MonitorInterface $monitor = null)
+    public function __construct(InspectorInterface $inspector = null)
     {
         $this->calculator = new HashCalculator();
-        $this->monitor = null === $monitor ?
-            new BlindMonitor() : $monitor;
+        $this->inspector = null === $inspector ?
+            new DefaultInspector() : $inspector;
         $this->validator = (new HeaderValidator())
             ->addRule(Specification::AUTH_HEADER, Specification::AUTH_REGEXP)
             ->addRule(Specification::NONCE_HEADER, Specification::NONCE_REGEXP)
@@ -61,7 +61,10 @@ class Verifier
         $serverSideSignature = $this->calculator
             ->hmac(MessageSerializer::serialize($this->withoutUnsignedHeaders($message)), $secret);
 
-        return hash_equals($serverSideSignature, $clientSideSignature) && !$this->monitor->seen($message);
+        $vetted = $this->inspector
+            ->vet($message, $verified = hash_equals($serverSideSignature, $clientSideSignature));
+
+        return $vetted && $verified;
     }
 
     /**

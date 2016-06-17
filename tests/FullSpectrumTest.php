@@ -1,18 +1,15 @@
 <?php
 
-namespace UMA\Tests\Psr\Http\Message\HMAC;
+namespace UMA\Tests\Psr7Hmac;
 
 use Psr\Http\Message\MessageInterface;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
-use UMA\Psr\Http\Message\HMAC\Signer;
-use UMA\Psr\Http\Message\HMAC\Specification;
-use UMA\Psr\Http\Message\HMAC\Verifier;
-use UMA\Psr\Http\Message\Internal\HashCalculator;
-use UMA\Psr\Http\Message\Internal\NonceProvider;
-use UMA\Tests\Psr\Http\Message\ReflectionUtil;
-use UMA\Tests\Psr\Http\Message\RequestsProvider;
-use UMA\Tests\Psr\Http\Message\ResponsesProvider;
+use UMA\Psr7Hmac\Internal\HashCalculator;
+use UMA\Psr7Hmac\Internal\NonceProvider;
+use UMA\Psr7Hmac\Signer;
+use UMA\Psr7Hmac\Specification;
+use UMA\Psr7Hmac\Verifier;
 
 class FullSpectrumTest extends \PHPUnit_Framework_TestCase
 {

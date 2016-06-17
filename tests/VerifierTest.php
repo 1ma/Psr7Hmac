@@ -1,15 +1,13 @@
 <?php
 
-namespace UMA\Tests\Psr\Http\Message\HMAC;
+namespace UMA\Tests\Psr7Hmac;
 
 use Psr\Http\Message\RequestInterface;
-use UMA\Psr\Http\Message\HMAC\Signer;
-use UMA\Psr\Http\Message\HMAC\Specification;
-use UMA\Psr\Http\Message\HMAC\Verifier;
-use UMA\Psr\Http\Message\Internal\HashCalculator;
-use UMA\Tests\Psr\Http\Message\Monitor\ArrayMonitor;
-use UMA\Tests\Psr\Http\Message\ReflectionUtil;
-use UMA\Tests\Psr\Http\Message\RequestsProvider;
+use UMA\Psr7Hmac\Internal\HashCalculator;
+use UMA\Psr7Hmac\Signer;
+use UMA\Psr7Hmac\Specification;
+use UMA\Psr7Hmac\Verifier;
+use UMA\Tests\Psr7Hmac\Inspector\ArrayInspector;
 
 class VerifierTest extends \PHPUnit_Framework_TestCase
 {
@@ -110,7 +108,7 @@ class VerifierTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($regularVerifier->verify($signedRequest, self::SECRET));
         $this->assertTrue($regularVerifier->verify($signedRequest, self::SECRET));
 
-        $monitoredVerifier = (new Verifier(new ArrayMonitor()));
+        $monitoredVerifier = (new Verifier(new ArrayInspector()));
         $this->assertTrue($monitoredVerifier->verify($signedRequest, self::SECRET));
         $this->assertFalse($monitoredVerifier->verify($signedRequest, self::SECRET));
         $this->assertFalse($monitoredVerifier->verify($signedRequest, self::SECRET));

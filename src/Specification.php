@@ -1,6 +1,6 @@
 <?php
 
-namespace UMA\Psr\Http\Message\HMAC;
+namespace UMA\Psr7Hmac;
 
 final class Specification
 {
@@ -62,9 +62,9 @@ final class Specification
      * the very least it will be the only header in the list.
      *
      * As per RFC 7230 Section 3.2 commas are not legal characters in a header name,
-     * hence there cannot be any ambiguity when parsing the header value.
+     * hence there cannot be any ambiguity when parsing the list.
      *
-     * @example Signed-Headers: api-key,content-type,host,signed-headers
+     * @example Signed-Headers: api-key,content-type,host,nonce,signed-headers
      * @example Signed-Headers: signed-headers
      */
     const SIGN_HEADER = 'Signed-Headers';

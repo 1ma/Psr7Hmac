@@ -1,8 +1,8 @@
 <?php
 
-namespace UMA\Psr\Http\Message\Internal;
+namespace UMA\Psr7Hmac\Internal;
 
-use UMA\Psr\Http\Message\HMAC\Specification;
+use UMA\Psr7Hmac\Specification;
 
 class HashCalculator
 {

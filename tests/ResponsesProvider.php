@@ -1,15 +1,15 @@
 <?php
 
-namespace UMA\Tests\Psr\Http\Message;
+namespace UMA\Tests\Psr7Hmac;
 
 use Psr\Http\Message\ResponseInterface;
-use UMA\Tests\Psr\Http\Message\Factory\AsikaFactory;
-use UMA\Tests\Psr\Http\Message\Factory\GuzzleFactory;
-use UMA\Tests\Psr\Http\Message\Factory\RingCentralFactory;
-use UMA\Tests\Psr\Http\Message\Factory\SlimFactory;
-use UMA\Tests\Psr\Http\Message\Factory\SymfonyFactory;
-use UMA\Tests\Psr\Http\Message\Factory\WanduFactory;
-use UMA\Tests\Psr\Http\Message\Factory\ZendFactory;
+use UMA\Tests\Psr7Hmac\Factory\AsikaFactory;
+use UMA\Tests\Psr7Hmac\Factory\GuzzleFactory;
+use UMA\Tests\Psr7Hmac\Factory\RingCentralFactory;
+use UMA\Tests\Psr7Hmac\Factory\SlimFactory;
+use UMA\Tests\Psr7Hmac\Factory\SymfonyFactory;
+use UMA\Tests\Psr7Hmac\Factory\WanduFactory;
+use UMA\Tests\Psr7Hmac\Factory\ZendFactory;
 
 trait ResponsesProvider
 {
@@ -59,7 +59,7 @@ trait ResponsesProvider
 
     public function binaryResponseProvider()
     {
-        $fh = fopen(__DIR__.'/resources/avatar.png', 'r');
+        $fh = fopen(__DIR__.'/../resources/avatar.png', 'r');
 
         $headers = [
             'Content-Type' => 'image/png',
