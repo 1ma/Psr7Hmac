@@ -11,6 +11,6 @@ class DefaultInspector implements InspectorInterface
      */
     public function vet(MessageInterface $message, $verified)
     {
-        return true;
+        return $verified;
     }
 }
