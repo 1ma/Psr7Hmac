@@ -2,6 +2,10 @@
 
 namespace UMA\Psr7Hmac;
 
+/**
+ * The Specification class centralizes the definition
+ * of several of the library knobs and constants.
+ */
 final class Specification
 {
     /**

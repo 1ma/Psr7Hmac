@@ -4,6 +4,8 @@ An HMAC authentication library built on top of the PSR-7 specification.
 
 [![Build Status](https://travis-ci.org/1ma/Psr7Hmac.svg?branch=master)](https://travis-ci.org/1ma/Psr7Hmac) [![Code Coverage](https://scrutinizer-ci.com/g/1ma/Psr7Hmac/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/1ma/Psr7Hmac/?branch=master) [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/1ma/Psr7Hmac/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/1ma/Psr7Hmac/?branch=master) [![Code Climate](https://codeclimate.com/github/1ma/Psr7Hmac/badges/gpa.svg)](https://codeclimate.com/github/1ma/Psr7Hmac) [![SensioLabsInsight](https://insight.sensiolabs.com/projects/8c7c772a-5819-426d-bef9-eb9f2b4a3102/mini.png)](https://insight.sensiolabs.com/projects/8c7c772a-5819-426d-bef9-eb9f2b4a3102)
 
+If you want to build an HMAC-authenticated API based on Symfony check out [UMAPsr7HmacBundle](https://github.com/1ma/UMAPsr7HmacBundle), which
+provides a convenient integration of this library with Symfony's [Security Component](http://symfony.com/doc/current/components/security.html).
 
 ## Library API
 
@@ -96,3 +98,10 @@ var_dump($verifier->verify($signedRequest->withoutHeader('Nonce'), 'secret'));
 * [[RFC 7230] Hypertext Transfer Protocol (HTTP/1.1): Message Syntax and Routing](https://tools.ietf.org/html/rfc7230)
 * [[RFC 7231] Hypertext Transfer Protocol (HTTP/1.1): Semantics and Content](https://tools.ietf.org/html/rfc7231)
 * [[RFC 7235] Hypertext Transfer Protocol (HTTP/1.1): Authentication](https://tools.ietf.org/html/rfc7235)
+
+
+## Disclaimer
+
+The code included in this library has not been reviewed by any cryptographer or security specialist, nor I claim to be one.
+If you intend to use in your own projects you are advised to read the documentation, understand the code and report back
+any issues you shall find.
