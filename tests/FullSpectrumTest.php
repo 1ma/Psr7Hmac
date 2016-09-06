@@ -176,7 +176,7 @@ class FullSpectrumTest extends \PHPUnit_Framework_TestCase
      */
     public function testBinaryRequest(RequestInterface $request)
     {
-        $fh = fopen(__DIR__.'/../resources/avatar.png', 'r');
+        $fh = fopen(__DIR__.'/Resources/avatar.png', 'r');
 
         $this->setExpectedSerialization(
             "POST /avatar/upload.php HTTP/1.1\r\nhost: www.example.com\r\ncontent-length: 13360\r\ncontent-type: image/png\r\nnonce: $this->nonce\r\nsigned-headers: content-length,content-type,host,nonce,signed-headers\r\n\r\n".stream_get_contents($fh)
@@ -192,7 +192,7 @@ class FullSpectrumTest extends \PHPUnit_Framework_TestCase
      */
     public function testBinaryResponse(ResponseInterface $response)
     {
-        $fh = fopen(__DIR__.'/../resources/avatar.png', 'r');
+        $fh = fopen(__DIR__.'/Resources/avatar.png', 'r');
 
         $this->setExpectedSerialization(
             "HTTP/1.1 200 OK\r\ncontent-length: 13360\r\ncontent-type: image/png\r\nnonce: $this->nonce\r\nsigned-headers: content-length,content-type,nonce,signed-headers\r\n\r\n".stream_get_contents($fh)

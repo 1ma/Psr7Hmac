@@ -59,7 +59,7 @@ trait ResponsesProvider
 
     public function binaryResponseProvider()
     {
-        $fh = fopen(__DIR__.'/../resources/avatar.png', 'r');
+        $fh = fopen(__DIR__.'/Resources/avatar.png', 'r');
 
         $headers = [
             'Content-Type' => 'image/png',
