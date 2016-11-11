@@ -15,7 +15,7 @@
         "ext-pcre": "*",
 
         "paragonie/random_compat": "^2.0",
-        "psr/http-message": "^1.0",
+        "psr/http-message": "^1.0.0",
         "symfony/polyfill-php56": "^1.2"
     },
     "require-dev": {
