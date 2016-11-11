@@ -2,12 +2,12 @@
 
 namespace UMA\Tests\Psr7Hmac\Internal;
 
-use Asika\Http\Test\Stub\StubMessage;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use UMA\Psr7Hmac\Internal\MessageSerializer;
 use UMA\Tests\Psr7Hmac\RequestsProvider;
 use UMA\Tests\Psr7Hmac\ResponsesProvider;
+use Windwalker\Http\Test\Stub\StubMessage;
 
 class MessageSerializerTest extends \PHPUnit_Framework_TestCase
 {

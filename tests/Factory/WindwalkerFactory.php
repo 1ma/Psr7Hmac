@@ -2,11 +2,11 @@
 
 namespace UMA\Tests\Psr7Hmac\Factory;
 
-use Asika\Http\Request;
-use Asika\Http\Response;
-use Asika\Http\Stream\Stream;
+use Windwalker\Http\Request\Request;
+use Windwalker\Http\Response\Response;
+use Windwalker\Http\Stream\Stream;
 
-class AsikaFactory implements FactoryInterface
+class WindwalkerFactory implements FactoryInterface
 {
     use StreamHelper;
 

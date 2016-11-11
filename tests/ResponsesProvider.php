@@ -3,12 +3,12 @@
 namespace UMA\Tests\Psr7Hmac;
 
 use Psr\Http\Message\ResponseInterface;
-use UMA\Tests\Psr7Hmac\Factory\AsikaFactory;
 use UMA\Tests\Psr7Hmac\Factory\GuzzleFactory;
 use UMA\Tests\Psr7Hmac\Factory\RingCentralFactory;
 use UMA\Tests\Psr7Hmac\Factory\SlimFactory;
 use UMA\Tests\Psr7Hmac\Factory\SymfonyFactory;
 use UMA\Tests\Psr7Hmac\Factory\WanduFactory;
+use UMA\Tests\Psr7Hmac\Factory\WindwalkerFactory;
 use UMA\Tests\Psr7Hmac\Factory\ZendFactory;
 
 trait ResponsesProvider
@@ -79,12 +79,12 @@ trait ResponsesProvider
     private function responses($statusCode, array $headers = [], $body = null)
     {
         return [
-            AsikaFactory::responseClass() => [AsikaFactory::response($statusCode, $headers, $body)],
             GuzzleFactory::responseClass() => [GuzzleFactory::response($statusCode, $headers, $body)],
             RingCentralFactory::responseClass() => [RingCentralFactory::response($statusCode, $headers, $body)],
             SlimFactory::responseClass() => [SlimFactory::response($statusCode, $headers, $body)],
             SymfonyFactory::responseClass() => [SymfonyFactory::response($statusCode, $headers, $body)],
             WanduFactory::responseClass() => [WanduFactory::response($statusCode, $headers, $body)],
+            WindwalkerFactory::responseClass() => [WindwalkerFactory::response($statusCode, $headers, $body)],
             ZendFactory::responseClass() => [ZendFactory::response($statusCode, $headers, $body)],
         ];
     }
