@@ -4,6 +4,7 @@ namespace UMA\Tests\Psr7Hmac;
 
 use Psr\Http\Message\ResponseInterface;
 use UMA\Tests\Psr7Hmac\Factory\GuzzleFactory;
+use UMA\Tests\Psr7Hmac\Factory\KamboFactory;
 use UMA\Tests\Psr7Hmac\Factory\MiBadgerFactory;
 use UMA\Tests\Psr7Hmac\Factory\RingCentralFactory;
 use UMA\Tests\Psr7Hmac\Factory\SlimFactory;
@@ -81,6 +82,7 @@ trait ResponsesProvider
     {
         return [
             GuzzleFactory::responseClass() => [GuzzleFactory::response($statusCode, $headers, $body)],
+            KamboFactory::responseClass() => [KamboFactory::response($statusCode, $headers, $body)],
             MiBadgerFactory::responseClass() => [MiBadgerFactory::response($statusCode, $headers, $body)],
             RingCentralFactory::responseClass() => [RingCentralFactory::response($statusCode, $headers, $body)],
             SlimFactory::responseClass() => [SlimFactory::response($statusCode, $headers, $body)],
