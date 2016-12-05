@@ -52,7 +52,7 @@ class MessageSerializerTest extends \PHPUnit_Framework_TestCase
      */
     public function testEmptyRequestWithHeaders(RequestInterface $request)
     {
-        $expectedSerialization = "GET /index.html HTTP/1.1\r\nhost: www.example.com\r\naccept: */*\r\naccept-encoding: gzip, deflate\r\nconnection: keep-alive\r\nuser-agent: PHP/5.6.21\r\n\r\n";
+        $expectedSerialization = "GET /index.html HTTP/1.1\r\nhost: www.example.com\r\naccept: */*\r\naccept-encoding: gzip,deflate\r\nconnection: keep-alive\r\nuser-agent: PHP/5.6.21\r\n\r\n";
 
         $this->assertSame($expectedSerialization, MessageSerializer::serialize($request));
     }

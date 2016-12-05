@@ -93,7 +93,7 @@ class FullSpectrumTest extends \PHPUnit_Framework_TestCase
     public function testEmptyRequestWithHeaders(RequestInterface $request)
     {
         $this->setExpectedSerialization(
-            "GET /index.html HTTP/1.1\r\nhost: www.example.com\r\naccept: */*\r\naccept-encoding: gzip, deflate\r\nconnection: keep-alive\r\nnonce: $this->nonce\r\nsigned-headers: accept,accept-encoding,connection,host,nonce,signed-headers,user-agent\r\nuser-agent: PHP/5.6.21\r\n\r\n"
+            "GET /index.html HTTP/1.1\r\nhost: www.example.com\r\naccept: */*\r\naccept-encoding: gzip,deflate\r\nconnection: keep-alive\r\nnonce: $this->nonce\r\nsigned-headers: accept,accept-encoding,connection,host,nonce,signed-headers,user-agent\r\nuser-agent: PHP/5.6.21\r\n\r\n"
         );
 
         $this->inspectSignedMessage($this->signer->sign($request));

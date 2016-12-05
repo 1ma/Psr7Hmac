@@ -25,7 +25,7 @@ trait RequestsProvider
             'User-Agent' => 'PHP/5.6.21',
             'Accept' => '*/*',
             'Connection' => 'keep-alive',
-            'Accept-Encoding' => 'gzip, deflate',
+            'Accept-Encoding' => ['gzip', 'deflate'],
         ];
 
         return $this->requests('GET', 'http://www.example.com/index.html', $headers);
