@@ -11,8 +11,6 @@
     },
     "require": {
         "php": ">=5.6.0",
-        "ext-hash": "*",
-        "ext-pcre": "*",
 
         "psr/http-message": "^1.0.0"
     },
