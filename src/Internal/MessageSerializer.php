@@ -50,7 +50,7 @@ final class MessageSerializer
             $values = is_array($values) ?
                 $values : [$values];
 
-            $msg .= mb_strtolower($name).':'.self::SP.implode(',', $values).self::CRLF;
+            $msg .= (new HeaderNameNormalizer())->normalize($name).':'.self::SP.implode(',', $values).self::CRLF;
         }
 
         return $msg;

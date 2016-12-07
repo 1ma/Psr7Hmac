@@ -6,6 +6,7 @@ use Psr\Http\Message\MessageInterface;
 use UMA\Psr7Hmac\Inspector\DefaultInspector;
 use UMA\Psr7Hmac\Inspector\InspectorInterface;
 use UMA\Psr7Hmac\Internal\HashCalculator;
+use UMA\Psr7Hmac\Internal\HeaderNameNormalizer;
 use UMA\Psr7Hmac\Internal\HeaderValidator;
 use UMA\Psr7Hmac\Internal\MessageSerializer;
 
@@ -22,6 +23,11 @@ class Verifier
     private $inspector;
 
     /**
+     * @var HeaderNameNormalizer
+     */
+    private $normalizer;
+
+    /**
      * @var HeaderValidator
      */
     private $validator;
@@ -34,6 +40,7 @@ class Verifier
         $this->calculator = new HashCalculator();
         $this->inspector = null === $inspector ?
             new DefaultInspector() : $inspector;
+        $this->normalizer = new HeaderNameNormalizer();
         $this->validator = (new HeaderValidator())
             ->addRule(Specification::AUTH_HEADER, Specification::AUTH_REGEXP)
             ->addRule(Specification::SIGN_HEADER, Specification::SIGN_REGEXP);
@@ -76,7 +83,7 @@ class Verifier
         $signedHeaders = array_filter(explode(',', $message->getHeaderLine(Specification::SIGN_HEADER)));
 
         foreach (array_keys($message->getHeaders()) as $headerName) {
-            if (!in_array(mb_strtolower($headerName), $signedHeaders)) {
+            if (!in_array($this->normalizer->normalize($headerName), $signedHeaders)) {
                 $message = $message->withoutHeader($headerName);
             }
         }
