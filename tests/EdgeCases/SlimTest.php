@@ -60,7 +60,7 @@ class SlimTest extends \PHPUnit_Framework_TestCase
      * names exactly as they are sent to the constructor. That means that on a FastCGI execution
      * environment they will have the 'HTTP_FOO_BAR' format instead of the expected 'Foo-Bar'.
      */
-    public function testCrazyHeaderShit()
+    public function testFastCGIHeaderNames()
     {
         $calculator = $this->getMockBuilder(HashCalculator::class)
             ->setMethods(['hmac'])
