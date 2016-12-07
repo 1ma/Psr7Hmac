@@ -6,7 +6,6 @@ use Psr\Http\Message\MessageInterface;
 use Psr\Http\Message\RequestInterface;
 use UMA\Psr7Hmac\Internal\HashCalculator;
 use UMA\Psr7Hmac\Internal\MessageSerializer;
-use UMA\Psr7Hmac\Internal\NonceProvider;
 
 class Signer
 {
@@ -21,18 +20,12 @@ class Signer
     private $calculator;
 
     /**
-     * @var NonceProvider
-     */
-    private $nonceProvider;
-
-    /**
      * @param string $secret
      */
     public function __construct($secret)
     {
         $this->secret = $secret;
         $this->calculator = new HashCalculator();
-        $this->nonceProvider = new NonceProvider();
     }
 
     /**
@@ -47,9 +40,7 @@ class Signer
     public function sign(MessageInterface $message)
     {
         $serialization = MessageSerializer::serialize(
-            $preSignedMessage = $this->withSignedHeadersHeader(
-                $message->withHeader(Specification::NONCE_HEADER, $this->nonceProvider->randomNonce())
-            )
+            $preSignedMessage = $this->withSignedHeadersHeader($message)
         );
 
         return $preSignedMessage->withHeader(

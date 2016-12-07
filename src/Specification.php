@@ -36,17 +36,6 @@ final class Specification
     const HASH_ALGORITHM = 'sha256';
 
     /**
-     * The 'Nonce' header field holds a random nonce. The library client
-     * may choose to use this field to detect replayed HTTP requests.
-     */
-    const NONCE_HEADER = 'Nonce';
-
-    /**
-     * 'Nonce' header value definition, a 12 byte sequence encoded as base64.
-     */
-    const NONCE_REGEXP = '@^[+/0-9A-Za-z]{16}$@';
-
-    /**
      * Name of the HTTP header that holds the list of signed headers.
      *
      * When verifying the authenticity on an HTTP message, any header

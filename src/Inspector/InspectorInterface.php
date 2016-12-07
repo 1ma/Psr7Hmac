@@ -12,7 +12,7 @@ use Psr\Http\Message\MessageInterface;
  * Typical use cases for the implementers of this
  * interface include the following:
  *  - Monitoring failed verification attempts
- *  - Tracking duplicate messages by means of the Nonce header
+ *  - Tracking duplicate messages by means of a nonce value
  *  - Enforcing additional verification rules upon the HTTP message
  */
 interface InspectorInterface

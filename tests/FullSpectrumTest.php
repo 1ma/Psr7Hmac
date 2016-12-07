@@ -6,7 +6,6 @@ use Psr\Http\Message\MessageInterface;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use UMA\Psr7Hmac\Internal\HashCalculator;
-use UMA\Psr7Hmac\Internal\NonceProvider;
 use UMA\Psr7Hmac\Signer;
 use UMA\Psr7Hmac\Specification;
 use UMA\Psr7Hmac\Verifier;
@@ -18,11 +17,6 @@ class FullSpectrumTest extends \PHPUnit_Framework_TestCase
     use ResponsesProvider;
 
     const SECRET = '$ecr3t';
-
-    /**
-     * @var string
-     */
-    private $nonce;
 
     /**
      * @var HashCalculator|\PHPUnit_Framework_MockObject_MockObject
@@ -43,18 +37,7 @@ class FullSpectrumTest extends \PHPUnit_Framework_TestCase
             ->setMethods(['hmac'])
             ->getMock();
 
-        $nonceProvider = $this->getMockBuilder(NonceProvider::class)
-            ->setMethods(['randomNonce'])
-            ->getMock();
-
-        $nonceProvider
-            ->expects($this->once())
-            ->method('randomNonce')
-            ->will($this->returnValue($this->nonce = (new NonceProvider())->randomNonce()));
-
-        $this->signer = new Signer(self::SECRET);
-        $this->replaceInstanceProperty($this->signer, 'calculator', $this->calculator);
-        $this->replaceInstanceProperty($this->signer, 'nonceProvider', $nonceProvider);
+        $this->replaceInstanceProperty($this->signer = new Signer(self::SECRET), 'calculator', $this->calculator);
     }
 
     /**
@@ -65,7 +48,7 @@ class FullSpectrumTest extends \PHPUnit_Framework_TestCase
     public function testSimplestRequest(RequestInterface $request)
     {
         $this->setExpectedSerialization(
-            "GET /index.html HTTP/1.1\r\nhost: www.example.com\r\nnonce: $this->nonce\r\nsigned-headers: host,nonce,signed-headers\r\n\r\n"
+            "GET /index.html HTTP/1.1\r\nhost: www.example.com\r\nsigned-headers: host,signed-headers\r\n\r\n"
         );
 
         $this->inspectSignedMessage($this->signer->sign($request));
@@ -79,7 +62,7 @@ class FullSpectrumTest extends \PHPUnit_Framework_TestCase
     public function testSimplestResponse(ResponseInterface $response)
     {
         $this->setExpectedSerialization(
-            "HTTP/1.1 200 OK\r\nnonce: $this->nonce\r\nsigned-headers: nonce,signed-headers\r\n\r\n"
+            "HTTP/1.1 200 OK\r\nsigned-headers: signed-headers\r\n\r\n"
         );
 
         $this->inspectSignedMessage($this->signer->sign($response));
@@ -93,7 +76,7 @@ class FullSpectrumTest extends \PHPUnit_Framework_TestCase
     public function testEmptyRequestWithHeaders(RequestInterface $request)
     {
         $this->setExpectedSerialization(
-            "GET /index.html HTTP/1.1\r\nhost: www.example.com\r\naccept: */*\r\naccept-encoding: gzip,deflate\r\nconnection: keep-alive\r\nnonce: $this->nonce\r\nsigned-headers: accept,accept-encoding,connection,host,nonce,signed-headers,user-agent\r\nuser-agent: PHP/5.6.21\r\n\r\n"
+            "GET /index.html HTTP/1.1\r\nhost: www.example.com\r\naccept: */*\r\naccept-encoding: gzip,deflate\r\nconnection: keep-alive\r\nsigned-headers: accept,accept-encoding,connection,host,signed-headers,user-agent\r\nuser-agent: PHP/5.6.21\r\n\r\n"
         );
 
         $this->inspectSignedMessage($this->signer->sign($request));
@@ -107,7 +90,7 @@ class FullSpectrumTest extends \PHPUnit_Framework_TestCase
     public function testEmptyResponseWithHeaders(ResponseInterface $response)
     {
         $this->setExpectedSerialization(
-            "HTTP/1.1 200 OK\r\naccept-ranges: bytes\r\ncontent-encoding: gzip\r\ncontent-length: 606\r\ncontent-type: text/html\r\nnonce: $this->nonce\r\nsigned-headers: accept-ranges,content-encoding,content-length,content-type,nonce,signed-headers\r\n\r\n"
+            "HTTP/1.1 200 OK\r\naccept-ranges: bytes\r\ncontent-encoding: gzip\r\ncontent-length: 606\r\ncontent-type: text/html\r\nsigned-headers: accept-ranges,content-encoding,content-length,content-type,signed-headers\r\n\r\n"
         );
 
         $this->inspectSignedMessage($this->signer->sign($response));
@@ -121,7 +104,7 @@ class FullSpectrumTest extends \PHPUnit_Framework_TestCase
     public function testJsonRequest(RequestInterface $request)
     {
         $this->setExpectedSerialization(
-            "POST /api/record.php HTTP/1.1\r\nhost: www.example.com\r\ncontent-length: 134\r\ncontent-type: application/json; charset=utf-8\r\nnonce: $this->nonce\r\nsigned-headers: content-length,content-type,host,nonce,signed-headers\r\n\r\n{\"employees\":[{\"firstName\":\"John\",\"lastName\":\"Doe\"},{\"firstName\":\"Anna\",\"lastName\":\"Smith\"},{\"firstName\":\"Peter\",\"lastName\":\"Jones\"}]}"
+            "POST /api/record.php HTTP/1.1\r\nhost: www.example.com\r\ncontent-length: 134\r\ncontent-type: application/json; charset=utf-8\r\nsigned-headers: content-length,content-type,host,signed-headers\r\n\r\n{\"employees\":[{\"firstName\":\"John\",\"lastName\":\"Doe\"},{\"firstName\":\"Anna\",\"lastName\":\"Smith\"},{\"firstName\":\"Peter\",\"lastName\":\"Jones\"}]}"
         );
 
         $this->inspectSignedMessage($this->signer->sign($request));
@@ -135,7 +118,7 @@ class FullSpectrumTest extends \PHPUnit_Framework_TestCase
     public function testJsonResponse(ResponseInterface $response)
     {
         $this->setExpectedSerialization(
-            "HTTP/1.1 200 OK\r\ncontent-length: 134\r\ncontent-type: application/json; charset=utf-8\r\nnonce: $this->nonce\r\nsigned-headers: content-length,content-type,nonce,signed-headers\r\n\r\n{\"employees\":[{\"firstName\":\"John\",\"lastName\":\"Doe\"},{\"firstName\":\"Anna\",\"lastName\":\"Smith\"},{\"firstName\":\"Peter\",\"lastName\":\"Jones\"}]}"
+            "HTTP/1.1 200 OK\r\ncontent-length: 134\r\ncontent-type: application/json; charset=utf-8\r\nsigned-headers: content-length,content-type,signed-headers\r\n\r\n{\"employees\":[{\"firstName\":\"John\",\"lastName\":\"Doe\"},{\"firstName\":\"Anna\",\"lastName\":\"Smith\"},{\"firstName\":\"Peter\",\"lastName\":\"Jones\"}]}"
         );
 
         $this->inspectSignedMessage($this->signer->sign($response));
@@ -149,7 +132,7 @@ class FullSpectrumTest extends \PHPUnit_Framework_TestCase
     public function testQueryParamsRequest(RequestInterface $request)
     {
         $this->setExpectedSerialization(
-            "GET /search?limit=10&offset=50&q=search+term HTTP/1.1\r\nhost: www.example.com\r\naccept: application/json; charset=utf-8\r\nnonce: $this->nonce\r\nsigned-headers: accept,host,nonce,signed-headers\r\n\r\n"
+            "GET /search?limit=10&offset=50&q=search+term HTTP/1.1\r\nhost: www.example.com\r\naccept: application/json; charset=utf-8\r\nsigned-headers: accept,host,signed-headers\r\n\r\n"
         );
 
         $this->inspectSignedMessage($this->signer->sign($request));
@@ -163,7 +146,7 @@ class FullSpectrumTest extends \PHPUnit_Framework_TestCase
     public function testSimpleFormRequest(RequestInterface $request)
     {
         $this->setExpectedSerialization(
-            "POST /login.php HTTP/1.1\r\nhost: www.example.com\r\ncontent-length: 51\r\ncontent-type: application/x-www-form-urlencoded; charset=utf-8\r\nnonce: $this->nonce\r\nsigned-headers: content-length,content-type,host,nonce,signed-headers\r\n\r\nuser=john.doe&password=battery+horse+correct+staple"
+            "POST /login.php HTTP/1.1\r\nhost: www.example.com\r\ncontent-length: 51\r\ncontent-type: application/x-www-form-urlencoded; charset=utf-8\r\nsigned-headers: content-length,content-type,host,signed-headers\r\n\r\nuser=john.doe&password=battery+horse+correct+staple"
         );
 
         $this->inspectSignedMessage($this->signer->sign($request));
@@ -179,7 +162,7 @@ class FullSpectrumTest extends \PHPUnit_Framework_TestCase
         $fh = fopen(__DIR__.'/Resources/avatar.png', 'r');
 
         $this->setExpectedSerialization(
-            "POST /avatar/upload.php HTTP/1.1\r\nhost: www.example.com\r\ncontent-length: 13360\r\ncontent-type: image/png\r\nnonce: $this->nonce\r\nsigned-headers: content-length,content-type,host,nonce,signed-headers\r\n\r\n".stream_get_contents($fh)
+            "POST /avatar/upload.php HTTP/1.1\r\nhost: www.example.com\r\ncontent-length: 13360\r\ncontent-type: image/png\r\nsigned-headers: content-length,content-type,host,signed-headers\r\n\r\n".stream_get_contents($fh)
         );
 
         $this->inspectSignedMessage($this->signer->sign($request));
@@ -195,7 +178,7 @@ class FullSpectrumTest extends \PHPUnit_Framework_TestCase
         $fh = fopen(__DIR__.'/Resources/avatar.png', 'r');
 
         $this->setExpectedSerialization(
-            "HTTP/1.1 200 OK\r\ncontent-length: 13360\r\ncontent-type: image/png\r\nnonce: $this->nonce\r\nsigned-headers: content-length,content-type,nonce,signed-headers\r\n\r\n".stream_get_contents($fh)
+            "HTTP/1.1 200 OK\r\ncontent-length: 13360\r\ncontent-type: image/png\r\nsigned-headers: content-length,content-type,signed-headers\r\n\r\n".stream_get_contents($fh)
         );
 
         $this->inspectSignedMessage($this->signer->sign($response));

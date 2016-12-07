@@ -7,7 +7,6 @@ use UMA\Psr7Hmac\Internal\HashCalculator;
 use UMA\Psr7Hmac\Signer;
 use UMA\Psr7Hmac\Specification;
 use UMA\Psr7Hmac\Verifier;
-use UMA\Tests\Psr7Hmac\Inspector\ArrayInspector;
 
 class VerifierTest extends \PHPUnit_Framework_TestCase
 {
@@ -90,28 +89,5 @@ class VerifierTest extends \PHPUnit_Framework_TestCase
             ->withHeader(Specification::AUTH_HEADER, Specification::AUTH_PREFIX.'herpder=');
 
         $this->assertFalse($this->verifier->verify($request, "irrelevant, won't be even checked"));
-    }
-
-    /**
-     * @dataProvider simplestRequestProvider
-     *
-     * @param RequestInterface $request
-     */
-    public function testReplayedMessageDetection(RequestInterface $request)
-    {
-        $signedRequest = (new Signer(self::SECRET))
-            ->sign($request);
-
-        $regularVerifier = (new Verifier());
-        $this->assertTrue($regularVerifier->verify($signedRequest, self::SECRET));
-        $this->assertTrue($regularVerifier->verify($signedRequest, self::SECRET));
-        $this->assertTrue($regularVerifier->verify($signedRequest, self::SECRET));
-        $this->assertTrue($regularVerifier->verify($signedRequest, self::SECRET));
-
-        $monitoredVerifier = (new Verifier(new ArrayInspector()));
-        $this->assertTrue($monitoredVerifier->verify($signedRequest, self::SECRET));
-        $this->assertFalse($monitoredVerifier->verify($signedRequest, self::SECRET));
-        $this->assertFalse($monitoredVerifier->verify($signedRequest, self::SECRET));
-        $this->assertFalse($monitoredVerifier->verify($signedRequest, self::SECRET));
     }
 }

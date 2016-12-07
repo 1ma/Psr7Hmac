@@ -58,9 +58,8 @@ $signer = new Signer('secret');
 $signedRequest = $signer->sign($psr7request);
 // GET /index.html HTTP/1.1
 // host: www.example.com
-// authorization: HMAC-SHA256 mk+D/35wCjsGZR+giPLIM88niBTnVHgfjPBCfvnnfyU=
-// nonce: DyXKHPlVeSI03HdK
-// signed-headers: host,nonce,signed-headers
+// authorization: HMAC-SHA256 63IQ8RWDbC9p4ipNrkJz0e0UeGiBrR96zkNdujE5cl8=
+// signed-headers: host,signed-headers
 
 
 //// SERVER SIDE
@@ -85,7 +84,7 @@ var_dump($verifier->verify($signedRequest->withHeader('Signed-Headers', 'host,si
 
 // The verification also fails if any single part of the message is
 // removed altogether after signing it.
-var_dump($verifier->verify($signedRequest->withoutHeader('Nonce'), 'secret'));
+var_dump($verifier->verify($signedRequest->withoutHeader('Signed-Headers'), 'secret'));
 // false
 ```
 

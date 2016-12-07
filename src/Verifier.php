@@ -36,7 +36,6 @@ class Verifier
             new DefaultInspector() : $inspector;
         $this->validator = (new HeaderValidator())
             ->addRule(Specification::AUTH_HEADER, Specification::AUTH_REGEXP)
-            ->addRule(Specification::NONCE_HEADER, Specification::NONCE_REGEXP)
             ->addRule(Specification::SIGN_HEADER, Specification::SIGN_REGEXP);
     }
 
