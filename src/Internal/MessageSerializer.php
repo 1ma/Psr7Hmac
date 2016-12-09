@@ -43,17 +43,17 @@ final class MessageSerializer
 
         unset($headers['host']);
 
-        ksort($headers);
+        $headerLines = [];
+        foreach ($headers as $name => $value) {
+            $value = is_array($value) ? $value : [$value];
+            $normalizedName = (new HeaderNameNormalizer())->normalize($name);
 
-        $msg = '';
-        foreach ($headers as $name => $values) {
-            $values = is_array($values) ?
-                $values : [$values];
-
-            $msg .= (new HeaderNameNormalizer())->normalize($name).':'.self::SP.implode(',', $values).self::CRLF;
+            $headerLines[$normalizedName] = $normalizedName.':'.self::SP.implode(',', $value).self::CRLF;
         }
 
-        return $msg;
+        ksort($headerLines);
+
+        return implode($headerLines);
     }
 
     private static function requestLine(RequestInterface $request)
