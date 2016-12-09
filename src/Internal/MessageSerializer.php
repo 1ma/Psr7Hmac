@@ -39,9 +39,10 @@ final class MessageSerializer
 
     private static function headers(MessageInterface $message)
     {
-        $headers = array_change_key_case($message->getHeaders(), CASE_LOWER);
+        $headers = $message->getHeaders();
 
         unset($headers['host']);
+        unset($headers['Host']);
 
         $headerLines = [];
         foreach ($headers as $name => $value) {

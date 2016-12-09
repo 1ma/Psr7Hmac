@@ -12,7 +12,7 @@ class SlimTest extends \PHPUnit_Framework_TestCase
 {
     use ReflectionUtil;
 
-    const ORIGINAL_SECRET = 'MeZTe+srVt0c';
+    const ORIGINAL_SECRET = 'zme+v5kHoCvD7uqF';
 
     /**
      * The Slim implementation of MessageInterface::getHeaders() returns the header
@@ -31,9 +31,9 @@ class SlimTest extends \PHPUnit_Framework_TestCase
             'USER' => 'root',
             'HTTP_CONNECTION' => 'close',
             'HTTP_CONTENT_LENGTH' => '0',
-            'HTTP_AUTHORIZATION' => 'HMAC-SHA256 65BY4wSpJqdjz+yCkMbYLllMGT+2aiB6GZrM6FvYedo=',
-            'HTTP_SIGNED_HEADERS' => 'api-key,host,signed-headers',
-            'HTTP_API_KEY' => '5+P7mNdE/SeT',
+            'HTTP_AUTHORIZATION' => 'HMAC-SHA256 NzRwG8TtHLXb2o6koJWumSd7dpTnfbzsPTxmDU9ymP0=',
+            'HTTP_SIGNED_HEADERS' => 'api-key,content-length,content-type,host,signed-headers',
+            'HTTP_API_KEY' => 'FDzAMHIgEUE224Hw',
             'HTTP_HOST' => 'localhost',
             'HTTP_USER_AGENT' => 'GuzzleHttp/6.2.1 PHP/7.0.13-1+deb.sury.org~trusty+1',
             'HTTPS' => 'off',
@@ -53,7 +53,7 @@ class SlimTest extends \PHPUnit_Framework_TestCase
             'REQUEST_URI' => '/users',
             'SCRIPT_NAME' => '/app.php',
             'CONTENT_LENGTH' => '0',
-            'CONTENT_TYPE' => '',
+            'CONTENT_TYPE' => 'osom/cacauets',
             'REQUEST_METHOD' => 'GET',
             'QUERY_STRING' => '',
             'FCGI_ROLE' => 'RESPONDER',
@@ -70,7 +70,7 @@ class SlimTest extends \PHPUnit_Framework_TestCase
             ->expects($this->once())
             ->method('hmac')
             ->with(
-                "GET /users HTTP/1.1\r\nhost: localhost\r\napi-key: 5+P7mNdE/SeT\r\nsigned-headers: api-key,host,signed-headers\r\n\r\n",
+                "GET /users HTTP/1.1\r\nhost: localhost\r\napi-key: FDzAMHIgEUE224Hw\r\ncontent-length: 0\r\ncontent-type: osom/cacauets\r\nsigned-headers: api-key,content-length,content-type,host,signed-headers\r\n\r\n",
                 static::ORIGINAL_SECRET
             )
             ->will($this->returnCallback(function ($data, $key) {
