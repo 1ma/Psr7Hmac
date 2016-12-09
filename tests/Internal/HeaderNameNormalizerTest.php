@@ -16,5 +16,7 @@ class HeaderNameNormalizerTest extends \PHPUnit_Framework_TestCase
         $this->assertSame('foo-bar', $nameNormalizer->normalize('Foo-Bar'));
         $this->assertSame('foo_bar', $nameNormalizer->normalize('Foo_Bar'));
         $this->assertSame('foo-bar', $nameNormalizer->normalize('HTTP_FOO_BAR'));
+        $this->assertSame('content-length', $nameNormalizer->normalize('CONTENT_LENGTH'));
+        $this->assertSame('content-type', $nameNormalizer->normalize('CONTENT_TYPE'));
     }
 }

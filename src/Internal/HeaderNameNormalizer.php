@@ -2,9 +2,13 @@
 
 namespace UMA\Psr7Hmac\Internal;
 
-
 class HeaderNameNormalizer
 {
+    private static $specialSnowflakes = [
+        'CONTENT_LENGTH' => 'content-length',
+        'CONTENT_TYPE' => 'content-type',
+    ];
+
     /**
      * @param string $name
      *
@@ -12,6 +16,10 @@ class HeaderNameNormalizer
      */
     public function normalize($name)
     {
+        if (array_key_exists($name, self::$specialSnowflakes)) {
+            return self::$specialSnowflakes[$name];
+        }
+
         $normalized = mb_strtolower($name);
 
         if (0 === strpos($normalized, 'http_')) {
