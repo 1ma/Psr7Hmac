@@ -19,6 +19,12 @@ class WanduFactory implements FactoryInterface
         $streamedBody = new Stream('php://memory', 'r+');
         $streamedBody->write($body);
 
+        foreach ($headers as $name => $value) {
+            if (!is_string($value) && !is_array($value)) {
+                $headers[$name] = strval($value);
+            }
+        }
+
         return new Request($method, new Uri($url), '1.1', $headers, $streamedBody);
     }
 
@@ -31,6 +37,12 @@ class WanduFactory implements FactoryInterface
     {
         $streamedBody = new Stream('php://memory', 'r+');
         $streamedBody->write($body);
+
+        foreach ($headers as $name => $value) {
+            if (!is_string($value) && !is_array($value)) {
+                $headers[$name] = strval($value);
+            }
+        }
 
         return new Response($statusCode, '', '1.1', $headers, $streamedBody);
     }
