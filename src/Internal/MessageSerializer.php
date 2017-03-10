@@ -32,9 +32,9 @@ final class MessageSerializer
             return self::requestLine($message);
         } elseif ($message instanceof ResponseInterface) {
             return self::statusLine($message);
-        } else {
-            throw new \InvalidArgumentException('Unknown message type');
         }
+        
+        throw new \InvalidArgumentException('Unknown message type');
     }
 
     private static function headers(MessageInterface $message)
