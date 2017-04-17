@@ -21,11 +21,11 @@ provides a convenient integration of this library with Symfony's [Security Compo
 Signer::__construct($secret);
 
 /**
- * @param MessageInterface $message
+ * @param RequestInterface $request
  *
- * @return MessageInterface
+ * @return RequestInterface
  */
-Signer::sign(MessageInterface $message);
+Signer::sign(RequestInterface $request);
 
 /**
  * @param InspectorInterface|null $inspector
@@ -33,12 +33,12 @@ Signer::sign(MessageInterface $message);
 Verifier::__construct(InspectorInterface $inspector = null);
 
 /**
- * @param MessageInterface $message
+ * @param RequestInterface $request
  * @param string           $secret
  *
  * @return bool
  */
-Verifier::verify(MessageInterface $message, $secret);
+Verifier::verify(RequestInterface $request, $secret);
 ```
 
 
@@ -87,7 +87,7 @@ var_dump($verifier->verify($signedRequest->withHeader('User-Agent', 'PHP/5.x'), 
 var_dump($verifier->verify($signedRequest->withHeader('Signed-Headers', 'host,signed-headers'), 'secret'));
 // false
 
-// The verification also fails if any single part of the message is
+// The verification also fails if any single part of the request is
 // removed altogether after signing it.
 var_dump($verifier->verify($signedRequest->withoutHeader('Signed-Headers'), 'secret'));
 // false
