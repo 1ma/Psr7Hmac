@@ -2,10 +2,9 @@
 
 namespace UMA\Psr7Hmac;
 
-use Psr\Http\Message\MessageInterface;
 use Psr\Http\Message\RequestInterface;
 use UMA\Psr7Hmac\Internal\HashCalculator;
-use UMA\Psr7Hmac\Internal\MessageSerializer;
+use UMA\Psr7Hmac\Internal\RequestSerializer;
 
 class Signer
 {
@@ -29,18 +28,14 @@ class Signer
     }
 
     /**
-     * @param MessageInterface $message
+     * @param RequestInterface $request
      *
-     * @return MessageInterface The signed message.
-     *
-     * @throws \InvalidArgumentException When $message is an implementation of
-     *                                   MessageInterface that cannot be
-     *                                   serialized and thus neither signed.
+     * @return RequestInterface The signed request.
      */
-    public function sign(MessageInterface $message)
+    public function sign(RequestInterface $request)
     {
-        $serialization = MessageSerializer::serialize(
-            $preSignedMessage = $this->withSignedHeadersHeader($message)
+        $serialization = RequestSerializer::serialize(
+            $preSignedMessage = $this->withSignedHeadersHeader($request)
         );
 
         return $preSignedMessage->withHeader(
@@ -50,18 +45,18 @@ class Signer
     }
 
     /**
-     * @param MessageInterface $message
+     * @param RequestInterface $request
      *
-     * @return MessageInterface
+     * @return RequestInterface
      */
-    private function withSignedHeadersHeader(MessageInterface $message)
+    private function withSignedHeadersHeader(RequestInterface $request)
     {
-        $headers = array_keys(array_change_key_case($message->getHeaders(), CASE_LOWER));
+        $headers = array_keys(array_change_key_case($request->getHeaders(), CASE_LOWER));
         array_push($headers, mb_strtolower(Specification::SIGN_HEADER));
 
         // Some of the tested RequestInterface implementations do not include
         // the Host header in $message->getHeaders(), so it is explicitly set when needed
-        if ($message instanceof RequestInterface && !in_array('host', $headers)) {
+        if ($request instanceof RequestInterface && !in_array('host', $headers)) {
             array_push($headers, 'host');
         }
 
@@ -70,6 +65,6 @@ class Signer
         // to produce the exact same string regardless of the underlying implementation
         sort($headers);
 
-        return $message->withHeader(Specification::SIGN_HEADER, implode(',', $headers));
+        return $request->withHeader(Specification::SIGN_HEADER, implode(',', $headers));
     }
 }

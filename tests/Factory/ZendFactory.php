@@ -3,7 +3,6 @@
 namespace UMA\Tests\Psr7Hmac\Factory;
 
 use Zend\Diactoros\Request;
-use Zend\Diactoros\Response;
 use Zend\Diactoros\Stream;
 
 class ZendFactory implements FactoryInterface
@@ -22,27 +21,9 @@ class ZendFactory implements FactoryInterface
 
     /**
      * {@inheritdoc}
-     *
-     * @return Response
-     */
-    public static function response($statusCode, array $headers = [], $body = null)
-    {
-        return new Response(new Stream(self::stream($body)), $statusCode, $headers);
-    }
-
-    /**
-     * {@inheritdoc}
      */
     public static function requestClass()
     {
         return Request::class;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public static function responseClass()
-    {
-        return Response::class;
     }
 }

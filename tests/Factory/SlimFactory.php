@@ -5,7 +5,6 @@ namespace UMA\Tests\Psr7Hmac\Factory;
 use Slim\Http\Body;
 use Slim\Http\Headers;
 use Slim\Http\Request;
-use Slim\Http\Response;
 use Slim\Http\Uri;
 
 class SlimFactory implements FactoryInterface
@@ -31,27 +30,9 @@ class SlimFactory implements FactoryInterface
 
     /**
      * {@inheritdoc}
-     *
-     * @return Response
-     */
-    public static function response($statusCode, array $headers = [], $body = null)
-    {
-        return new Response($statusCode, new Headers($headers), new Body(self::stream($body)));
-    }
-
-    /**
-     * {@inheritdoc}
      */
     public static function requestClass()
     {
         return Request::class;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public static function responseClass()
-    {
-        return Response::class;
     }
 }

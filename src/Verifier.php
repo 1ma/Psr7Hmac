@@ -2,13 +2,13 @@
 
 namespace UMA\Psr7Hmac;
 
-use Psr\Http\Message\MessageInterface;
+use Psr\Http\Message\RequestInterface;
 use UMA\Psr7Hmac\Inspector\DefaultInspector;
 use UMA\Psr7Hmac\Inspector\InspectorInterface;
 use UMA\Psr7Hmac\Internal\HashCalculator;
 use UMA\Psr7Hmac\Internal\HeaderNameNormalizer;
 use UMA\Psr7Hmac\Internal\HeaderValidator;
-use UMA\Psr7Hmac\Internal\MessageSerializer;
+use UMA\Psr7Hmac\Internal\RequestSerializer;
 
 class Verifier
 {
@@ -47,47 +47,43 @@ class Verifier
     }
 
     /**
-     * @param MessageInterface $message
+     * @param RequestInterface $request
      * @param string           $secret
      *
      * @return bool Signature verification outcome.
-     *
-     * @throws \InvalidArgumentException When $message is an implementation of
-     *                                   MessageInterface that cannot be
-     *                                   serialized and thus neither verified.
      */
-    public function verify(MessageInterface $message, $secret)
+    public function verify(RequestInterface $request, $secret)
     {
-        if (false === $matches = $this->validator->conforms($message)) {
+        if (false === $matches = $this->validator->conforms($request)) {
             return false;
         }
 
         $clientSideSignature = $matches[Specification::AUTH_HEADER][1];
 
         $serverSideSignature = $this->calculator
-            ->hmac(MessageSerializer::serialize($this->withoutUnsignedHeaders($message)), $secret);
+            ->hmac(RequestSerializer::serialize($this->withoutUnsignedHeaders($request)), $secret);
 
         $vetted = $this->inspector
-            ->vet($message, $verified = hash_equals($serverSideSignature, $clientSideSignature));
+            ->vet($request, $verified = hash_equals($serverSideSignature, $clientSideSignature));
 
         return $vetted && $verified;
     }
 
     /**
-     * @param MessageInterface $message
+     * @param RequestInterface $request
      *
-     * @return MessageInterface
+     * @return RequestInterface
      */
-    private function withoutUnsignedHeaders(MessageInterface $message)
+    private function withoutUnsignedHeaders(RequestInterface $request)
     {
-        $signedHeaders = array_filter(explode(',', $message->getHeaderLine(Specification::SIGN_HEADER)));
+        $signedHeaders = array_filter(explode(',', $request->getHeaderLine(Specification::SIGN_HEADER)));
 
-        foreach (array_keys($message->getHeaders()) as $headerName) {
+        foreach (array_keys($request->getHeaders()) as $headerName) {
             if (!in_array($this->normalizer->normalize($headerName), $signedHeaders)) {
-                $message = $message->withoutHeader($headerName);
+                $request = $request->withoutHeader($headerName);
             }
         }
 
-        return $message;
+        return $request;
     }
 }

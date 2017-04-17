@@ -3,7 +3,6 @@
 namespace UMA\Tests\Psr7Hmac\Factory;
 
 use Kambo\Http\Message\Request;
-use Kambo\Http\Message\Response;
 use Kambo\Http\Message\Stream;
 use Kambo\Http\Message\Uri;
 
@@ -37,27 +36,9 @@ class KamboFactory
 
     /**
      * {@inheritdoc}
-     *
-     * @return Response
-     */
-    public static function response($statusCode, array $headers = [], $body = null)
-    {
-        return new Response($statusCode, $headers, new Stream(self::stream($body)));
-    }
-
-    /**
-     * {@inheritdoc}
      */
     public static function requestClass()
     {
         return Request::class;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public static function responseClass()
-    {
-        return Response::class;
     }
 }

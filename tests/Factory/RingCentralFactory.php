@@ -3,7 +3,6 @@
 namespace UMA\Tests\Psr7Hmac\Factory;
 
 use RingCentral\Psr7\Request;
-use RingCentral\Psr7\Response;
 
 class RingCentralFactory implements FactoryInterface
 {
@@ -19,27 +18,9 @@ class RingCentralFactory implements FactoryInterface
 
     /**
      * {@inheritdoc}
-     *
-     * @return Response
-     */
-    public static function response($statusCode, array $headers = [], $body = null)
-    {
-        return new Response($statusCode, $headers, $body);
-    }
-
-    /**
-     * {@inheritdoc}
      */
     public static function requestClass()
     {
         return Request::class;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public static function responseClass()
-    {
-        return Response::class;
     }
 }
