@@ -12,7 +12,9 @@ trait StringifierHelper
     private static function stringify(array $headers)
     {
         foreach ($headers as $name => $value) {
-            if (!is_string($value) && !is_array($value)) {
+            if (is_array($value)) {
+                $headers[$name] = static::stringify($value);
+            } elseif (!is_string($value)) {
                 $headers[$name] = (string) $value;
             }
         }
