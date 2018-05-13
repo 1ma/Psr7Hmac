@@ -3,3 +3,5 @@
 /docker-compose.yml
 /phpunit.xml
 /vendor/
+
+*.phar
