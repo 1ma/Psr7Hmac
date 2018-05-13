@@ -35,6 +35,7 @@ final class RequestSerializer
 
         unset($headers['host']);
         unset($headers['Host']);
+        unset($headers['HTTP_HOST']);
 
         $headerLines = [];
         foreach ($headers as $name => $value) {
