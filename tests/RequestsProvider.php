@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace UMA\Tests\Psr7Hmac;
 
 use Psr\Http\Message\RequestInterface;
@@ -16,12 +18,18 @@ use UMA\Tests\Psr7Hmac\Factory\ZendFactory;
 
 trait RequestsProvider
 {
-    public function simplestRequestProvider()
+    /**
+     * @return RequestInterface[]
+     */
+    public function simplestRequestProvider(): array
     {
         return $this->requests('GET', 'http://www.example.com/index.html');
     }
 
-    public function emptyRequestWithHeadersProvider()
+    /**
+     * @return RequestInterface[]
+     */
+    public function emptyRequestWithHeadersProvider(): array
     {
         $headers = [
             'User-Agent' => 'PHP/5.6.21',
@@ -33,7 +41,10 @@ trait RequestsProvider
         return $this->requests('GET', 'http://www.example.com/index.html', $headers);
     }
 
-    public function queryParamsRequestProvider()
+    /**
+     * @return RequestInterface[]
+     */
+    public function queryParamsRequestProvider(): array
     {
         $headers = [
             'Accept' => 'application/json; charset=utf-8',
@@ -42,7 +53,10 @@ trait RequestsProvider
         return $this->requests('GET', 'http://www.example.com/search?q=search+term&limit=10&offset=50', $headers);
     }
 
-    public function jsonRequestProvider()
+    /**
+     * @return RequestInterface[]
+     */
+    public function jsonRequestProvider(): array
     {
         $headers = [
             'Content-Type' => 'application/json; charset=utf-8',
@@ -69,7 +83,10 @@ trait RequestsProvider
         return $this->requests('POST', 'http://www.example.com/api/record.php', $headers, json_encode($body));
     }
 
-    public function simpleFormRequestProvider()
+    /**
+     * @return RequestInterface[]
+     */
+    public function simpleFormRequestProvider(): array
     {
         $headers = [
             'Content-Length' => 51,
@@ -81,9 +98,12 @@ trait RequestsProvider
         return $this->requests('POST', 'http://www.example.com/login.php', $headers, $body);
     }
 
-    public function binaryRequestProvider()
+    /**
+     * @return RequestInterface[]
+     */
+    public function binaryRequestProvider(): array
     {
-        $fh = fopen(__DIR__.'/Resources/avatar.png', 'r');
+        $fh = fopen(__DIR__.'/Resources/avatar.png', 'r+b');
 
         $headers = [
             'Content-Type' => 'image/png',
@@ -94,14 +114,9 @@ trait RequestsProvider
     }
 
     /**
-     * @param string      $method
-     * @param string      $url
-     * @param string[]    $headers
-     * @param string|null $body
-     *
      * @return RequestInterface[]
      */
-    private function requests($method, $url, array $headers = [], $body = null)
+    private function requests(string $method, string $url, array $headers = [], string $body = null): array
     {
         return [
             GuzzleFactory::requestClass() => [GuzzleFactory::request($method, $url, $headers, $body)],

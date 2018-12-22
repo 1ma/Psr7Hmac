@@ -1,15 +1,15 @@
 <?php
 
+declare(strict_types=1);
+
 namespace UMA\Tests\Psr7Hmac\Factory;
 
 trait StringifierHelper
 {
     /**
-     * @param array $headers
-     *
-     * @return array
+     * @param string[] $headers
      */
-    private static function stringify(array $headers)
+    private static function stringify(array $headers): array
     {
         foreach ($headers as $name => $value) {
             if (is_array($value)) {

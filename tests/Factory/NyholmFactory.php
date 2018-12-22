@@ -1,10 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace UMA\Tests\Psr7Hmac\Factory;
 
 use Nyholm\Psr7\Request as NyholmRequest;
+use Psr\Http\Message\RequestInterface;
 
-class NyholmFactory implements FactoryInterface
+final class NyholmFactory implements FactoryInterface
 {
 
     /**
@@ -12,7 +15,7 @@ class NyholmFactory implements FactoryInterface
      *
      * @return NyholmRequest
      */
-    public static function request($method, $url, array $headers = [], $body = null)
+    public static function request(string $method, string $url, array $headers = [], string $body = null): RequestInterface
     {
         return new NyholmRequest($method, $url, $headers, $body, '1.1');
     }
@@ -20,7 +23,7 @@ class NyholmFactory implements FactoryInterface
     /**
      * {@inheritdoc}
      */
-    public static function requestClass()
+    public static function requestClass(): string
     {
         return NyholmRequest::class;
     }

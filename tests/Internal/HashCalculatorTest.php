@@ -1,10 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace UMA\Tests\Psr7Hmac;
 
+use PHPUnit\Framework\TestCase;
 use UMA\Psr7Hmac\Internal\HashCalculator;
 
-class HashCalculatorTest extends \PHPUnit_Framework_TestCase
+final class HashCalculatorTest extends TestCase
 {
     /**
      * @dataProvider vectorProvider
@@ -13,21 +16,21 @@ class HashCalculatorTest extends \PHPUnit_Framework_TestCase
      * @param string $data
      * @param string $expectedDigest
      */
-    public function testVector($key, $data, $expectedDigest)
+    public function testVector($key, $data, $expectedDigest): void
     {
         $actualDigest = base64_decode((new HashCalculator())->hmac($data, $key), true);
 
         if (32 > strlen($expectedDigest)) { // Test Case 5 happens to be a beautiful, unique snowflake
-            $this->assertStringStartsWith($expectedDigest, $actualDigest);
+            self::assertStringStartsWith($expectedDigest, $actualDigest);
         } else {
-            $this->assertSame($expectedDigest, $actualDigest);
+            self::assertSame($expectedDigest, $actualDigest);
         }
     }
 
     /**
      * @see https://tools.ietf.org/html/rfc4231#section-4
      */
-    public function vectorProvider()
+    public function vectorProvider(): array
     {
         return [
             'Test Case 1' => [

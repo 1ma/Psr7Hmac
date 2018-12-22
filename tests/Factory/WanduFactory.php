@@ -1,12 +1,15 @@
 <?php
 
+declare(strict_types=1);
+
 namespace UMA\Tests\Psr7Hmac\Factory;
 
+use Psr\Http\Message\RequestInterface;
 use Wandu\Http\Psr\Request;
 use Wandu\Http\Psr\Stream;
 use Wandu\Http\Psr\Uri;
 
-class WanduFactory implements FactoryInterface
+final class WanduFactory implements FactoryInterface
 {
     use StringifierHelper;
 
@@ -15,7 +18,7 @@ class WanduFactory implements FactoryInterface
      *
      * @return Request
      */
-    public static function request($method, $url, array $headers = [], $body = null)
+    public static function request(string $method, string $url, array $headers = [], string $body = null): RequestInterface
     {
         $streamedBody = new Stream('php://memory', 'r+');
         $streamedBody->write($body);
@@ -26,7 +29,7 @@ class WanduFactory implements FactoryInterface
     /**
      * {@inheritdoc}
      */
-    public static function requestClass()
+    public static function requestClass(): string
     {
         return Request::class;
     }
