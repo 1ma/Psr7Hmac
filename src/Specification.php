@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace UMA\Psr7Hmac;
 
 /**
@@ -14,13 +16,13 @@ final class Specification
      *
      * @see https://tools.ietf.org/html/rfc7235#section-4.2
      */
-    const AUTH_HEADER = 'Authorization';
+    public const AUTH_HEADER = 'Authorization';
 
     /**
      * Authentication credentials prefix. Its purpose is telling the
      * message receiver which kind of data the authentication header is holding.
      */
-    const AUTH_PREFIX = 'HMAC-SHA256 ';
+    public const AUTH_PREFIX = 'HMAC-SHA256 ';
 
     /**
      * 'Authorization' header value definition. It must begin with 'HMAC-SHA256',
@@ -28,12 +30,12 @@ final class Specification
      *
      * @example Authorization: HMAC-SHA256 y0SLRAxCrIrQhPyKh5XJj1t4AjWcMF6r1X7Nsg4kiJY=
      */
-    const AUTH_REGEXP = '@^HMAC-SHA256 ([+/0-9A-Za-z]{43}=)$@';
+    public const AUTH_REGEXP = '@^HMAC-SHA256 ([+/0-9A-Za-z]{43}=)$@';
 
     /**
      * Hash algorithm used in conjunction with the HMAC function.
      */
-    const HASH_ALGORITHM = 'sha256';
+    public const HASH_ALGORITHM = 'sha256';
 
     /**
      * Name of the HTTP header that holds the list of signed headers.
@@ -60,7 +62,7 @@ final class Specification
      * @example Signed-Headers: api-key,content-type,host,nonce,signed-headers
      * @example Signed-Headers: signed-headers
      */
-    const SIGN_HEADER = 'Signed-Headers';
+    public const SIGN_HEADER = 'Signed-Headers';
 
     /**
      * 'Signed-Headers' header value definition. As explained above, its a
@@ -82,5 +84,5 @@ final class Specification
      * @see https://tools.ietf.org/html/rfc7230#section-3.2
      * @see https://tools.ietf.org/html/rfc7230#section-3.2.6
      */
-    const SIGN_REGEXP = "@^[-!#$%&'*+.^_`|~0-9a-z]+(,[-!#$%&'*+.^_`|~0-9a-z]+)*$@";
+    public const SIGN_REGEXP = "@^[-!#$%&'*+.^_`|~0-9a-z]+(,[-!#$%&'*+.^_`|~0-9a-z]+)*$@";
 }

@@ -1,12 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace UMA\Psr7Hmac;
 
 use Psr\Http\Message\RequestInterface;
 use UMA\Psr7Hmac\Internal\HashCalculator;
 use UMA\Psr7Hmac\Internal\RequestSerializer;
 
-class Signer
+final class Signer
 {
     /**
      * @var string
@@ -18,21 +20,13 @@ class Signer
      */
     private $calculator;
 
-    /**
-     * @param string $secret
-     */
-    public function __construct($secret)
+    public function __construct(string $secret)
     {
         $this->secret = $secret;
         $this->calculator = new HashCalculator();
     }
 
-    /**
-     * @param RequestInterface $request
-     *
-     * @return RequestInterface The signed request.
-     */
-    public function sign(RequestInterface $request)
+    public function sign(RequestInterface $request): RequestInterface
     {
         $serialization = RequestSerializer::serialize(
             $preSignedMessage = $this->withSignedHeadersHeader($request)
@@ -44,27 +38,22 @@ class Signer
         );
     }
 
-    /**
-     * @param RequestInterface $request
-     *
-     * @return RequestInterface
-     */
-    private function withSignedHeadersHeader(RequestInterface $request)
+    private function withSignedHeadersHeader(RequestInterface $request): RequestInterface
     {
-        $headers = array_keys(array_change_key_case($request->getHeaders(), CASE_LOWER));
-        array_push($headers, mb_strtolower(Specification::SIGN_HEADER));
+        $headers = \array_keys(\array_change_key_case($request->getHeaders(), CASE_LOWER));
+        $headers[] = \mb_strtolower(Specification::SIGN_HEADER);
 
         // Some of the tested RequestInterface implementations do not include
         // the Host header in $message->getHeaders(), so it is explicitly set when needed
-        if ($request instanceof RequestInterface && !in_array('host', $headers)) {
-            array_push($headers, 'host');
+        if ($request instanceof RequestInterface && !\in_array('host', $headers, true)) {
+            $headers[] = 'host';
         }
 
         // There is no guarantee about the order of the headers returned by
         // $message->getHeaders(), so they are explicitly sorted in order
         // to produce the exact same string regardless of the underlying implementation
-        sort($headers);
+        \sort($headers);
 
-        return $request->withHeader(Specification::SIGN_HEADER, implode(',', $headers));
+        return $request->withHeader(Specification::SIGN_HEADER, \implode(',', $headers));
     }
 }

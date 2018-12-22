@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace UMA\Psr7Hmac\Inspector;
 
 use Psr\Http\Message\MessageInterface;
@@ -18,7 +20,7 @@ use Psr\Http\Message\MessageInterface;
 interface InspectorInterface
 {
     /**
-     * Once injected into a Verifier instance, the vet() method
+     * Once injected into a Verifier instance the vet() method
      * will be called once for every call to Verifier::verify(),
      * right after the HMAC verification outcome is determined.
      *
@@ -32,11 +34,6 @@ interface InspectorInterface
      * that passed the HMAC verification. When the $verified argument is
      * false the returned boolean has no effect (i.e. it can only
      * force verification failures, not successes).
-     *
-     * @param MessageInterface $message
-     * @param bool             $verified
-     *
-     * @return bool
      */
-    public function vet(MessageInterface $message, $verified);
+    public function vet(MessageInterface $message, bool $verified): bool;
 }
