@@ -1,13 +1,16 @@
 <?php
 
+declare(strict_types=1);
+
 namespace UMA\Tests\Psr7Hmac\Factory;
 
+use Psr\Http\Message\RequestInterface;
 use Slim\Http\Body;
 use Slim\Http\Headers;
 use Slim\Http\Request;
 use Slim\Http\Uri;
 
-class SlimFactory implements FactoryInterface
+final class SlimFactory implements FactoryInterface
 {
     use StreamHelper;
 
@@ -16,7 +19,7 @@ class SlimFactory implements FactoryInterface
      *
      * @return Request
      */
-    public static function request($method, $url, array $headers = [], $body = null)
+    public static function request(string $method, string $url, array $headers = [], string $body = null): RequestInterface
     {
         $parseUrl = parse_url($url);
 
@@ -31,7 +34,7 @@ class SlimFactory implements FactoryInterface
     /**
      * {@inheritdoc}
      */
-    public static function requestClass()
+    public static function requestClass(): string
     {
         return Request::class;
     }

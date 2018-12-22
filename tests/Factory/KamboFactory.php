@@ -1,12 +1,15 @@
 <?php
 
+declare(strict_types=1);
+
 namespace UMA\Tests\Psr7Hmac\Factory;
 
 use Kambo\Http\Message\Request;
 use Kambo\Http\Message\Stream;
 use Kambo\Http\Message\Uri;
+use Psr\Http\Message\RequestInterface;
 
-class KamboFactory
+final class KamboFactory implements FactoryInterface
 {
     use StreamHelper;
 
@@ -15,12 +18,11 @@ class KamboFactory
      *
      * @return Request
      */
-    public static function request($method, $url, array $headers = [], $body = null)
+    public static function request(string $method, string $url, array $headers = [], string $body = null): RequestInterface
     {
         $parseUrl = parse_url($url);
 
-        $query = array_key_exists('query', $parseUrl) ?
-            $parseUrl['query'] : null;
+        $query = $parseUrl['query'] ?? null;
 
         $uri = new Uri($parseUrl['scheme'], $parseUrl['host'], null, $parseUrl['path'], $query);
 
@@ -37,7 +39,7 @@ class KamboFactory
     /**
      * {@inheritdoc}
      */
-    public static function requestClass()
+    public static function requestClass(): string
     {
         return Request::class;
     }

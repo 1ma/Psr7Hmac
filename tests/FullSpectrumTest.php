@@ -1,22 +1,27 @@
 <?php
 
+declare(strict_types=1);
+
 namespace UMA\Tests\Psr7Hmac;
 
+use PHPUnit\Framework\ExpectationFailedException;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\RequestInterface;
 use UMA\Psr7Hmac\Internal\HashCalculator;
 use UMA\Psr7Hmac\Signer;
 use UMA\Psr7Hmac\Specification;
 use UMA\Psr7Hmac\Verifier;
 
-class FullSpectrumTest extends \PHPUnit_Framework_TestCase
+final class FullSpectrumTest extends TestCase
 {
     use ReflectionUtil;
     use RequestsProvider;
 
-    const SECRET = '$ecr3t';
+    private const SECRET = '$ecr3t';
 
     /**
-     * @var HashCalculator|\PHPUnit_Framework_MockObject_MockObject
+     * @var HashCalculator|MockObject
      */
     private $calculator;
 
@@ -39,10 +44,8 @@ class FullSpectrumTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider simplestRequestProvider
-     *
-     * @param RequestInterface $request
      */
-    public function testSimplestRequest(RequestInterface $request)
+    public function testSimplestRequest(RequestInterface $request): void
     {
         $this->setExpectedSerialization(
             "GET /index.html HTTP/1.1\r\nhost: www.example.com\r\nsigned-headers: host,signed-headers\r\n\r\n"
@@ -53,10 +56,8 @@ class FullSpectrumTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider emptyRequestWithHeadersProvider
-     *
-     * @param RequestInterface $request
      */
-    public function testEmptyRequestWithHeaders(RequestInterface $request)
+    public function testEmptyRequestWithHeaders(RequestInterface $request): void
     {
         $this->setExpectedSerialization(
             "GET /index.html HTTP/1.1\r\nhost: www.example.com\r\naccept: */*\r\naccept-encoding: gzip,deflate\r\nconnection: keep-alive\r\nsigned-headers: accept,accept-encoding,connection,host,signed-headers,user-agent\r\nuser-agent: PHP/5.6.21\r\n\r\n"
@@ -67,10 +68,8 @@ class FullSpectrumTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider jsonRequestProvider
-     *
-     * @param RequestInterface $request
      */
-    public function testJsonRequest(RequestInterface $request)
+    public function testJsonRequest(RequestInterface $request): void
     {
         $this->setExpectedSerialization(
             "POST /api/record.php HTTP/1.1\r\nhost: www.example.com\r\ncontent-length: 134\r\ncontent-type: application/json; charset=utf-8\r\nsigned-headers: content-length,content-type,host,signed-headers\r\n\r\n{\"employees\":[{\"firstName\":\"John\",\"lastName\":\"Doe\"},{\"firstName\":\"Anna\",\"lastName\":\"Smith\"},{\"firstName\":\"Peter\",\"lastName\":\"Jones\"}]}"
@@ -81,10 +80,8 @@ class FullSpectrumTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider queryParamsRequestProvider
-     *
-     * @param RequestInterface $request
      */
-    public function testQueryParamsRequest(RequestInterface $request)
+    public function testQueryParamsRequest(RequestInterface $request): void
     {
         $this->setExpectedSerialization(
             "GET /search?limit=10&offset=50&q=search+term HTTP/1.1\r\nhost: www.example.com\r\naccept: application/json; charset=utf-8\r\nsigned-headers: accept,host,signed-headers\r\n\r\n"
@@ -95,10 +92,8 @@ class FullSpectrumTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider simpleFormRequestProvider
-     *
-     * @param RequestInterface $request
      */
-    public function testSimpleFormRequest(RequestInterface $request)
+    public function testSimpleFormRequest(RequestInterface $request): void
     {
         $this->setExpectedSerialization(
             "POST /login.php HTTP/1.1\r\nhost: www.example.com\r\ncontent-length: 51\r\ncontent-type: application/x-www-form-urlencoded; charset=utf-8\r\nsigned-headers: content-length,content-type,host,signed-headers\r\n\r\nuser=john.doe&password=battery+horse+correct+staple"
@@ -109,10 +104,8 @@ class FullSpectrumTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider binaryRequestProvider
-     *
-     * @param RequestInterface $request
      */
-    public function testBinaryRequest(RequestInterface $request)
+    public function testBinaryRequest(RequestInterface $request): void
     {
         $fh = fopen(__DIR__.'/Resources/avatar.png', 'r');
 
@@ -123,10 +116,7 @@ class FullSpectrumTest extends \PHPUnit_Framework_TestCase
         $this->inspectSignedRequest($this->signer->sign($request));
     }
 
-    /**
-     * @param string $serialization
-     */
-    private function setExpectedSerialization($serialization)
+    private function setExpectedSerialization(string $serialization): void
     {
         $this->calculator
             ->expects($this->once())
@@ -138,26 +128,26 @@ class FullSpectrumTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param RequestInterface $signedRequest
+     * @throws ExpectationFailedException
      */
-    private function inspectSignedRequest(RequestInterface $signedRequest)
+    private function inspectSignedRequest(RequestInterface $signedRequest): void
     {
         $freshVerifier = new Verifier();
 
-        $this->assertTrue($signedRequest->hasHeader(Specification::AUTH_HEADER));
-        $this->assertTrue($signedRequest->hasHeader(Specification::SIGN_HEADER));
+        self::assertTrue($signedRequest->hasHeader(Specification::AUTH_HEADER));
+        self::assertTrue($signedRequest->hasHeader(Specification::SIGN_HEADER));
 
-        $this->assertTrue($freshVerifier->verify($signedRequest, self::SECRET));
+        self::assertTrue($freshVerifier->verify($signedRequest, self::SECRET));
 
-        $this->assertFalse($freshVerifier->verify($signedRequest, 'an0ther $ecr3t'));
+        self::assertFalse($freshVerifier->verify($signedRequest, 'an0ther $ecr3t'));
 
         $withAddedHeader = $signedRequest->withHeader('X-Foo', 'Bar');
-        $this->assertTrue($freshVerifier->verify($withAddedHeader, self::SECRET));
+        self::assertTrue($freshVerifier->verify($withAddedHeader, self::SECRET));
 
         $tamperedSignedHeader = $signedRequest->withHeader(Specification::SIGN_HEADER, 'tampered,signed-headers,list');
-        $this->assertFalse($freshVerifier->verify($tamperedSignedHeader, self::SECRET));
+        self::assertFalse($freshVerifier->verify($tamperedSignedHeader, self::SECRET));
 
         $deletedSignedHeader = $signedRequest->withoutHeader(Specification::SIGN_HEADER);
-        $this->assertFalse($freshVerifier->verify($deletedSignedHeader, self::SECRET));
+        self::assertFalse($freshVerifier->verify($deletedSignedHeader, self::SECRET));
     }
 }

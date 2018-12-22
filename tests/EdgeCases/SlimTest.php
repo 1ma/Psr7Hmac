@@ -1,25 +1,28 @@
 <?php
 
+declare(strict_types=1);
+
 namespace UMA\Tests\Psr7Hmac\EdgeCases;
 
+use PHPUnit\Framework\TestCase;
 use Slim\Http\Environment;
 use Slim\Http\Request as SlimRequest;
 use UMA\Psr7Hmac\Internal\HashCalculator;
 use UMA\Psr7Hmac\Verifier;
 use UMA\Tests\Psr7Hmac\ReflectionUtil;
 
-class SlimTest extends \PHPUnit_Framework_TestCase
+final class SlimTest extends TestCase
 {
     use ReflectionUtil;
 
-    const ORIGINAL_SECRET = 'zme+v5kHoCvD7uqF';
+    private const ORIGINAL_SECRET = 'zme+v5kHoCvD7uqF';
 
     /**
      * The Slim implementation of MessageInterface::getHeaders() returns the header
      * names exactly as they are sent to the constructor. That means that on a FastCGI execution
      * environment they will have the 'HTTP_FOO_BAR' format instead of the expected 'Foo-Bar'.
      */
-    public function testFastCGIHeaderNames()
+    public function testFastCGIHeaderNames(): void
     {
         $liveSlimRequest = SlimRequest::createFromEnvironment(Environment::mock([
             'HOSTNAME' => '97a23161396e',
@@ -79,6 +82,6 @@ class SlimTest extends \PHPUnit_Framework_TestCase
 
         $this->replaceInstanceProperty($verifier = new Verifier(), 'calculator', $calculator);
 
-        $this->assertTrue($verifier->verify($liveSlimRequest, static::ORIGINAL_SECRET));
+        self::assertTrue($verifier->verify($liveSlimRequest, static::ORIGINAL_SECRET));
     }
 }

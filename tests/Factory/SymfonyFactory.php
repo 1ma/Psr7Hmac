@@ -1,19 +1,22 @@
 <?php
 
+declare(strict_types=1);
+
 namespace UMA\Tests\Psr7Hmac\Factory;
 
+use Psr\Http\Message\RequestInterface;
 use Symfony\Bridge\PsrHttpMessage\Factory\DiactorosFactory;
 use Symfony\Component\HttpFoundation\Request as SymfonyRequest;
 use Zend\Diactoros\ServerRequest as ZendRequest;
 
-class SymfonyFactory implements FactoryInterface
+final class SymfonyFactory implements FactoryInterface
 {
     /**
      * {@inheritdoc}
      *
      * @return ZendRequest
      */
-    public static function request($method, $url, array $headers = [], $body = null)
+    public static function request(string $method, string $url, array $headers = [], string $body = null): RequestInterface
     {
         $symfonyRequest = SymfonyRequest::create($url, $method, [], [], [], [], $body);
 
@@ -31,7 +34,7 @@ class SymfonyFactory implements FactoryInterface
     /**
      * {@inheritdoc}
      */
-    public static function requestClass()
+    public static function requestClass(): string
     {
         // This is indeed a white lie, as the HttpFoundation component
         // is not a PSR-7 implementation.

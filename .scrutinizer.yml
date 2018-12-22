@@ -9,7 +9,7 @@ build:
     tests:
         override:
             -
-                command: 'wget https://phar.phpunit.de/phpunit-4.8.26.phar && php phpunit-4.8.26.phar'
+                command: 'composer test'
                 coverage:
                     file: 'build/logs/clover.xml'
                     format: 'clover'

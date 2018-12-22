@@ -1,11 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace UMA\Tests\Psr7Hmac\Factory;
 
+use Psr\Http\Message\RequestInterface;
 use Windwalker\Http\Request\Request;
 use Windwalker\Http\Stream\Stream;
 
-class WindwalkerFactory implements FactoryInterface
+final class WindwalkerFactory implements FactoryInterface
 {
     use StreamHelper;
     use StringifierHelper;
@@ -15,7 +18,7 @@ class WindwalkerFactory implements FactoryInterface
      *
      * @return Request
      */
-    public static function request($method, $url, array $headers = [], $body = null)
+    public static function request(string $method, string $url, array $headers = [], string $body = null): RequestInterface
     {
         return new Request($url, $method, new Stream(self::stream($body)), self::stringify($headers));
     }
@@ -23,7 +26,7 @@ class WindwalkerFactory implements FactoryInterface
     /**
      * {@inheritdoc}
      */
-    public static function requestClass()
+    public static function requestClass(): string
     {
         return Request::class;
     }

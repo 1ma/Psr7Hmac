@@ -7,11 +7,10 @@ php:
   - nightly
 
 install:
-  - curl https://phar.phpunit.de/phpunit-5.7.21.phar > phpunit.phar
   - composer install
 
 script:
-  - php phpunit.phar
+  - composer test
 
 after_script:
   - curl https://www.dropbox.com/s/fbvk20qdgjccu3l/test-reporter.phar?dl=1 > test-reporter.phar
