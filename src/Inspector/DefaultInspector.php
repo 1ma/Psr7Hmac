@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace UMA\Psr7Hmac\Inspector;
 
 use Psr\Http\Message\MessageInterface;
@@ -11,12 +13,12 @@ use Psr\Http\Message\MessageInterface;
  *
  * It just blindly agrees with its Verifier.
  */
-class DefaultInspector implements InspectorInterface
+final class DefaultInspector implements InspectorInterface
 {
     /**
      * {@inheritdoc}
      */
-    public function vet(MessageInterface $message, $verified)
+    public function vet(MessageInterface $message, bool $verified): bool
     {
         return $verified;
     }

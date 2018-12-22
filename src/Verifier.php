@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace UMA\Psr7Hmac;
 
 use Psr\Http\Message\RequestInterface;
@@ -10,7 +12,7 @@ use UMA\Psr7Hmac\Internal\HeaderNameNormalizer;
 use UMA\Psr7Hmac\Internal\HeaderValidator;
 use UMA\Psr7Hmac\Internal\RequestSerializer;
 
-class Verifier
+final class Verifier
 {
     /**
      * @var HashCalculator
@@ -38,21 +40,14 @@ class Verifier
     public function __construct(InspectorInterface $inspector = null)
     {
         $this->calculator = new HashCalculator();
-        $this->inspector = null === $inspector ?
-            new DefaultInspector() : $inspector;
+        $this->inspector = $inspector ?? new DefaultInspector();
         $this->normalizer = new HeaderNameNormalizer();
         $this->validator = (new HeaderValidator())
             ->addRule(Specification::AUTH_HEADER, Specification::AUTH_REGEXP)
             ->addRule(Specification::SIGN_HEADER, Specification::SIGN_REGEXP);
     }
 
-    /**
-     * @param RequestInterface $request
-     * @param string           $secret
-     *
-     * @return bool Signature verification outcome.
-     */
-    public function verify(RequestInterface $request, $secret)
+    public function verify(RequestInterface $request, string $secret): bool
     {
         if (false === $matches = $this->validator->conforms($request)) {
             return false;
@@ -64,22 +59,17 @@ class Verifier
             ->hmac(RequestSerializer::serialize($this->withoutUnsignedHeaders($request)), $secret);
 
         $vetted = $this->inspector
-            ->vet($request, $verified = hash_equals($serverSideSignature, $clientSideSignature));
+            ->vet($request, $verified = \hash_equals($serverSideSignature, $clientSideSignature));
 
         return $vetted && $verified;
     }
 
-    /**
-     * @param RequestInterface $request
-     *
-     * @return RequestInterface
-     */
-    private function withoutUnsignedHeaders(RequestInterface $request)
+    private function withoutUnsignedHeaders(RequestInterface $request): RequestInterface
     {
-        $signedHeaders = array_filter(explode(',', $request->getHeaderLine(Specification::SIGN_HEADER)));
+        $signedHeaders = \array_filter(\explode(',', $request->getHeaderLine(Specification::SIGN_HEADER)));
 
-        foreach (array_keys($request->getHeaders()) as $headerName) {
-            if (!in_array($this->normalizer->normalize($headerName), $signedHeaders)) {
+        foreach (\array_keys($request->getHeaders()) as $headerName) {
+            if (!\in_array($this->normalizer->normalize($headerName), $signedHeaders, true)) {
                 $request = $request->withoutHeader($headerName);
             }
         }

@@ -7,14 +7,10 @@ namespace UMA\Tests\Psr7Hmac\EdgeCases;
 use PHPUnit\Framework\TestCase;
 use Slim\Http\Environment;
 use Slim\Http\Request as SlimRequest;
-use UMA\Psr7Hmac\Internal\HashCalculator;
 use UMA\Psr7Hmac\Verifier;
-use UMA\Tests\Psr7Hmac\ReflectionUtil;
 
 final class SlimTest extends TestCase
 {
-    use ReflectionUtil;
-
     private const ORIGINAL_SECRET = 'zme+v5kHoCvD7uqF';
 
     /**
@@ -65,22 +61,7 @@ final class SlimTest extends TestCase
             'REQUEST_TIME' => 1480957028,
         ]));
 
-        $calculator = $this->getMockBuilder(HashCalculator::class)
-            ->setMethods(['hmac'])
-            ->getMock();
-
-        $calculator
-            ->expects($this->once())
-            ->method('hmac')
-            ->with(
-                "GET /users HTTP/1.1\r\nhost: localhost\r\napi-key: FDzAMHIgEUE224Hw\r\ncontent-length: 0\r\ncontent-type: osom/cacauets\r\nsigned-headers: api-key,content-length,content-type,host,signed-headers\r\n\r\n",
-                static::ORIGINAL_SECRET
-            )
-            ->will($this->returnCallback(function ($data, $key) {
-                return (new HashCalculator())->hmac($data, $key);
-            }));
-
-        $this->replaceInstanceProperty($verifier = new Verifier(), 'calculator', $calculator);
+        $verifier = new Verifier();
 
         self::assertTrue($verifier->verify($liveSlimRequest, static::ORIGINAL_SECRET));
     }

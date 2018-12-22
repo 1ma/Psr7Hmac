@@ -1,20 +1,16 @@
 <?php
 
+declare(strict_types=1);
+
 namespace UMA\Psr7Hmac\Internal;
 
 use Psr\Http\Message\MessageInterface;
 
-class HeaderValidator
+final class HeaderValidator
 {
     private $rules = [];
 
-    /**
-     * @param string $header
-     * @param string $rule
-     *
-     * @return HeaderValidator
-     */
-    public function addRule($header, $rule)
+    public function addRule(string $header, string $rule): HeaderValidator
     {
         $this->rules[$header] = $rule;
 
@@ -22,8 +18,6 @@ class HeaderValidator
     }
 
     /**
-     * @param MessageInterface $message
-     *
      * @return array|bool
      */
     public function conforms(MessageInterface $message)
@@ -31,7 +25,7 @@ class HeaderValidator
         $matches = [];
 
         foreach ($this->rules as $header => $rule) {
-            if (0 === preg_match($rule, $message->getHeaderLine($header), $matches[$header])) {
+            if (0 === \preg_match($rule, $message->getHeaderLine($header), $matches[$header])) {
                 return false;
             }
         }
