@@ -12,13 +12,5 @@ install:
 script:
   - composer test
 
-after_script:
-  - curl https://www.dropbox.com/s/fbvk20qdgjccu3l/test-reporter.phar?dl=1 > test-reporter.phar
-  - php test-reporter.phar
-
 notifications:
   email: false
-
-addons:
-  code_climate:
-    repo_token: $CODECLIMATE_REPO_TOKEN
