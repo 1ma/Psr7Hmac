@@ -68,7 +68,7 @@ final class MessageSerializerTest extends TestCase
      */
     public function testBinaryRequest(RequestInterface $request): void
     {
-        $fh = fopen(__DIR__.'/../Resources/avatar.png', 'r+b');
+        $fh = fopen(__DIR__.'/../resources/avatar.png', 'r+b');
 
         $expectedSerialization = "POST /avatar/upload.php HTTP/1.1\r\nhost: www.example.com\r\ncontent-length: 13360\r\ncontent-type: image/png\r\n\r\n".stream_get_contents($fh);
 
