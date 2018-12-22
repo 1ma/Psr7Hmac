@@ -107,7 +107,7 @@ final class FullSpectrumTest extends TestCase
      */
     public function testBinaryRequest(RequestInterface $request): void
     {
-        $fh = fopen(__DIR__.'/Resources/avatar.png', 'r');
+        $fh = fopen(__DIR__.'/resources/avatar.png', 'r');
 
         $this->setExpectedSerialization(
             "POST /avatar/upload.php HTTP/1.1\r\nhost: www.example.com\r\ncontent-length: 13360\r\ncontent-type: image/png\r\nsigned-headers: content-length,content-type,host,signed-headers\r\n\r\n".stream_get_contents($fh)

@@ -1,9 +1,0 @@
-version: '2'
-services:
-  php:
-    image: 1maa/php-cli:5.6-xdebug
-    ports:
-      - '2222:22'
-    volumes:
-      - .:/root/Psr7Hmac
-    working_dir: /root/Psr7Hmac
