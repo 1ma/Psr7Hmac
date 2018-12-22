@@ -16,7 +16,6 @@
     "require-dev": {
         "guzzlehttp/psr7": "^1.3",
         "kambo/httpmessage": "^0.9.0",
-        "mibadger/http": "^2.0",
         "nyholm/psr7": "^1.0",
         "phpunit/phpunit": "^7.5",
         "ringcentral/psr7": "^1.2",

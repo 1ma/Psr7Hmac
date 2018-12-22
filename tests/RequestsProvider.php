@@ -7,7 +7,6 @@ namespace UMA\Tests\Psr7Hmac;
 use Psr\Http\Message\RequestInterface;
 use UMA\Tests\Psr7Hmac\Factory\GuzzleFactory;
 use UMA\Tests\Psr7Hmac\Factory\KamboFactory;
-use UMA\Tests\Psr7Hmac\Factory\MiBadgerFactory;
 use UMA\Tests\Psr7Hmac\Factory\NyholmFactory;
 use UMA\Tests\Psr7Hmac\Factory\RingCentralFactory;
 use UMA\Tests\Psr7Hmac\Factory\SlimFactory;
@@ -121,7 +120,6 @@ trait RequestsProvider
         return [
             GuzzleFactory::requestClass() => [GuzzleFactory::request($method, $url, $headers, $body)],
             KamboFactory::requestClass() => [KamboFactory::request($method, $url, $headers, $body)],
-            MiBadgerFactory::requestClass() => [MiBadgerFactory::request($method, $url, $headers, $body)],
             NyholmFactory::requestClass() => [NyholmFactory::request($method, $url, $headers, $body)],
             RingCentralFactory::requestClass() => [RingCentralFactory::request($method, $url, $headers, $body)],
             SlimFactory::requestClass() => [SlimFactory::request($method, $url, $headers, $body)],
