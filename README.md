@@ -2,11 +2,11 @@
 
 An HMAC authentication library built on top of the PSR-7 specification.
 
-[![Build Status](https://travis-ci.org/1ma/Psr7Hmac.svg?branch=master)](https://travis-ci.org/1ma/Psr7Hmac) [![Code Coverage](https://scrutinizer-ci.com/g/1ma/Psr7Hmac/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/1ma/Psr7Hmac/?branch=master) [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/1ma/Psr7Hmac/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/1ma/Psr7Hmac/?branch=master) [![Code Climate](https://codeclimate.com/github/1ma/Psr7Hmac/badges/gpa.svg)](https://codeclimate.com/github/1ma/Psr7Hmac) [![SensioLabsInsight](https://insight.sensiolabs.com/projects/8c7c772a-5819-426d-bef9-eb9f2b4a3102/mini.png)](https://insight.sensiolabs.com/projects/8c7c772a-5819-426d-bef9-eb9f2b4a3102) [![Total Downloads](https://poser.pugx.org/uma/psr7-hmac/downloads)](https://packagist.org/packages/uma/psr7-hmac)
+[![Build Status](https://travis-ci.org/1ma/Psr7Hmac.svg?branch=master)](https://travis-ci.org/1ma/Psr7Hmac) [![Code Coverage](https://scrutinizer-ci.com/g/1ma/Psr7Hmac/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/1ma/Psr7Hmac/?branch=master) [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/1ma/Psr7Hmac/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/1ma/Psr7Hmac/?branch=master) [![Total Downloads](https://poser.pugx.org/uma/psr7-hmac/downloads)](https://packagist.org/packages/uma/psr7-hmac)
 
 ## Releases
 
-[![Latest Stable Version](https://poser.pugx.org/uma/psr7-hmac/v/stable)](https://packagist.org/packages/uma/psr7-hmac) [![Latest Unstable Version](https://poser.pugx.org/uma/psr7-hmac/v/unstable)](https://packagist.org/packages/uma/psr7-hmac)
+[![Latest Stable Version](https://poser.pugx.org/uma/psr7-hmac/v/stable)](https://packagist.org/packages/uma/psr7-hmac)
 
 
 > If you want to build an HMAC-authenticated API based on Symfony check out [UMAPsr7HmacBundle](https://github.com/1ma/UMAPsr7HmacBundle), which
