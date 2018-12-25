@@ -51,15 +51,21 @@ final class HmacMiddleware implements MiddlewareInterface
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         if (null === $key = $this->keyProvider->getKeyFrom($request)) {
-            return $this->unauthenticatedHandler->handle($request);
+            return $this->unauthenticatedHandler->handle(
+                $request->withAttribute(Errors::HMAC_ERROR, Errors::NO_KEY)
+            );
         }
 
         if (null === $secret = $this->secretProvider->getSecretFor($key)) {
-            return $this->unauthenticatedHandler->handle($request);
+            return $this->unauthenticatedHandler->handle(
+                $request->withAttribute(Errors::HMAC_ERROR, Errors::NO_SECRET)
+            );
         }
 
         if (false === $this->hmacVerifier->verify($request, $secret)) {
-            return $this->unauthenticatedHandler->handle($request);
+            return $this->unauthenticatedHandler->handle(
+                $request->withAttribute(Errors::HMAC_ERROR, Errors::BROKEN_SIGNATURE)
+            );
         }
 
         return $handler->handle($request);
