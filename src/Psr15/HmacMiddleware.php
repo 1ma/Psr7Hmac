@@ -8,6 +8,7 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
+use UMA\Psr7Hmac\Specification;
 use UMA\Psr7Hmac\Verifier;
 
 final class HmacMiddleware implements MiddlewareInterface
@@ -52,19 +53,19 @@ final class HmacMiddleware implements MiddlewareInterface
     {
         if (null === $key = $this->keyProvider->getKeyFrom($request)) {
             return $this->unauthenticatedHandler->handle(
-                $request->withAttribute(Errors::HMAC_ERROR, Errors::NO_KEY)
+                $request->withAttribute(Specification::HMAC_ERROR, Specification::ERR_NO_KEY)
             );
         }
 
         if (null === $secret = $this->secretProvider->getSecretFor($key)) {
             return $this->unauthenticatedHandler->handle(
-                $request->withAttribute(Errors::HMAC_ERROR, Errors::NO_SECRET)
+                $request->withAttribute(Specification::HMAC_ERROR, Specification::ERR_NO_SECRET)
             );
         }
 
         if (false === $this->hmacVerifier->verify($request, $secret)) {
             return $this->unauthenticatedHandler->handle(
-                $request->withAttribute(Errors::HMAC_ERROR, Errors::BROKEN_SIGNATURE)
+                $request->withAttribute(Specification::HMAC_ERROR, Specification::ERR_BROKEN_SIG)
             );
         }
 
