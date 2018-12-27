@@ -85,4 +85,28 @@ final class Specification
      * @see https://tools.ietf.org/html/rfc7230#section-3.2.6
      */
     public const SIGN_REGEXP = "@^[-!#$%&'*+.^_`|~0-9a-z]+(,[-!#$%&'*+.^_`|~0-9a-z]+)*$@";
+
+    /**
+     * Error attribute name.
+     */
+    public const HMAC_ERROR = 'error.hmac';
+
+    /**
+     * The KeyProvider could not retrieve a key from
+     * the incoming request.
+     */
+    public const ERR_NO_KEY = -1;
+
+    /**
+     * The SecretProvider could not find a secret matching
+     * the key received in the request (i.e. it is a made up key).
+     */
+    public const ERR_NO_SECRET = -2;
+
+    /**
+     * The HMAC signature did not match, therefore the request
+     * might have been tampered in-flight or the client is making
+     * up the value of the HMAC signature.
+     */
+    public const ERR_BROKEN_SIG = -3;
 }
