@@ -36,14 +36,13 @@ final class HmacMiddleware implements MiddlewareInterface
     public function __construct(
         KeyProviderInterface $keyProvider,
         SecretProviderInterface $secretProvider,
-        RequestHandlerInterface $unauthenticatedHandler,
-        Verifier $hmacVerifier = null
+        RequestHandlerInterface $unauthenticatedHandler
     )
     {
         $this->keyProvider = $keyProvider;
         $this->secretProvider = $secretProvider;
         $this->unauthenticatedHandler = $unauthenticatedHandler;
-        $this->hmacVerifier = $hmacVerifier ?? new Verifier();
+        $this->hmacVerifier = new Verifier();
     }
 
     /**
