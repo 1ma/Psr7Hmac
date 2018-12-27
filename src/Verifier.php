@@ -5,8 +5,6 @@ declare(strict_types=1);
 namespace UMA\Psr7Hmac;
 
 use Psr\Http\Message\RequestInterface;
-use UMA\Psr7Hmac\Inspector\DefaultInspector;
-use UMA\Psr7Hmac\Inspector\InspectorInterface;
 use UMA\Psr7Hmac\Internal\HashCalculator;
 use UMA\Psr7Hmac\Internal\HeaderNameNormalizer;
 use UMA\Psr7Hmac\Internal\HeaderValidator;
@@ -20,11 +18,6 @@ final class Verifier
     private $calculator;
 
     /**
-     * @var InspectorInterface
-     */
-    private $inspector;
-
-    /**
      * @var HeaderNameNormalizer
      */
     private $normalizer;
@@ -34,13 +27,9 @@ final class Verifier
      */
     private $validator;
 
-    /**
-     * @param InspectorInterface|null $inspector
-     */
-    public function __construct(InspectorInterface $inspector = null)
+    public function __construct()
     {
         $this->calculator = new HashCalculator();
-        $this->inspector = $inspector ?? new DefaultInspector();
         $this->normalizer = new HeaderNameNormalizer();
         $this->validator = (new HeaderValidator())
             ->addRule(Specification::AUTH_HEADER, Specification::AUTH_REGEXP)
@@ -58,10 +47,7 @@ final class Verifier
         $serverSideSignature = $this->calculator
             ->hmac(RequestSerializer::serialize($this->withoutUnsignedHeaders($request)), $secret);
 
-        $vetted = $this->inspector
-            ->vet($request, $verified = \hash_equals($serverSideSignature, $clientSideSignature));
-
-        return $vetted && $verified;
+        return \hash_equals($serverSideSignature, $clientSideSignature);
     }
 
     private function withoutUnsignedHeaders(RequestInterface $request): RequestInterface
