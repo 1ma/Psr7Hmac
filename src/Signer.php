@@ -45,7 +45,7 @@ final class Signer
 
         // Some of the tested RequestInterface implementations do not include
         // the Host header in $message->getHeaders(), so it is explicitly set when needed
-        if ($request instanceof RequestInterface && !\in_array('host', $headers, true)) {
+        if (!\in_array('host', $headers, true)) {
             $headers[] = 'host';
         }
 
