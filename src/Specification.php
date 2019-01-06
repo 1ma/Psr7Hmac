@@ -84,5 +84,5 @@ final class Specification
      * @see https://tools.ietf.org/html/rfc7230#section-3.2
      * @see https://tools.ietf.org/html/rfc7230#section-3.2.6
      */
-    public const SIGN_REGEXP = "@^[-!#$%&'*+.^_`|~0-9a-z]+(,[-!#$%&'*+.^_`|~0-9a-z]+)*$@";
+    public const SIGN_REGEXP = "@^[-!#$%&'*+.^_`|~0-9a-z]+(?:,[-!#$%&'*+.^_`|~0-9a-z]+)*$@";
 }
