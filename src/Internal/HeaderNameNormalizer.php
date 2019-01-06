@@ -17,7 +17,7 @@ final class HeaderNameNormalizer
             return self::$specialSnowflakes[$name];
         }
 
-        $normalized = \mb_strtolower($name);
+        $normalized = \strtolower($name);
 
         if (0 === \strpos($normalized, 'http_')) {
             $normalized = \str_replace('_', '-', \substr($normalized, 5));
