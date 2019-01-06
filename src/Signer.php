@@ -15,15 +15,9 @@ final class Signer
      */
     private $secret;
 
-    /**
-     * @var HashCalculator
-     */
-    private $calculator;
-
     public function __construct(string $secret)
     {
         $this->secret = $secret;
-        $this->calculator = new HashCalculator();
     }
 
     public function sign(RequestInterface $request): RequestInterface
@@ -34,7 +28,7 @@ final class Signer
 
         return $preSignedMessage->withHeader(
             Specification::AUTH_HEADER,
-            Specification::AUTH_PREFIX.$this->calculator->hmac($serialization, $this->secret)
+            Specification::AUTH_PREFIX.HashCalculator::hmac($serialization, $this->secret)
         );
     }
 

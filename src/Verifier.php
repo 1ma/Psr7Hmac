@@ -13,18 +13,12 @@ use UMA\Psr7Hmac\Internal\RequestSerializer;
 final class Verifier
 {
     /**
-     * @var HashCalculator
-     */
-    private $calculator;
-
-    /**
      * @var HeaderValidator
      */
     private $validator;
 
     public function __construct()
     {
-        $this->calculator = new HashCalculator();
         $this->validator = (new HeaderValidator())
             ->addRule(Specification::AUTH_HEADER, Specification::AUTH_REGEXP)
             ->addRule(Specification::SIGN_HEADER, Specification::SIGN_REGEXP);
@@ -38,8 +32,10 @@ final class Verifier
 
         $clientSideSignature = $matches[Specification::AUTH_HEADER][1];
 
-        $serverSideSignature = $this->calculator
-            ->hmac(RequestSerializer::serialize($this->withoutUnsignedHeaders($request)), $secret);
+        $serverSideSignature = HashCalculator::hmac(
+            RequestSerializer::serialize($this->withoutUnsignedHeaders($request)),
+            $secret
+        );
 
         return \hash_equals($serverSideSignature, $clientSideSignature);
     }

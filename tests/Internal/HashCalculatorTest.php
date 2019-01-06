@@ -18,7 +18,7 @@ final class HashCalculatorTest extends TestCase
      */
     public function testVector($key, $data, $expectedDigest): void
     {
-        $actualDigest = base64_decode((new HashCalculator())->hmac($data, $key), true);
+        $actualDigest = base64_decode(HashCalculator::hmac($data, $key), true);
 
         if (32 > strlen($expectedDigest)) { // Test Case 5 happens to be a beautiful, unique snowflake
             self::assertStringStartsWith($expectedDigest, $actualDigest);
