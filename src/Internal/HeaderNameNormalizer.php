@@ -11,7 +11,7 @@ final class HeaderNameNormalizer
         'CONTENT_TYPE' => 'content-type',
     ];
 
-    public function normalize(string $name): string
+    public static function normalize(string $name): string
     {
         if (\array_key_exists($name, self::$specialSnowflakes)) {
             return self::$specialSnowflakes[$name];

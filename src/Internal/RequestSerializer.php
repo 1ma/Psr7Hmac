@@ -40,7 +40,7 @@ final class RequestSerializer
         $headerLines = [];
         foreach ($headers as $name => $value) {
             $value = \is_array($value) ? $value : [$value];
-            $normalizedName = (new HeaderNameNormalizer())->normalize($name);
+            $normalizedName = HeaderNameNormalizer::normalize($name);
 
             $headerLines[$normalizedName] = $normalizedName.': '.\implode(',', $value).self::CRLF;
         }

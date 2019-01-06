@@ -11,15 +11,13 @@ final class HeaderNameNormalizerTest extends TestCase
 {
     public function testNormalizer(): void
     {
-        $nameNormalizer = new HeaderNameNormalizer();
-
-        self::assertSame('foo', $nameNormalizer->normalize('foo'));
-        self::assertSame('foo', $nameNormalizer->normalize('Foo'));
-        self::assertSame('foo', $nameNormalizer->normalize('HTTP_FOO'));
-        self::assertSame('foo-bar', $nameNormalizer->normalize('Foo-Bar'));
-        self::assertSame('foo_bar', $nameNormalizer->normalize('Foo_Bar'));
-        self::assertSame('foo-bar', $nameNormalizer->normalize('HTTP_FOO_BAR'));
-        self::assertSame('content-length', $nameNormalizer->normalize('CONTENT_LENGTH'));
-        self::assertSame('content-type', $nameNormalizer->normalize('CONTENT_TYPE'));
+        self::assertSame('foo', HeaderNameNormalizer::normalize('foo'));
+        self::assertSame('foo', HeaderNameNormalizer::normalize('Foo'));
+        self::assertSame('foo', HeaderNameNormalizer::normalize('HTTP_FOO'));
+        self::assertSame('foo-bar', HeaderNameNormalizer::normalize('Foo-Bar'));
+        self::assertSame('foo_bar', HeaderNameNormalizer::normalize('Foo_Bar'));
+        self::assertSame('foo-bar', HeaderNameNormalizer::normalize('HTTP_FOO_BAR'));
+        self::assertSame('content-length', HeaderNameNormalizer::normalize('CONTENT_LENGTH'));
+        self::assertSame('content-type', HeaderNameNormalizer::normalize('CONTENT_TYPE'));
     }
 }

@@ -18,11 +18,6 @@ final class Verifier
     private $calculator;
 
     /**
-     * @var HeaderNameNormalizer
-     */
-    private $normalizer;
-
-    /**
      * @var HeaderValidator
      */
     private $validator;
@@ -30,7 +25,6 @@ final class Verifier
     public function __construct()
     {
         $this->calculator = new HashCalculator();
-        $this->normalizer = new HeaderNameNormalizer();
         $this->validator = (new HeaderValidator())
             ->addRule(Specification::AUTH_HEADER, Specification::AUTH_REGEXP)
             ->addRule(Specification::SIGN_HEADER, Specification::SIGN_REGEXP);
@@ -55,7 +49,7 @@ final class Verifier
         $signedHeaders = \array_filter(\explode(',', $request->getHeaderLine(Specification::SIGN_HEADER)));
 
         foreach (\array_keys($request->getHeaders()) as $headerName) {
-            if (!\in_array($this->normalizer->normalize($headerName), $signedHeaders, true)) {
+            if (!\in_array(HeaderNameNormalizer::normalize($headerName), $signedHeaders, true)) {
                 $request = $request->withoutHeader($headerName);
             }
         }
