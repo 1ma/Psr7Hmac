@@ -6,6 +6,7 @@ namespace UMA\Psr7Hmac;
 
 use Psr\Http\Message\RequestInterface;
 use UMA\Psr7Hmac\Internal\HashCalculator;
+use UMA\Psr7Hmac\Internal\HeaderNameNormalizer;
 use UMA\Psr7Hmac\Internal\RequestSerializer;
 
 final class Signer
@@ -34,8 +35,10 @@ final class Signer
 
     private function withSignedHeadersHeader(RequestInterface $request): RequestInterface
     {
-        $headers = \array_keys(\array_change_key_case($request->getHeaders(), CASE_LOWER));
-        $headers[] = \mb_strtolower(Specification::SIGN_HEADER);
+        $headers = [HeaderNameNormalizer::normalize(Specification::SIGN_HEADER)];
+        foreach ($request->getHeaders() as $name => $_) {
+            $headers[] = HeaderNameNormalizer::normalize($name);
+        }
 
         // Some of the tested RequestInterface implementations do not include
         // the Host header in $message->getHeaders(), so it is explicitly set when needed
