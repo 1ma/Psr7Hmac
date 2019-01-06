@@ -9,7 +9,7 @@ use Psr\Http\Message\RequestInterface;
 use UMA\Psr7Hmac\Internal\RequestSerializer;
 use UMA\Tests\Psr7Hmac\RequestsProvider;
 
-final class MessageSerializerTest extends TestCase
+final class RequestSerializerTest extends TestCase
 {
     use RequestsProvider;
 
