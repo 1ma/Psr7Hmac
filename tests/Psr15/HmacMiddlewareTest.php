@@ -39,17 +39,17 @@ final class HmacMiddlewareTest extends TestCase
         $middleware = new HmacMiddleware(
             new HeaderKeyProvider('X-Api-Key'),
             new KeyValueSecretProvider([self::SAMPLE_API_KEY => self::SAMPLE_SECRET]),
-            new FakeRequestHandler(true),
-            new FakeRequestHandler(true),
-            new FakeRequestHandler(true)
+            new FakeRequestHandler(true, 400),
+            new FakeRequestHandler(true, 401),
+            new FakeRequestHandler(true, 403)
         );
 
         $response = $middleware->process(
             $signedRequest,
-            new FakeRequestHandler(false, 202)
+            new FakeRequestHandler(false, 200)
         );
 
-        self::assertSame(202, $response->getStatusCode());
+        self::assertSame(200, $response->getStatusCode());
     }
 
     public function testApiKeyMissingInRequest(): void
@@ -63,13 +63,13 @@ final class HmacMiddlewareTest extends TestCase
             new HeaderKeyProvider('X-Api-Key'),
             new KeyValueSecretProvider([self::SAMPLE_API_KEY => self::SAMPLE_SECRET]),
             new FakeRequestHandler(false, 400),
-            new FakeRequestHandler(true),
-            new FakeRequestHandler(true)
+            new FakeRequestHandler(true, 401),
+            new FakeRequestHandler(true, 403)
         );
 
         $response = $middleware->process(
             $signedRequest,
-            new FakeRequestHandler(true)
+            new FakeRequestHandler(true, 200)
         );
 
         self::assertSame(400, $response->getStatusCode());
@@ -85,14 +85,14 @@ final class HmacMiddlewareTest extends TestCase
         $middleware = new HmacMiddleware(
             new HeaderKeyProvider('X-Api-Key'),
             new KeyValueSecretProvider([]),
-            new FakeRequestHandler(true),
+            new FakeRequestHandler(true, 400),
             new FakeRequestHandler(false, 401),
-            new FakeRequestHandler(true)
+            new FakeRequestHandler(true, 403)
         );
 
         $response = $middleware->process(
             $signedRequest,
-            new FakeRequestHandler(true)
+            new FakeRequestHandler(true, 200)
         );
 
         self::assertSame(401, $response->getStatusCode());
@@ -108,14 +108,14 @@ final class HmacMiddlewareTest extends TestCase
         $middleware = new HmacMiddleware(
             new HeaderKeyProvider('X-Api-Key'),
             new KeyValueSecretProvider([self::SAMPLE_API_KEY => self::SAMPLE_SECRET]),
-            new FakeRequestHandler(true),
-            new FakeRequestHandler(true),
+            new FakeRequestHandler(true, 400),
+            new FakeRequestHandler(true, 401),
             new FakeRequestHandler(false, 403)
         );
 
         $response = $middleware->process(
             $signedRequest,
-            new FakeRequestHandler(true)
+            new FakeRequestHandler(true, 200)
         );
 
         self::assertSame(403, $response->getStatusCode());
