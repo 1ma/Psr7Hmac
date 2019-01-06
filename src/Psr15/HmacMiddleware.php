@@ -8,7 +8,6 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
-use UMA\Psr7Hmac\Specification;
 use UMA\Psr7Hmac\Verifier;
 
 final class HmacMiddleware implements MiddlewareInterface
@@ -26,7 +25,17 @@ final class HmacMiddleware implements MiddlewareInterface
     /**
      * @var RequestHandlerInterface
      */
-    private $unauthenticatedHandler;
+    private $noKeyHandler;
+
+    /**
+     * @var RequestHandlerInterface
+     */
+    private $noSecretHandler;
+
+    /**
+     * @var RequestHandlerInterface
+     */
+    private $badSigHandler;
 
     /**
      * @var Verifier
@@ -36,12 +45,16 @@ final class HmacMiddleware implements MiddlewareInterface
     public function __construct(
         KeyProviderInterface $keyProvider,
         SecretProviderInterface $secretProvider,
-        RequestHandlerInterface $unauthenticatedHandler
+        RequestHandlerInterface $noKeyHandler,
+        RequestHandlerInterface $noSecretHandler,
+        RequestHandlerInterface $badSigHandler
     )
     {
         $this->keyProvider = $keyProvider;
         $this->secretProvider = $secretProvider;
-        $this->unauthenticatedHandler = $unauthenticatedHandler;
+        $this->noKeyHandler = $noKeyHandler;
+        $this->noSecretHandler = $noSecretHandler;
+        $this->badSigHandler = $badSigHandler;
         $this->hmacVerifier = new Verifier();
     }
 
@@ -51,21 +64,15 @@ final class HmacMiddleware implements MiddlewareInterface
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         if (null === $key = $this->keyProvider->getKeyFrom($request)) {
-            return $this->unauthenticatedHandler->handle(
-                $request->withAttribute(Specification::HMAC_ERROR, Specification::ERR_NO_KEY)
-            );
+            return $this->noKeyHandler->handle($request);
         }
 
         if (null === $secret = $this->secretProvider->getSecretFor($key)) {
-            return $this->unauthenticatedHandler->handle(
-                $request->withAttribute(Specification::HMAC_ERROR, Specification::ERR_NO_SECRET)
-            );
+            return $this->noSecretHandler->handle($request);
         }
 
         if (false === $this->hmacVerifier->verify($request, $secret)) {
-            return $this->unauthenticatedHandler->handle(
-                $request->withAttribute(Specification::HMAC_ERROR, Specification::ERR_BROKEN_SIG)
-            );
+            return $this->badSigHandler->handle($request);
         }
 
         return $handler->handle($request);

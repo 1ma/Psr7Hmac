@@ -16,21 +16,37 @@ use UMA\Tests\Psr7Hmac\Fixtures\FakeRequestHandler;
 
 final class HmacMiddlewareTest extends TestCase
 {
+    private const SAMPLE_API_KEY = '57e00897-3979-4218-aac7-3de4d626f723';
+    private const SAMPLE_SECRET = '6b9550e6b2e7c5041e0ed344b0181fed';
+
+    /**
+     * @var Signer
+     */
+    private $signer;
+
+    protected function setUp()
+    {
+        $this->signer = new Signer(self::SAMPLE_SECRET);
+    }
+
     public function testMiddlewareHappyPath(): void
     {
         /** @var ServerRequestInterface $signedRequest */
-        $signedRequest = (new Signer('6b9550e6b2e7c5041e0ed344b0181fed'))
-            ->sign(new ServerRequest('GET', '/data.json', ['X-Api-Key' => '57e00897-3979-4218-aac7-3de4d626f723']));
+        $signedRequest = $this->signer->sign(
+            new ServerRequest('GET', '/data.json', ['X-Api-Key' => self::SAMPLE_API_KEY])
+        );
 
         $middleware = new HmacMiddleware(
             new HeaderKeyProvider('X-Api-Key'),
-            new KeyValueSecretProvider(['57e00897-3979-4218-aac7-3de4d626f723' => '6b9550e6b2e7c5041e0ed344b0181fed']),
-            new FakeRequestHandler($this, true)
+            new KeyValueSecretProvider([self::SAMPLE_API_KEY => self::SAMPLE_SECRET]),
+            new FakeRequestHandler(true),
+            new FakeRequestHandler(true),
+            new FakeRequestHandler(true)
         );
 
         $response = $middleware->process(
             $signedRequest,
-            new FakeRequestHandler($this, false, 202)
+            new FakeRequestHandler(false, 202)
         );
 
         self::assertSame(202, $response->getStatusCode());
@@ -39,18 +55,21 @@ final class HmacMiddlewareTest extends TestCase
     public function testApiKeyMissingInRequest(): void
     {
         /** @var ServerRequestInterface $signedRequest */
-        $signedRequest = (new Signer('6b9550e6b2e7c5041e0ed344b0181fed'))
-            ->sign(new ServerRequest('GET', '/data.json'));
+        $signedRequest = $this->signer->sign(
+            new ServerRequest('GET', '/data.json')
+        );
 
         $middleware = new HmacMiddleware(
             new HeaderKeyProvider('X-Api-Key'),
-            new KeyValueSecretProvider(['57e00897-3979-4218-aac7-3de4d626f723' => '6b9550e6b2e7c5041e0ed344b0181fed']),
-            new FakeRequestHandler($this, false, 400)
+            new KeyValueSecretProvider([self::SAMPLE_API_KEY => self::SAMPLE_SECRET]),
+            new FakeRequestHandler(false, 400),
+            new FakeRequestHandler(true),
+            new FakeRequestHandler(true)
         );
 
         $response = $middleware->process(
             $signedRequest,
-            new FakeRequestHandler($this, true)
+            new FakeRequestHandler(true)
         );
 
         self::assertSame(400, $response->getStatusCode());
@@ -59,18 +78,21 @@ final class HmacMiddlewareTest extends TestCase
     public function testApiKeyNotMappedToAnySecret(): void
     {
         /** @var ServerRequestInterface $signedRequest */
-        $signedRequest = (new Signer('6b9550e6b2e7c5041e0ed344b0181fed'))
-            ->sign(new ServerRequest('GET', '/data.json', ['X-Api-Key' => '57e00897-3979-4218-aac7-3de4d626f723']));
+        $signedRequest = $this->signer->sign(
+            new ServerRequest('GET', '/data.json', ['X-Api-Key' => self::SAMPLE_API_KEY])
+        );
 
         $middleware = new HmacMiddleware(
             new HeaderKeyProvider('X-Api-Key'),
             new KeyValueSecretProvider([]),
-            new FakeRequestHandler($this, false, 401)
+            new FakeRequestHandler(true),
+            new FakeRequestHandler(false, 401),
+            new FakeRequestHandler(true)
         );
 
         $response = $middleware->process(
             $signedRequest,
-            new FakeRequestHandler($this, true)
+            new FakeRequestHandler(true)
         );
 
         self::assertSame(401, $response->getStatusCode());
@@ -79,19 +101,21 @@ final class HmacMiddlewareTest extends TestCase
     public function testBrokenHmacSignature(): void
     {
         /** @var ServerRequestInterface $signedRequest */
-        $signedRequest = (new Signer('6b9550e6b2e7c5041e0ed344b0181fed'))
-            ->sign(new ServerRequest('GET', '/data.json', ['X-Api-Key' => '57e00897-3979-4218-aac7-3de4d626f723']))
-            ->withBody(Stream::create('ouch'));
+        $signedRequest = $this->signer->sign(
+            new ServerRequest('GET', '/data.json', ['X-Api-Key' => self::SAMPLE_API_KEY])
+        )->withBody(Stream::create('ouch'));
 
         $middleware = new HmacMiddleware(
             new HeaderKeyProvider('X-Api-Key'),
-            new KeyValueSecretProvider(['57e00897-3979-4218-aac7-3de4d626f723' => '6b9550e6b2e7c5041e0ed344b0181fed']),
-            new FakeRequestHandler($this, false, 403)
+            new KeyValueSecretProvider([self::SAMPLE_API_KEY => self::SAMPLE_SECRET]),
+            new FakeRequestHandler(true),
+            new FakeRequestHandler(true),
+            new FakeRequestHandler(false, 403)
         );
 
         $response = $middleware->process(
             $signedRequest,
-            new FakeRequestHandler($this, true)
+            new FakeRequestHandler(true)
         );
 
         self::assertSame(403, $response->getStatusCode());
