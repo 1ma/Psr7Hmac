@@ -24,7 +24,7 @@ final class HmacMiddlewareTest extends TestCase
      */
     private $signer;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->signer = new Signer(self::SAMPLE_SECRET);
     }

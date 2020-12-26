@@ -25,7 +25,7 @@ final class FullSpectrumTest extends TestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->signer = new Signer(self::SECRET);
     }

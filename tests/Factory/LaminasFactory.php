@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace UMA\Tests\Psr7Hmac\Factory;
 
+use Laminas\Diactoros\Request;
+use Laminas\Diactoros\Stream;
 use Psr\Http\Message\RequestInterface;
-use Zend\Diactoros\Request;
-use Zend\Diactoros\Stream;
 
-class ZendFactory implements FactoryInterface
+class LaminasFactory implements FactoryInterface
 {
     use StreamHelper;
 

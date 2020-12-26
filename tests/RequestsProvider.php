@@ -7,13 +7,13 @@ namespace UMA\Tests\Psr7Hmac;
 use Psr\Http\Message\RequestInterface;
 use UMA\Tests\Psr7Hmac\Factory\GuzzleFactory;
 use UMA\Tests\Psr7Hmac\Factory\KamboFactory;
+use UMA\Tests\Psr7Hmac\Factory\LaminasFactory;
 use UMA\Tests\Psr7Hmac\Factory\NyholmFactory;
 use UMA\Tests\Psr7Hmac\Factory\RingCentralFactory;
 use UMA\Tests\Psr7Hmac\Factory\SlimFactory;
 use UMA\Tests\Psr7Hmac\Factory\SymfonyFactory;
 use UMA\Tests\Psr7Hmac\Factory\WanduFactory;
 use UMA\Tests\Psr7Hmac\Factory\WindwalkerFactory;
-use UMA\Tests\Psr7Hmac\Factory\ZendFactory;
 
 trait RequestsProvider
 {
@@ -120,13 +120,13 @@ trait RequestsProvider
         return [
             GuzzleFactory::requestClass() => [GuzzleFactory::request($method, $url, $headers, $body)],
             KamboFactory::requestClass() => [KamboFactory::request($method, $url, $headers, $body)],
+            LaminasFactory::requestClass() => [LaminasFactory::request($method, $url, $headers, $body)],
             NyholmFactory::requestClass() => [NyholmFactory::request($method, $url, $headers, $body)],
             RingCentralFactory::requestClass() => [RingCentralFactory::request($method, $url, $headers, $body)],
             SlimFactory::requestClass() => [SlimFactory::request($method, $url, $headers, $body)],
             SymfonyFactory::requestClass() => [SymfonyFactory::request($method, $url, $headers, $body)],
             WanduFactory::requestClass() => [WanduFactory::request($method, $url, $headers, $body)],
             WindwalkerFactory::requestClass() => [WindwalkerFactory::request($method, $url, $headers, $body)],
-            ZendFactory::requestClass() => [ZendFactory::request($method, $url, $headers, $body)],
         ];
     }
 }

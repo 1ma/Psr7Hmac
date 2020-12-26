@@ -24,7 +24,7 @@ final class VerifierTest extends TestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->verifier = new Verifier();
     }

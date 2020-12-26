@@ -4,17 +4,18 @@ declare(strict_types=1);
 
 namespace UMA\Tests\Psr7Hmac\Factory;
 
+use Nyholm\Psr7\Factory\Psr17Factory;
+use Nyholm\Psr7\ServerRequest as NyholmRequest;
 use Psr\Http\Message\RequestInterface;
-use Symfony\Bridge\PsrHttpMessage\Factory\DiactorosFactory;
+use Symfony\Bridge\PsrHttpMessage\Factory\PsrHttpFactory;
 use Symfony\Component\HttpFoundation\Request as SymfonyRequest;
-use Zend\Diactoros\ServerRequest as ZendRequest;
 
 final class SymfonyFactory implements FactoryInterface
 {
     /**
      * {@inheritdoc}
      *
-     * @return ZendRequest
+     * @return NyholmRequest
      */
     public static function request(string $method, string $url, array $headers = [], string $body = null): RequestInterface
     {
@@ -27,7 +28,8 @@ final class SymfonyFactory implements FactoryInterface
 
         $symfonyRequest->headers->add($headers);
 
-        return (new DiactorosFactory())
+        $factory = new Psr17Factory();
+        return (new PsrHttpFactory($factory, $factory, $factory, $factory))
             ->createRequest($symfonyRequest);
     }
 
@@ -39,7 +41,7 @@ final class SymfonyFactory implements FactoryInterface
         // This is indeed a white lie, as the HttpFoundation component
         // is not a PSR-7 implementation.
 
-        // Instead, the returned requests are actually Zend\Diactoros\ServerRequest
+        // Instead, the returned requests are actually Nyholm\Psr7\ServerRequest
         // instances produced by Symfony's own PSR-7 bridge.
         return SymfonyRequest::class;
     }
