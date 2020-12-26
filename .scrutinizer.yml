@@ -17,7 +17,7 @@ build:
                     - php-scrutinizer-run --enable-security-analysis
         testing:
             environment:
-                php: '7.1'
+                php: '7.4'
             tests:
                 override:
                     -

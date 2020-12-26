@@ -2,7 +2,7 @@
 
 An HMAC authentication library built on top of the PSR-7 specification.
 
-[![Build Status](https://travis-ci.org/1ma/Psr7Hmac.svg?branch=master)](https://travis-ci.org/1ma/Psr7Hmac) [![Code Coverage](https://scrutinizer-ci.com/g/1ma/Psr7Hmac/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/1ma/Psr7Hmac/?branch=master) [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/1ma/Psr7Hmac/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/1ma/Psr7Hmac/?branch=master) [![Total Downloads](https://poser.pugx.org/uma/psr7-hmac/downloads)](https://packagist.org/packages/uma/psr7-hmac)
+![.github/workflows/phpunit.yml](https://github.com/1ma/Psr7Hmac/workflows/.github/workflows/phpunit.yml/badge.svg) [![Code Coverage](https://scrutinizer-ci.com/g/1ma/Psr7Hmac/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/1ma/Psr7Hmac/?branch=master) [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/1ma/Psr7Hmac/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/1ma/Psr7Hmac/?branch=master) [![Total Downloads](https://poser.pugx.org/uma/psr7-hmac/downloads)](https://packagist.org/packages/uma/psr7-hmac)
 
 ## Releases
 
